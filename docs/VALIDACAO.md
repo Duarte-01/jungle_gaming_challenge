@@ -31,3 +31,16 @@ O download do Chromium do Playwright foi bloqueado pelo proxy (`403 Domain forbi
 Não executados nesta etapa: os fluxos funcionais do marketplace, regressão visual com o Figma, auditorias Lighthouse e validação de deploy. Não há evidência de conclusão desses requisitos.
 
 Relatório HTML da execução atual: `playwright-report/index.html`, gerado localmente e ignorado pelo Git. A entrega final precisará incluir os relatórios requeridos de maneira reproduzível.
+
+## Etapa 2 — início e catálogo
+
+Após as capturas fornecidas pelo candidato, foram adicionados início responsivo, listagem de 36 NFTs, filtros na URL e detalhe parcial.
+
+- TypeScript, lint sem avisos e build: passaram.
+- Precisão ETH: **2 testes unitários passaram**.
+- E2E da infraestrutura e catálogo: **21 testes passaram** (7 casos em cada uma das larguras 390, 768 e 1440).
+- A execução final de E2E usou o build de produção com `E2E_PREVIEW=true`, concluída em 33 segundos. Uma execução anterior também passou no servidor de desenvolvimento.
+
+Cobertura adicionada: busca e histórico, refresh, filtros combinados, ordenação, paginação, detalhe direto, NFT inexistente, edição esgotada, carregamento lento, erro MSW 503 e nova tentativa. O mobile também verifica o foco do diálogo de filtros e o retorno do foco após Escape.
+
+Os retratos originais ainda faltam. As capturas locais da interface mostram fallbacks, portanto esta execução **não valida fidelidade visual**, assets finais, Lighthouse, favoritos, sessão, carrinho ou compra. Não há baselines visuais finais nem deploy público.
