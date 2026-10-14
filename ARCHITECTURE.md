@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Esta documentação descreve a base. As regras de negócio do marketplace ainda não estão implementadas. A tela técnica provisória não é uma substituição do Figma.
+Esta documentação descreve a base e a primeira versão do catálogo. A página inicial segue a composição das capturas fornecidas, com assets originais pendentes. A tela técnica fica em `/setup`. Compra, conta e eventos de negócio ainda não estão implementados.
 
 ## Responsabilidades
 
@@ -13,6 +13,10 @@ O MSW inicia antes do React. A configuração `VITE_ENABLE_MOCKS=false` desativa
 ## Contratos implementados nesta etapa
 
 `GET /api/health` → `200 { status: "ok", service: "jungle-marketplace-mock" }`.
+
+`GET /api/nfts?q=&category=&network=&min=0&max=100&sort=recent&tab=all&page=1` retorna itens, total, página, número de páginas e facets. Página contém até nove itens. Ordenações: `recent` (ordem estável de fixture), `price-asc`, `price-desc`, `name`; destaques: `all`, `new`, `trending`. `GET /api/nfts/:id` retorna um NFT com edições e disponibilidade, ou 404. Valores ETH são strings; filtros e ordenação de preço usam BigInt em wei.
+
+Parâmetros são normalizados pelo Router e pelo MSW. Mudanças de filtro reiniciam a paginação. O cache da listagem usa todos os parâmetros na chave; a query passa AbortSignal ao Axios e mantém dados anteriores enquanto informa atualização. O detalhe usa chave por ID, sem retry para 404. Fixtures do catálogo ainda são imutáveis; a persistência e a sincronização de mutations/eventos serão adicionadas na etapa de compra.
 
 Socket.IO: cliente envia `health.check`; simulação devolve `health.ready { id, version, transport: "socket.io" }`. É uma verificação de infraestrutura, sem recursos privados. Os eventos `nft.updated` e `order.updated` ainda serão implementados.
 
@@ -32,4 +36,4 @@ Vite simplifica desenvolvimento e build; Tailwind 4 participa pelo plugin do Vit
 
 Os testes iniciais exercitam rede e navegador, mas não comprovam o atendimento ao desafio. Lighthouse está instalado; os scripts específicos, as medições e a análise serão feitos sobre páginas funcionais e assets finais. O deploy ainda não foi executado.
 
-Contratos REST de negócio, estratégia de sessão, hashing de senhas fictícias, persistência, precisão monetária, reconciliação, idempotência e cenários serão documentados com suas implementações.
+Contratos de sessão e compra, hashing de senhas fictícias, persistência, reconciliação, idempotência e cenários completos serão documentados com suas implementações. `docs/ETAPA-02.md` registra as substituições provisórias de fonte, as imagens pendentes e os cenários iniciais de catálogo.

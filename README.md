@@ -2,11 +2,11 @@
 
 Implementação em andamento do [desafio frontend](https://github.com/junglegaming/frontend-challenge).
 
-**Estado atual:** etapa 1, infraestrutura validada. A tela inicial é provisória e não representa o Figma. Catálogo, conta, carrinho, pagamento e eventos de negócio ainda não foram implementados. Não há deploy publicado nem auditoria Lighthouse concluída.
+**Estado atual:** etapa 2, início responsivo, catálogo via MSW e detalhe parcial. Imagens originais e revisão de fidelidade visual estão pendentes. Conta, carrinho, pagamento e eventos de negócio ainda não foram implementados. A tela técnica está em `/setup`. Não há deploy público nem auditoria Lighthouse concluída.
 
 ## Executar
 
-Requisitos: Node.js 22.12+ (ambiente atual: Node 24) e npm.
+Requisitos: Node.js 22.18+ (ambiente atual: Node 24) e npm.
 
 ```bash
 npm ci
@@ -18,6 +18,7 @@ O Vite informa o endereço local no terminal. Os mocks estão ativos por padrão
 ```bash
 npm run typecheck
 npm run lint
+npm run test:unit
 npm run build
 npm run preview
 npm run browsers:install
@@ -35,12 +36,13 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e
 
 Esse override é opcional: em outra máquina, `npm run browsers:install` e `npm run test:e2e` usam o browser do Playwright normalmente. A versão do Chromium da nuvem deve ser registrada junto dos resultados.
 
-Os testes atuais verificam a integração REST/MSW, o evento transmitido por Socket.IO, refresh e rota inexistente nas larguras 390, 768 e 1440. Eles **não** constituem a cobertura funcional exigida para a entrega final. Relatórios HTML ficam em `playwright-report/`, e traces de falhas em `test-results/`. Os browsers ficam em `.cache/browsers/`, sem depender de escrita na pasta pessoal da máquina.
+Os testes atuais verificam a infraestrutura, busca, filtros, paginação, histórico, detalhe parcial e recuperação de falhas nas larguras 390, 768 e 1440. Dois testes unitários verificam a precisão dos valores ETH. Eles **não** constituem a cobertura funcional exigida para a entrega final. Relatórios HTML ficam em `playwright-report/`, e traces de falhas em `test-results/`. Os browsers ficam em `.cache/browsers/`, sem depender de escrita na pasta pessoal da máquina.
 
 ## Onde estudar
 
 - [Roteiro dos dois dias](docs/ROTEIRO.md): ordem de implementação e critérios pendentes.
 - [Primeira etapa explicada](docs/ETAPA-01.md): percurso da requisição, arquivos e exercício.
+- [Segunda etapa explicada](docs/ETAPA-02.md): URL, filtros, mocks e precisão ETH.
 - [Arquitetura](ARCHITECTURE.md): decisões atuais e limites da base.
 - [Figma do desafio](https://www.figma.com/design/Ff0SksUi7UFtPWUO8kyNtw/Frontend-Challenge?node-id=0-1).
 

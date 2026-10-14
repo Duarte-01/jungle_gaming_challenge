@@ -22,8 +22,8 @@ Não adiar a primeira publicação até o último minuto; publicar uma versão f
 
 - [x] Enunciado lido e stack identificada.
 - [x] Base da aplicação criada.
-- [ ] Layout e assets obtidos: acesso automático ao Figma retornou 403.
-- [ ] Catálogo e detalhe.
+- [ ] Fidelidade visual e assets originais: capturas desktop/mobile do início recebidas; fonte e retratos isolados pendentes.
+- [ ] Catálogo e detalhe completos: listagem, filtros na URL e detalhe parcial implementados; favoritos e ações de compra pendentes.
 - [ ] Conta, sessão e isolamento de dados.
 - [ ] Favoritos e rollback.
 - [ ] Carrinho, cotação e precisão ETH.
