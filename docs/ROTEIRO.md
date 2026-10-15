@@ -16,7 +16,7 @@ Prazo de trabalho informado: dois dias a partir de 14/10/2026. Confirmar o horá
 3. **Acessibilidade e Lighthouse:** teclado, foco, skeletons, motion reduzido, 390/768/1440 px. Três medições por página e perfil para início e detalhe, com medianas e relatórios.
 4. **Entrega e ensaio:** publicar, validar rotas e mocks no deploy, documentação, conferir checkout limpo e praticar a explicação do fluxo e dos testes.
 
-Não adiar a primeira publicação até o último minuto; publicar uma versão funcional assim que o fluxo estiver estável e atualizar depois.
+Por solicitação do candidato, a integração na main e a publicação ficam suspensas até concluir a revisão e atingir todas as metas. Priorize corrigir os checks; recursos extras não devem atrasar essa validação.
 
 ## Situação atual
 
@@ -33,7 +33,7 @@ Não adiar a primeira publicação até o último minuto; publicar uma versão f
 - [x] Eventos de negócio, versões e reconciliação na reconexão.
 - [x] Cenários de compra, eventos, reset e controles REST da demonstração.
 - [x] 12 grupos de E2E e regressão visual: 129 execuções passaram; 12 baselines versionadas.
-- [x] Auditorias Lighthouse: 12 relatórios HTML/JSON e medianas; performance mobile abaixo de 90, com diagnóstico em `PERFORMANCE.md`.
+- [x] Metas Lighthouse locais: 12 medições, medianas performance mobile 90/91 e desktop 100/100; demais categorias 100. Relatórios e condições em `PERFORMANCE.md`.
 - [ ] Deploy público validado.
 - [x] Documentação das etapas, contratos, design, performance e guia da Vercel.
 - [ ] Treino final de apresentação, após validar a publicação.

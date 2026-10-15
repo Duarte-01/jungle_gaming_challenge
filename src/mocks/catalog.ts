@@ -15,7 +15,7 @@ export const catalogHandlers = [
           ? search.q.toLowerCase().includes('emerald')
             ? 1000
             : 100
-          : 250,
+          : 120,
     )
     if (scenario === 'offline') return HttpResponse.error()
     if (scenario === 'catalog-error')
@@ -72,7 +72,7 @@ export const catalogHandlers = [
     })
   }),
   http.get('/api/nfts/:id', async ({ params }) => {
-    await delay(localStorage.getItem('kurio:scenario') === 'slow' ? 2000 : 200)
+    await delay(localStorage.getItem('kurio:scenario') === 'slow' ? 2000 : 120)
     if (localStorage.getItem('kurio:scenario') === 'offline') return HttpResponse.error()
     const { nfts } = await readDatabase()
     const nft = nfts.find((item) => item.id === params.id)

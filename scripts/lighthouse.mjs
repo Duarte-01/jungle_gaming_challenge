@@ -1,5 +1,5 @@
 import { spawn, execFileSync } from 'node:child_process'
-import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, readdir, writeFile, rm } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -21,6 +21,16 @@ if (!pages.length || !profiles.length)
 const baseURL = process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4174'
 const outputDir = resolve(process.env.AUDIT_OUTPUT_DIR ?? 'reports/lighthouse')
 await mkdir(outputDir, { recursive: true })
+// A failed audit must not leave an old successful summary in the artifact.
+await rm(resolve(outputDir, 'summary.json'), { force: true })
+for (const [page] of pages)
+  for (const profile of profiles)
+    for (let run = 1; run <= 10; run++)
+      for (const extension of ['html', 'json'])
+        await rm(resolve(outputDir, `${page}-${profile}-${run}.report.${extension}`), {
+          force: true,
+        })
+
 const chromePath =
   process.env.CHROME_PATH ?? (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined)
 const server = process.env.AUDIT_BASE_URL
@@ -91,6 +101,34 @@ try {
         if (report.runtimeError) throw new Error(JSON.stringify(report.runtimeError))
         if (!report.audits['largest-contentful-paint']?.numericValue)
           throw new Error('Página não produziu LCP; não aceitar auditoria vazia.')
+        const requests = report.audits['network-requests']?.details?.items ?? []
+        const expectedApiPath =
+          page === 'home' ? '/api/nfts' : `/api/nfts/${path.split('/').at(-1)}`
+        if (
+          !requests.some(
+            (request) =>
+              new URL(request.url).pathname === expectedApiPath && request.statusCode === 200,
+          )
+        )
+          throw new Error(`A auditoria não carregou os dados reais da rota ${page} pelo MSW.`)
+        if (
+          !requests.some(
+            (request) =>
+              /\/images\/nfts\/emerald-ape\.(avif|webp|png)$/.test(new URL(request.url).pathname) &&
+              request.statusCode === 200,
+          )
+        )
+          throw new Error(
+            'A auditoria não carregou a arte; não aceitar skeleton/fallback como entrega.',
+          )
+        if (
+          !requests.some(
+            (request) =>
+              /ibm-plex-mono.*\.woff2$/.test(new URL(request.url).pathname) &&
+              request.statusCode === 200,
+          )
+        )
+          throw new Error('A auditoria não carregou a fonte local da aplicação.')
         const scores = Object.fromEntries(
           config.categories.map((name) => [name, Math.round(report.categories[name].score * 100)]),
         )
@@ -154,6 +192,15 @@ try {
     baseURL,
     config,
     observations,
+    scope: {
+      runs,
+      pages: pages.map(([name]) => name),
+      profiles,
+      completeMatrix:
+        runs === config.runs &&
+        pages.length === Object.keys(config.pages).length &&
+        profiles.length === config.profiles.length,
+    },
     medians,
     buildFiles: process.env.AUDIT_BASE_URL
       ? null

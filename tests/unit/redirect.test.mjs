@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { safeReturnTo } from '../../src/domain/account.ts'
+import { safeReturnTo } from '../../src/domain/account-helpers.ts'
 
 test('retorno mantém caminhos internos e rejeita destinos externos e ciclos de login', () => {
   assert.equal(safeReturnTo('/carrinho?origem=nft#resumo'), '/carrinho?origem=nft#resumo')

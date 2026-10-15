@@ -1,6 +1,6 @@
-import { io } from 'socket.io-client'
-
-export function createMarketSocket() {
+export async function createMarketSocket() {
+  // Called by effects only after MSW is ready; import captures the intercepted WebSocket.
+  const { io } = await import('socket.io-client')
   return io(window.location.origin, {
     path: '/realtime',
     transports: ['websocket'],

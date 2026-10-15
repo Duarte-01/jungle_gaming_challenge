@@ -2,7 +2,7 @@
 
 Implementação em andamento do [desafio frontend](https://github.com/junglegaming/frontend-challenge).
 
-**Estado atual:** etapa 5. Os fluxos de catálogo, conta e compra simulada estão implementados e foram revisados com os frames desktop/mobile recebidos. O projeto inclui baselines visuais, configuração e relatórios Lighthouse. Fonte aproximada e ajustes em relação ao Figma estão documentados em [DESIGN](docs/DESIGN.md). A publicação pública ainda depende da conta/autorização na Vercel e da validação da URL; veja o [passo a passo de deploy](docs/DEPLOY.md). Resultados e limitações das auditorias estão em [PERFORMANCE](docs/PERFORMANCE.md).
+**Estado atual:** revisão da etapa 6. Catálogo, conta e compra simulada estão implementados. **Validação local: 129 E2E e 4 unitários aprovados; metas Lighthouse atingidas nas quatro combinações, com 12 medições.** A CI usa um ambiente fixado e os dois jobs automáticos; confira os checks do commit correspondente antes de integrar na `main` ou publicar. Veja a [matriz de requisitos](docs/REQUISITOS.md), os [resultados executados](docs/VALIDACAO.md) e as [medianas Lighthouse](docs/PERFORMANCE.md). Fonte aproximada e diferenças em relação ao Figma estão declaradas em [DESIGN](docs/DESIGN.md). **Não há deploy público validado.**
 
 ## Executar
 
@@ -28,17 +28,17 @@ npm run test:report
 npm run audit:lighthouse
 ```
 
-Em um Linux sem as bibliotecas necessárias ao Chromium, instale as dependências do Playwright conforme sua documentação. No ambiente de nuvem, essa necessidade será diagnosticada durante a execução.
+Para reproduzir os checks visuais e Lighthouse do GitHub, use o [ambiente Docker fixado](ci/README.md). A distribuição, as fontes e o Chromium influenciam as capturas: usar um browser diferente exige inspecionar as diferenças, não regenerar baselines automaticamente.
 
-Neste ambiente, o download de browsers de `cdn.playwright.dev` é bloqueado pela política de rede. Use o Chromium já instalado, sem precisar do comando `browsers:install`:
+O desenvolvimento manual não exige Docker. Em uma máquina local, `npm run browsers:install` instala o browser para os testes funcionais. Nesta nuvem, o download do Playwright é bloqueado; há Chromium do sistema disponível e a imagem de validação preparada. Para uma verificação funcional com o browser do sistema:
 
 ```bash
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e
 ```
 
-Esse override é opcional: em outra máquina, `npm run browsers:install` e `npm run test:e2e` usam o browser do Playwright normalmente. A versão do Chromium da nuvem deve ser registrada junto dos resultados.
+Esse comando não substitui a regressão visual no container oficial. Os quatro PNGs originais continuam preservados; `npm run assets:optimize` reproduz os derivados AVIF/WebP usados pelo navegador, conforme [ASSETS](docs/ASSETS.md).
 
-Os testes atuais verificam infraestrutura, catálogo, contas, favoritos, carrinho, carteiras, checkout e pedidos nas larguras 390, 768 e 1440. Incluem recusa, timeout, reconexão, revisão de preços, estoque, cupons, taxas e isolamento de pedidos. Os testes unitários verificam precisão ETH e destinos de retorno após login. Os resultados executados estão em [VALIDACAO](docs/VALIDACAO.md). As 12 baselines cobrem início, detalhe, carrinho e pagamento nos três tamanhos. Relatórios atuais são gerados em `playwright-report/`, e traces de falhas em `test-results/`. A entrega preserva uma cópia do relatório em `reports/playwright/` e as 12 auditorias HTML/JSON em `reports/lighthouse/`. Os browsers ficam em `.cache/browsers/`.
+Os testes atuais verificam infraestrutura, catálogo, contas, favoritos, carrinho, carteiras, checkout e pedidos nas larguras 390, 768 e 1440. Incluem recusa, timeout, reconexão, revisão de preços, estoque, cupons, taxas e isolamento de pedidos. Os testes unitários verificam precisão ETH, destinos de retorno após login e validação de eventos de rede. Os resultados executados estão em [VALIDACAO](docs/VALIDACAO.md). As 12 baselines cobrem início, detalhe, carrinho e pagamento nos três tamanhos. Relatórios atuais são gerados em `playwright-report/`, e traces de falhas em `test-results/`. A entrega preserva uma cópia do relatório em `reports/playwright/` e as 12 auditorias HTML/JSON em `reports/lighthouse/`. Os browsers ficam em `.cache/browsers/`.
 
 ## Testar a demonstração manualmente
 
@@ -69,6 +69,8 @@ Os dados do mock ficam no navegador deste endereço, não no GitHub. Trocar a po
 - [Terceira etapa explicada](docs/ETAPA-03.md): sessão, isolamento, favoritos otimistas e carrinho.
 - [Quarta etapa explicada](docs/ETAPA-04.md): carteiras, revisão, idempotência, recibos e tempo real, com exercício passo a passo.
 - [Quinta etapa explicada](docs/ETAPA-05.md): composição dos frames, acessibilidade, novos campos e verificações, com exercício guiado.
+- [Sexta etapa explicada](docs/ETAPA-06.md): CI, baselines, carregamento e exercício para interpretar os relatórios.
+- [Matriz de requisitos](docs/REQUISITOS.md): exigências, código, evidências e pendências.
 - [Referências visuais](docs/DESIGN.md): frames, fonte local, desvios e regressão visual.
 - [Performance](docs/PERFORMANCE.md): medianas Lighthouse, condições, relatórios e limitações.
 - [Publicação na Vercel](docs/DEPLOY.md): conta, branches, importação e validação pública.
@@ -82,4 +84,4 @@ Os dados do mock ficam no navegador deste endereço, não no GitHub. Trocar a po
 
 Build: `npm run build`; saída: `dist`; mocks ativos por padrão, sem credenciais privadas. `vercel.json` prepara build e fallback de rotas; `netlify.toml` e `public/_redirects` preparam a alternativa Netlify. A configuração de hospedagem ainda precisa ser validada no serviço publicado.
 
-O código de desenvolvimento está na branch `feat/marketplace-base`. Revise e integre à `main` antes de importar a produção pela Vercel. **Publicar o ambiente do Codex**, **enviar commits ao GitHub** e **publicar o site** são operações diferentes. O guia [DEPLOY](docs/DEPLOY.md) explica cada passo. Nenhuma URL pública está declarada como validada nesta entrega local.
+O código de desenvolvimento está na branch `feat/marketplace-base`. **Integração na `main` e deploy suspensos por solicitação do candidato até concluir a revisão e obter os dois checks verdes do commit correspondente.** A Vercel será configurada depois dessa etapa. **Publicar o ambiente do Codex**, **enviar commits ao GitHub** e **publicar o site** são operações diferentes. O guia [DEPLOY](docs/DEPLOY.md) explica cada passo. Nenhuma URL pública está declarada como validada nesta entrega local.

@@ -117,14 +117,4 @@ export interface SavedOrder {
   held: boolean
 }
 
-export const marketEventSchema = z.object({
-  id: z.string(),
-  sequence: z.number().int().positive(),
-  type: z.enum(['nft.updated', 'order.updated', 'quote.updated']),
-  resourceId: z.string(),
-  version: z.number().int().positive(),
-  ownerId: z.string().optional(),
-  actorId: z.string().optional(),
-  reason: z.enum(['reservation', 'market']).optional(),
-})
-export type MarketEvent = z.infer<typeof marketEventSchema>
+export { parseMarketEvent, type MarketEvent } from './market-event'

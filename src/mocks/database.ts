@@ -1,10 +1,10 @@
 import type { Nft } from '../api/catalog'
-import { suggestedCollectorHandle, type User } from '../domain/account'
+import type { User } from '../domain/account'
+import { suggestedCollectorHandle } from '../domain/account-helpers'
 import { catalogFixtures } from './fixtures/catalog'
-import { hashPassword } from './password'
+import { fixtureCredentials } from './fixtures/credentials'
 import type { MarketEvent, SavedOrder, Wallet, WalletConnection } from '../domain/checkout'
 import { broadcast } from './event-bus'
-import { walletSchema } from '../domain/checkout'
 
 export interface SavedCart {
   items: { nftId: string; editionId: string; quantity: number }[]
@@ -39,22 +39,20 @@ let initialization: Promise<Database> | undefined
 let pendingTransaction: Promise<unknown> = Promise.resolve()
 
 async function createDatabase(): Promise<Database> {
-  const users = await Promise.all(
-    [
-      { id: 'collector-ana', name: 'Ana Colecionadora', email: 'ana@kurio.test' },
-      { id: 'collector-bruno', name: 'Bruno Colecionador', email: 'bruno@kurio.test' },
-    ].map(async (user) => ({
-      user: {
-        ...user,
-        username: user.email.split('@')[0],
-        ens: user.email.split('@')[0],
-        walletNickname: 'Minha carteira',
-        phone: '',
-        avatarUrl: null,
-      },
-      password: await hashPassword('KurioDemo2026!'),
-    })),
-  )
+  const users = [
+    { id: 'collector-ana', name: 'Ana Colecionadora', email: 'ana@kurio.test' },
+    { id: 'collector-bruno', name: 'Bruno Colecionador', email: 'bruno@kurio.test' },
+  ].map((user) => ({
+    user: {
+      ...user,
+      username: user.email.split('@')[0],
+      ens: user.email.split('@')[0],
+      walletNickname: 'Minha carteira',
+      phone: '',
+      avatarUrl: null,
+    },
+    password: { ...fixtureCredentials[user.id] },
+  }))
   return {
     version: 1,
     users,
@@ -148,7 +146,14 @@ export async function readDatabase(): Promise<Database> {
       record.user.walletNickname ??= 'Minha carteira'
     }
     for (const wallets of Object.values(parsed.wallets))
-      for (const wallet of wallets) Object.assign(wallet, walletSchema.parse(wallet))
+      for (const wallet of wallets) {
+        wallet.provider ??= 'MetaMask'
+        wallet.profileName ??= 'Colecionador Kurio'
+        wallet.email ??= 'colecionador@kurio.test'
+        wallet.ens ??= 'colecionador'
+        wallet.referralCode ??= 'KURIO'
+        wallet.secondaryAddress ??= ''
+      }
     parsed.connections ??= {}
     for (const connection of Object.values(parsed.connections)) connection.provider ??= 'MetaMask'
     parsed.orders ??= {}

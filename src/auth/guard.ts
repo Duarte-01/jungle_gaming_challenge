@@ -1,7 +1,7 @@
 import { redirect } from '@tanstack/react-router'
 import { sessionOptions } from '../api/account'
 import { queryClient } from '../app/query-client'
-import { safeReturnTo } from '../domain/account'
+import { safeReturnTo } from '../domain/account-helpers'
 
 export async function requireSession({ location }: { location: { href: string } }) {
   const session = await queryClient.fetchQuery({ ...sessionOptions, staleTime: 0 })

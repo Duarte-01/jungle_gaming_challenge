@@ -1,7 +1,7 @@
 {
-  "createdAt": "2026-10-15T05:22:58.672Z",
+  "createdAt": "2026-10-15T14:46:01.828Z",
   "node": "v24.19.0",
-  "chromium": "Chromium 154.0.8037.57 built on Debian GNU/Linux 13 (trixie)",
+  "chromium": "Chromium 155.0.8059.39 built on Debian GNU/Linux 13 (trixie)",
   "baseURL": "http://127.0.0.1:4174",
   "config": {
     "runs": 3,
@@ -37,18 +37,18 @@
       "profile": "mobile",
       "run": 1,
       "scores": {
-        "performance": 83,
+        "performance": 90,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 4396.792925,
+        "largest-contentful-paint": 3586.0609999999997,
         "cumulative-layout-shift": 0.01944106925880923,
-        "total-blocking-time": 156.99999999999955
+        "total-blocking-time": 90
       },
       "lighthouseVersion": "13.5.0",
-      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
       "finalUrl": "http://127.0.0.1:4174/?q=&category=&network=&min=%220%22&max=%22100%22&sort=recent&tab=all&page=1"
     },
     {
@@ -56,18 +56,18 @@
       "profile": "mobile",
       "run": 2,
       "scores": {
-        "performance": 82,
+        "performance": 91,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 4397.8451,
+        "largest-contentful-paint": 3444.303675,
         "cumulative-layout-shift": 0.01944106925880923,
-        "total-blocking-time": 184
+        "total-blocking-time": 88
       },
       "lighthouseVersion": "13.5.0",
-      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
       "finalUrl": "http://127.0.0.1:4174/?q=&category=&network=&min=%220%22&max=%22100%22&sort=recent&tab=all&page=1"
     },
     {
@@ -75,18 +75,18 @@
       "profile": "mobile",
       "run": 3,
       "scores": {
-        "performance": 83,
+        "performance": 90,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 4424.0988,
+        "largest-contentful-paint": 3527.6845999999996,
         "cumulative-layout-shift": 0.01944106925880923,
-        "total-blocking-time": 147
+        "total-blocking-time": 91.5
       },
       "lighthouseVersion": "13.5.0",
-      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
       "finalUrl": "http://127.0.0.1:4174/?q=&category=&network=&min=%220%22&max=%22100%22&sort=recent&tab=all&page=1"
     },
     {
@@ -94,18 +94,18 @@
       "profile": "desktop",
       "run": 1,
       "scores": {
-        "performance": 99,
+        "performance": 100,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 980.898375,
+        "largest-contentful-paint": 746.812,
         "cumulative-layout-shift": 0,
         "total-blocking-time": 0
       },
       "lighthouseVersion": "13.5.0",
-      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
       "finalUrl": "http://127.0.0.1:4174/?q=&category=&network=&min=%220%22&max=%22100%22&sort=recent&tab=all&page=1"
     },
     {
@@ -113,18 +113,18 @@
       "profile": "desktop",
       "run": 2,
       "scores": {
-        "performance": 99,
+        "performance": 100,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 968.2887500000002,
+        "largest-contentful-paint": 701.8607499999999,
         "cumulative-layout-shift": 0,
-        "total-blocking-time": 0.5
+        "total-blocking-time": 0
       },
       "lighthouseVersion": "13.5.0",
-      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
       "finalUrl": "http://127.0.0.1:4174/?q=&category=&network=&min=%220%22&max=%22100%22&sort=recent&tab=all&page=1"
     },
     {
@@ -132,18 +132,18 @@
       "profile": "desktop",
       "run": 3,
       "scores": {
-        "performance": 99,
+        "performance": 100,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 993.3114500000001,
+        "largest-contentful-paint": 741.29675,
         "cumulative-layout-shift": 0,
-        "total-blocking-time": 1.9999999999999432
+        "total-blocking-time": 0
       },
       "lighthouseVersion": "13.5.0",
-      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
       "finalUrl": "http://127.0.0.1:4174/?q=&category=&network=&min=%220%22&max=%22100%22&sort=recent&tab=all&page=1"
     },
     {
@@ -151,18 +151,18 @@
       "profile": "mobile",
       "run": 1,
       "scores": {
-        "performance": 86,
+        "performance": 91,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 4158.642,
+        "largest-contentful-paint": 3527.5877999999993,
         "cumulative-layout-shift": 0,
-        "total-blocking-time": 76
+        "total-blocking-time": 39
       },
       "lighthouseVersion": "13.5.0",
-      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
       "finalUrl": "http://127.0.0.1:4174/nfts/emerald-ape-42"
     },
     {
@@ -170,18 +170,18 @@
       "profile": "mobile",
       "run": 2,
       "scores": {
-        "performance": 85,
+        "performance": 91,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 4199.2717999999995,
+        "largest-contentful-paint": 3523.2385999999997,
         "cumulative-layout-shift": 0,
-        "total-blocking-time": 92
+        "total-blocking-time": 47.5
       },
       "lighthouseVersion": "13.5.0",
-      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
       "finalUrl": "http://127.0.0.1:4174/nfts/emerald-ape-42"
     },
     {
@@ -189,18 +189,18 @@
       "profile": "mobile",
       "run": 3,
       "scores": {
-        "performance": 85,
+        "performance": 91,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 4204.6829,
+        "largest-contentful-paint": 3410.8602499999997,
         "cumulative-layout-shift": 0,
-        "total-blocking-time": 105
+        "total-blocking-time": 43.5
       },
       "lighthouseVersion": "13.5.0",
-      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
       "finalUrl": "http://127.0.0.1:4174/nfts/emerald-ape-42"
     },
     {
@@ -208,18 +208,18 @@
       "profile": "desktop",
       "run": 1,
       "scores": {
-        "performance": 98,
+        "performance": 100,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 1046.2943999999998,
+        "largest-contentful-paint": 747.27925,
         "cumulative-layout-shift": 0.005072712718950702,
         "total-blocking-time": 0
       },
       "lighthouseVersion": "13.5.0",
-      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
       "finalUrl": "http://127.0.0.1:4174/nfts/emerald-ape-42"
     },
     {
@@ -227,18 +227,18 @@
       "profile": "desktop",
       "run": 2,
       "scores": {
-        "performance": 99,
+        "performance": 100,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 978.4174,
+        "largest-contentful-paint": 789.668,
         "cumulative-layout-shift": 0.005072712718950702,
         "total-blocking-time": 0
       },
       "lighthouseVersion": "13.5.0",
-      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
       "finalUrl": "http://127.0.0.1:4174/nfts/emerald-ape-42"
     },
     {
@@ -246,53 +246,65 @@
       "profile": "desktop",
       "run": 3,
       "scores": {
-        "performance": 99,
+        "performance": 100,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 987.1090999999999,
+        "largest-contentful-paint": 736.40275,
         "cumulative-layout-shift": 0.005072712718950702,
         "total-blocking-time": 0
       },
       "lighthouseVersion": "13.5.0",
-      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
       "finalUrl": "http://127.0.0.1:4174/nfts/emerald-ape-42"
     }
   ],
+  "scope": {
+    "runs": 3,
+    "pages": [
+      "home",
+      "detail"
+    ],
+    "profiles": [
+      "mobile",
+      "desktop"
+    ],
+    "completeMatrix": true
+  },
   "medians": [
     {
       "page": "home",
       "profile": "mobile",
       "runs": 3,
       "scores": {
-        "performance": 83,
+        "performance": 90,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 4397.8451,
+        "largest-contentful-paint": 3527.6845999999996,
         "cumulative-layout-shift": 0.01944106925880923,
-        "total-blocking-time": 156.99999999999955
+        "total-blocking-time": 90
       },
-      "targetsMet": false
+      "targetsMet": true
     },
     {
       "page": "home",
       "profile": "desktop",
       "runs": 3,
       "scores": {
-        "performance": 99,
+        "performance": 100,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 980.898375,
+        "largest-contentful-paint": 741.29675,
         "cumulative-layout-shift": 0,
-        "total-blocking-time": 0.5
+        "total-blocking-time": 0
       },
       "targetsMet": true
     },
@@ -301,30 +313,30 @@
       "profile": "mobile",
       "runs": 3,
       "scores": {
-        "performance": 85,
+        "performance": 91,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 4199.2717999999995,
+        "largest-contentful-paint": 3523.2385999999997,
         "cumulative-layout-shift": 0,
-        "total-blocking-time": 92
+        "total-blocking-time": 43.5
       },
-      "targetsMet": false
+      "targetsMet": true
     },
     {
       "page": "detail",
       "profile": "desktop",
       "runs": 3,
       "scores": {
-        "performance": 99,
+        "performance": 100,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100
       },
       "metrics": {
-        "largest-contentful-paint": 987.1090999999999,
+        "largest-contentful-paint": 747.27925,
         "cumulative-layout-shift": 0.005072712718950702,
         "total-blocking-time": 0
       },
@@ -334,42 +346,59 @@
   "buildFiles": {
     "_redirects": "6036983e5fc00f0169c9e939b1816ed771eee00e27f2fcc517b819041460b9ef",
     "favicon.svg": "801f0b02b7768a39cc0ad8f6bc60ad46655d30cb35d13c560e736b8685d169c4",
-    "index.html": "94b3499dfb46dcbdc332ffea764d01ad0931e0b2f8dded5b78386b922d07cca6",
+    "index.html": "9b0adc7e68c62a6f38e9ec26ac837b47b060d019a95fc69fd8fee4c67a2a4b91",
     "mockServiceWorker.js": "26171599d94d5445297303f3a1f1cedec26835ea3d0057dcfa92ec520cb35cca",
     "robots.txt": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95",
     "licenses/ibm-plex-mono-OFL.txt": "23b0a9d0c6d3f140a0b77e483c5cfa6bba574325ef5cb189ed9f2fec4884533f",
+    "images/nfts/emerald-ape.avif": "8e080727d56fd2c60dfcf9bdd0c2e288e7edcde335602ff0d03bfd0b8748d29d",
     "images/nfts/emerald-ape.png": "358616ec920e300cd0dc8e5470f19481dc0a5115b413826624b5d34fc14a607a",
+    "images/nfts/emerald-ape.webp": "26d1df56a5c0d148e6e0da81e268473ecd13a6740d6c3ba65aba7e2fe3e602d5",
+    "images/nfts/golden-beat.avif": "114239d8a2daeed8797e3694f505dd45d64f4cc1c40f6241750d83304a8b0aa6",
     "images/nfts/golden-beat.png": "f821c01cb38ab4ce4b51888d0bc8e7af18e6ca97417a9ee04d70c55226db7277",
+    "images/nfts/golden-beat.webp": "9b563584e435e7a98b0cd628ee6a1632eaaff92c16df6dd96f83a9d08bd1e366",
+    "images/nfts/manifest.json": "34289b12bd896b19b8e8e63ca9ced3c1fa1049668386f60c580689dccb3cafc3",
+    "images/nfts/neon-vessel.avif": "2f03a022e06b01998a95bbea4588ce52816836b03a62e93453ef787f7c4323a3",
     "images/nfts/neon-vessel.png": "77075cabfcf0b2bee451dc14e03655e1ae90abd2e165ffe746da058fd23292b2",
+    "images/nfts/neon-vessel.webp": "90fdd7efd412f09c5e19d567d5d6eaf7da3847fc077c28b192d78741c47cbe7d",
+    "images/nfts/sage-nomad.avif": "396156321691deb19d861966a80793284401a31ca4c6f92b05fe9e80f1848e15",
     "images/nfts/sage-nomad.png": "66c1e3e83dd0a4ae875c13e7c4576987d3c014280e155f1807689b59fda43272",
-    "assets/account-CjI7h0Zc.js": "89e617d095d6664defcea9149910b5bd4cc8283da760b5d8fc55dd1d107c8b95",
-    "assets/account-sidebar-TYKqZkAt.js": "3fbd2fb7ce5ccc42426fd400b12ebd2cf53b983e8cfb1e17256c2c8f66a1e57c",
-    "assets/application-1Gpc77n-.js": "fc02356970476f0d941fcc240e3ee8739239f98230cf5c678c1eb253286e269a",
-    "assets/auth-Dtu9Vxxo.js": "7e02f20b1aa450e8964a36cf1cbdb6c64a4456e4568cdd37d07a7c9995efdaab",
-    "assets/browser-BYuprcb7.js": "452e656b25f548b04ad86907b006905faa286bb9dcb4e5d0c46fab5eb3e13650",
-    "assets/cart-CTrOBvqK.js": "72baa1793ca25341647c8a4e28cd1c20ab5ca9de67b51cbcba8ea47430bb1d7e",
-    "assets/checkout-CLJ6pxsz.js": "a139d2714e2e37472c122701b675cdaf1912f4a1a1017dc37e9aad30ca2b9389",
-    "assets/checkout-DoYzPo2u.js": "03f9fd96d5a593be29d738bff54a1e473d09359f7c358da733a2eb432323edac",
-    "assets/checkout-kbl2MZCo.js": "a575306b257b68b462db8a7b8f68b181ceddc8b35393893d5119b7f20fe7b9a5",
-    "assets/favorites-CdviXjAk.js": "5276d0db3244640384875bc2d76b42d9b1716035c8bdc41ff5b8b8b6c262cd40",
-    "assets/form-field-DMgD6TgX.js": "cefa2f722160c486bc0f1c37a84df6dde507bc46d89fddf35a7407a7087fd8ea",
+    "images/nfts/sage-nomad.webp": "a3a542134b4c0073d9e17595045b34bdb6a51eb02e7e4f8357244832e83a0f4b",
+    "assets/account-handlers-6eGxUs74.js": "e5a15b82610299ee95d4d24fdbbb129d089dc22729299b24fac74f1cd1d21a82",
+    "assets/account-kZkEvB55.js": "b98813acc633864d346687a0627941a18d4e149a9161f9ba5e295b5466e58bf3",
+    "assets/account-sidebar-DZMTCXpY.js": "1081bd83b682feb9ba5fe98a6127dc80ad91da24ded5ca3dc48b39b8a53c436e",
+    "assets/auth-C5neW9GI.js": "a3004a2659865a0b304f188da90f01c5b8d6f682fe9700f268ce951b62f8825d",
+    "assets/cart-Dae0Fkj-.js": "ed75835b58a11c48f2f25af353433bf7448f8170e907dccbff8a42ed6e18fe3f",
+    "assets/cart-handlers-C3xt59Je.js": "2b508ca927612a0146e259d6a432d127098b57b341b7bcc1e5ca1fb2233267cb",
+    "assets/checkout-2_K6p_TT.js": "a1ecb75e4cf599fd780d1206d34fa8d8677a360591eaf9cd51f88b4f44ec0a02",
+    "assets/checkout-BJZVzBPU.js": "4415e31bde81563ca61f8678f91393b19664f1ecc038aca82ea3d87df380b71d",
+    "assets/checkout-BXKtUSnk.js": "dbe06dcbd6df1779c2fe5590bbf63b579d97ed9d382556a3bf1d6e20f1d0b0d9",
+    "assets/esm-BzHLvC_f.js": "e51d5d53abc6581b46b45d40187e2314182561b76690d5bc80e8663ed19ea0c0",
+    "assets/favorites-WTYGedyz.js": "b9d44c0d22e9788778a3db0226fb4380b6d969c6c63f3463b12938031b3cc4a5",
+    "assets/form-field-bWMC1W65.js": "170f539dc1dfe26ff0cf93bbf527f659cffb9a44e6bddff9f75a946ad349d5c9",
+    "assets/http-client-CSy1q-Ik.js": "89dafacc5e5057d4398bdf4cd873dda2c6d5252efef1ac4cf78605ef4ee2a024",
     "assets/ibm-plex-mono-latin-400-normal-CvHOgSBP.woff": "328d50b6ece9ca25c46eea3e885ba497f6237f2fb84ef7b92f88e14a1a25e381",
     "assets/ibm-plex-mono-latin-400-normal-DMJ8VG8y.woff2": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+    "assets/ibm-plex-mono-latin-500-normal-DSY6xOcd.woff2": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
     "assets/ibm-plex-mono-latin-600-normal-BgSNZQsw.woff2": "0d1f0b8d0722224e32e9f28261bdc86c79115be73444ae5eceb73976a1bcdf83",
     "assets/ibm-plex-mono-latin-600-normal-DWFSQ4vo.woff": "cb96282f22c6f19112856fd6e0b34e2baefaf4ca6551e851d58c5ab0aabcd2be",
-    "assets/index-DQdu1665.css": "b6d8ba69683db4aa6f0d63d895f7d093c41c2e821b84da7c218848d568355dff",
-    "assets/index-Dir2p_RL.js": "1a0ead5caabce8bf48ccca7a7f6e5b9cefb877310c24caa358286d9094bdb9f8",
-    "assets/market-header-DeoUcw7Y.js": "11031b09dc086dfaa4cd4aa5512634aec626aa1496aaaae8bb74d4b2b02a8c09",
-    "assets/mobile-nav-DjMv4qcS.js": "23c0f9f4d7c7060ec1954ece1e9d6949d2e2a38ce6bb800d5ab48b4516d1b7a2",
-    "assets/nft-art-DezqjpBQ.js": "1ec58ad4a2dba0971d8c88709179e61d7ab1f6e9dd828f518176f0617b8c8661",
-    "assets/orders-BROEyY9g.js": "94ede985d87166dc2840ce5db1706b9c2c642133d3eb65a6bd276fdaf1b5049a",
-    "assets/password-field-DVM_2Ixn.js": "4c76d2e5f98af67dc23eb9b7052ee729d76d3db2b19575cc1b9b2d5db46ebf4e",
-    "assets/profile-CYqgX7w4.js": "ea093149b72cdec586f2a834ae8aa29cd14f3ad598ad4a42f9fc6aea178c4e1c",
-    "assets/quote-summary-Ciy2tq3b.js": "ee0f43c875135e7418a148164500eeefe8565f9588646ca6f43736a43c3ed5b2",
-    "assets/setup-D1BKw_qz.js": "3a856d53f81438645f71a0611b023b3850ffef341e58c1ce33c9ee6663967e9e",
-    "assets/use-wallets-b0FT-WO6.js": "a4883a6d564a07c0147113392d64b08ee1f7453d4680e1d0af1a0f3036089081",
-    "assets/useMatch-BPwn8g_W.js": "fca8f615ee8171cf79ede721de4eea784cfd5bb03a5bb7be888abaa94a61bcbe",
-    "assets/useSearch-DIovW8N6.js": "ebfe581927eec499d7b572ee12ba04681af894843ddab5ec1ab3d8661b0a6672",
-    "assets/wallets-B0qY8oa7.js": "fc4d60748f65dd374dda30539022a8d7c181d2748ecbad6d20ea40704d5cd6fb"
+    "assets/ibm-plex-mono-latin-700-normal-7sUh57Bg.woff2": "4f84d86cfd060f4ded334358ff8a4c81d4db2ed5addd568359d693f44a87765a",
+    "assets/index-1iNoo02S.js": "24ba5da2ac10ddd5b6ea60b31be5c1a7185e8b14d6e27a9bf1a0683b8ff63ef9",
+    "assets/index-y1cpTBgz.css": "e96eee350bafe2128c025383b58cf9ccd94ff459b341cb8562597160a82da8e2",
+    "assets/market-controls-BKAa4lJT.js": "debd5eee5ae44606351f995f4d18fbd83b04b0a1629d63b9a447e94e23eda151",
+    "assets/mock-network-BYwbm61X.js": "08e65924905101fd14fde7bc72fd84f234805f2560548909f657bc762586e60d",
+    "assets/module-loader-BLdHbfdN.js": "8aec9ff75ffa86a03d51268b63126abadb3754aa5a6b6c5bb16e4e2446a63dee",
+    "assets/order-handlers-Dy0V6qYY.js": "aaed15aebc9b4b766c2310619cc37432cd52e41784a33c7591912eb67eacc7b8",
+    "assets/orders-9Jstf17T.js": "e70b85a490f88abd0dbdf523078a661b8dc4242e25ca0fbfcf38b2bec334c7b7",
+    "assets/password-field-D_Cr24ub.js": "35bae9c62cefd4fb3b0daf152c998f1bedb063a43d6529c739c3370529656ccc",
+    "assets/profile-PWIp1Uuw.js": "af9dd02b1d60610947b11de5c9a60bf9cc36cfdf20ad294a32274394d9504811",
+    "assets/public-ui-CCYG_Dd9.js": "ee402de0add206208bdab2be7d17ef8f2b4cf374cba20e50d29c299e806eab27",
+    "assets/quote-summary-BBvd6XMz.js": "837b1f37ccb00844738fe77ccb225bb4e2399724db7e47569cf4dbd97175580a",
+    "assets/rolldown-runtime-XKyaHtl9.js": "548d1dbf321e7d2ae804fcc158b588706a7c52f8ca175de1490c6ccb4dbe55b7",
+    "assets/schemas-CSq7W9-F.js": "b5dedc78f851880d803caa44b9976d7596144039758f9b25a0fcca3d2fd6e09a",
+    "assets/setup-DW8X3rHr.js": "f7ed1c72d287f53fefeb6a7649a7ad11c5577e0dac4da80438fd12eb72e4e3a6",
+    "assets/ui-vendor-pwI3WiOV.js": "73b627ae5d63c0c622e8d672b77f5001773197f0421e98978a88e6d5d4171e64",
+    "assets/use-wallets-DfVsKdfO.js": "e063d5d0baf9ec8f32fda35bdb1bfd5541470d3032c52dde38294356b269358a",
+    "assets/wallet-handlers-BWtjINzn.js": "d6f57cef434f35fd27bf95c997e678b2d1189cb60fccdd7c98e58c264fa81c57",
+    "assets/wallets-CGw6NCYk.js": "701d8ce7cd628d85fa9afa54f01cba4363fb93d8271f83a3f094cdcb8d1d93a1"
   }
 }

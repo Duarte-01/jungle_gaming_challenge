@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ImageOff } from 'lucide-react'
 import { cn } from '../lib/utils'
+import { NftImage } from './nft-image'
 
 export function NftArt({
   src,
@@ -22,7 +23,7 @@ export function NftArt({
           <span>{name}</span>
         </div>
       ) : (
-        <img
+        <NftImage
           src={src}
           alt={name}
           width={250}

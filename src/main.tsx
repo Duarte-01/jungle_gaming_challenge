@@ -1,43 +1,34 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
 import '@fontsource/ibm-plex-mono/latin-400.css'
 import '@fontsource/ibm-plex-mono/latin-600.css'
 import './index.css'
 
-const root = createRoot(document.getElementById('root')!)
-root.render(
-  <div className="kurio-app bootstrap-loading" role="status" aria-label="Preparando o marketplace">
-    <div className="container bootstrap-header">
-      <span className="brand">KURIO</span>
-      <span>Preparando sua experiência…</span>
-    </div>
-    <div className="container bootstrap-body">
-      <div className="shimmer" />
-      <div className="shimmer" />
-      <div className="shimmer" />
-    </div>
-  </div>,
-)
-
 async function bootstrap() {
+  // Download UI and mocks concurrently; the HTML shell stays visible meanwhile.
+  if (import.meta.env.VITE_ENABLE_MOCKS !== 'false' && 'serviceWorker' in navigator) {
+    // Register while UI/network modules download. worker.start still owns activation/errors.
+    void navigator.serviceWorker.register('/mockServiceWorker.js').catch(() => undefined)
+  }
+  // Let the honest loading shell paint before evaluating the larger modules.
+  await new Promise<void>((resolve) =>
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+  )
+  const application = import('./app/mount')
   if (import.meta.env.VITE_ENABLE_MOCKS !== 'false') {
     const { worker } = await import('./mocks/browser')
     await worker.start({ onUnhandledRequest: 'warn', quiet: true })
   }
-  // Socket.IO captura WebSocket ao importar. Carregue as rotas após a interceptação.
-  const { Application } = await import('./app/application')
-  root.render(
-    <StrictMode>
-      <Application />
-    </StrictMode>,
-  )
+  const { mountApplication } = await application
+  mountApplication()
 }
 
 void bootstrap().catch(() => {
-  root.render(
-    <main role="alert" className="container commerce-page">
-      <h1>Não foi possível iniciar a experiência</h1>
-      <p>Confira sua conexão e recarregue a página.</p>
-    </main>,
-  )
+  const message = document.createElement('main')
+  message.className = 'container commerce-page'
+  message.setAttribute('role', 'alert')
+  const title = document.createElement('h1')
+  title.textContent = 'Não foi possível iniciar a experiência'
+  const explanation = document.createElement('p')
+  explanation.textContent = 'Confira sua conexão e recarregue a página.'
+  message.append(title, explanation)
+  document.getElementById('root')!.replaceChildren(message)
 })

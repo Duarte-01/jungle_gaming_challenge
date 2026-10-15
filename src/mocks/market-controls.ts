@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw'
+import { HttpResponse, type HttpResponseResolver } from 'msw'
 import { z } from 'zod'
 import { broadcast, appendEvent, mockEventBus } from './event-bus'
 import { transaction } from './database'
@@ -7,8 +7,9 @@ import { settleOrder } from './order-state'
 import { sessionUser } from './session'
 
 const decimal = z.string().regex(/^\d+(?:\.\d{1,18})?$/)
-export const marketControls = [
-  http.post('/api/testing/nfts/:id', ({ request, params }) =>
+
+export const marketResolvers = {
+  'POST /api/testing/nfts/:id': ({ request, params }) =>
     controlResponse(async () => {
       const input = await parseBody(
         request,
@@ -34,8 +35,7 @@ export const marketControls = [
         return HttpResponse.json(nft)
       })
     }),
-  ),
-  http.post('/api/testing/pricing', ({ request }) =>
+  'POST /api/testing/pricing': ({ request }) =>
     controlResponse(async () => {
       const input = await parseBody(
         request,
@@ -50,8 +50,7 @@ export const marketControls = [
         return HttpResponse.json({ version: database.pricingVersion })
       })
     }),
-  ),
-  http.post('/api/testing/orders/:id/settle', ({ cookies, params, request }) =>
+  'POST /api/testing/orders/:id/settle': ({ cookies, params, request }) =>
     controlResponse(async () => {
       const { outcome } = await parseBody(
         request,
@@ -67,8 +66,7 @@ export const marketControls = [
         return HttpResponse.json(saved.order)
       })
     }),
-  ),
-  http.post('/api/testing/realtime/disconnect', ({ request }) =>
+  'POST /api/testing/realtime/disconnect': ({ request }) =>
     controlResponse(async () => {
       const { durationMs } = await parseBody(
         request,
@@ -80,8 +78,7 @@ export const marketControls = [
       mockEventBus.dispatchEvent(new Event('disconnect'))
       return HttpResponse.json({ status: 'disconnected' })
     }),
-  ),
-  http.post('/api/testing/events/replay', ({ request, cookies }) =>
+  'POST /api/testing/events/replay': ({ request, cookies }) =>
     controlResponse(async () => {
       const input = await parseBody(
         request,
@@ -114,5 +111,4 @@ export const marketControls = [
       for (let index = 0; index < input.copies; index++) broadcast(event)
       return HttpResponse.json({ id: event.id, version: event.version })
     }),
-  ),
-]
+} satisfies Record<string, HttpResponseResolver>

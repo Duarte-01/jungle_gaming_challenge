@@ -1,6 +1,6 @@
 # Evidências de validação
 
-**Resultado atual: etapa 5, ao final deste documento.** As etapas anteriores são registros históricos; suas listas de pendências descrevem a versão daquela data.
+**Resultado atual: etapa 6, ao final deste documento.** As etapas anteriores são registros históricos; suas listas de pendências descrevem a versão daquela data.
 
 ## Etapa 1 — infraestrutura
 
@@ -126,3 +126,25 @@ Além dos 12 grupos do enunciado cobertos pela suíte anterior, a etapa acrescen
 As referências e diferenças visuais estão em `DESIGN.md`. As baselines verificam regressão da implementação; não são prova de igualdade pixel a pixel com o Figma. Fonte original não fornecida. A performance e as 12 auditorias Lighthouse são detalhadas em `PERFORMANCE.md`. A publicação pública e sua validação continuam pendentes da conta/autorização do usuário; configuração de hospedagem não é evidência de deploy. O workflow do GitHub foi preparado, mas sua execução remota ainda não foi validada.
 
 O servidor de desenvolvimento foi reiniciado após a instalação. Um contexto de browser novo completou o caminho catálogo → detalhe → carrinho → login → pagamento → confirmação → refresh do recibo, seguido da verificação REST/Socket.IO em `/setup`, sem erros JavaScript. Isso valida a execução atual de desenvolvimento, além do build E2E; não comprova o deploy público. O lint exclui `reports/**`, que contém JavaScript gerado do visualizador de traces do Playwright; o código da aplicação, testes, scripts e configurações continuam sendo analisados.
+
+## Etapa 6 — reprodução da CI e validação antes da publicação
+
+Execução em 15/10/2026. Container Debian 13, Node.js 24.19.0, npm 11.17.0, Chromium 155.0.8059.39 e Playwright 1.64.1. A instalação limpa também foi reproduzida em diretório novo dentro do container, incluindo o módulo nativo Sharp/libvips. O build desta validação foi produzido com Node 24.19.0/npm 11.9.0 no mesmo checkout Linux; a CI instala e constrói dentro do container.
+
+- `npm ci`, TypeScript, lint, formatação e build: passaram.
+- Unitários: **4 passaram**, sem falhas/skips, incluindo rejeição de evento de rede malformado.
+- E2E no build de produção: **129 passaram**, sem falhas, skips, flaky ou retries, em aproximadamente 5,5 minutos, com dois workers. São 43 casos em cada uma das larguras 390, 768 e 1440.
+- As **12 comparações visuais** passaram. Antes das mudanças de design, as 12 baselines antigas já tinham passado no novo container sem alteração. Após a revisão das medidas fornecidas pelo candidato, somente início desktop foi atualizado: o diff ficou restrito ao destaque, sem mudança das tolerâncias. As outras 11 capturas permanecem intactas.
+- A compra completa agora percorre os links reais de catálogo → detalhe → carrinho → pagamento → recibo. As demais condições de erro, isolamento e eventos continuam exercitando MSW/Axios e o cliente Socket.IO.
+- A verificação de conta desktop inclui largura CSS 720 equivalente ao reflow de uma janela de 1440 com zoom 200%. Ela verifica overflow e conteúdo de perfil/carteiras/pedidos; não é uma emulação de todos os efeitos do zoom físico do navegador.
+- Os quatro PNGs originais não foram alterados. Os nove cards são verificados com as imagens AVIF realmente decodificadas. WebP sem perda é comparado aos pixels RGBA dos originais durante a geração.
+
+Relatório completo desta execução: `reports/playwright/index.html`. Estatísticas extraídas do próprio relatório, ferramentas e hashes do build: `reports/validation.json`. Comando reproduzível em `ci/README.md`. O histórico da falha de aviso mobile da etapa anterior permanece preservado e identificado; não é apresentado como execução aprovada.
+
+O run remoto anterior `38686726917` falhou em 12 screenshots, com 117 outros testes aprovados. O ambiente de renderização anterior diferia: baselines Debian/Chromium 154 e runner Ubuntu/browser Playwright 156. A CI passou a usar o container fixado, e o Lighthouse deixou de depender exclusivamente de workflow_dispatch. Ambos os jobs executam independentemente em push/PR; upload de artefatos continua com always. A aprovação local não é apresentada como aprovação desse run antigo.
+
+As auditorias completas, seus alvos e condições estão em `PERFORMANCE.md`. Fonte original continua desconhecida: `font/family` não revelou o valor no Figma. As medidas fornecidas foram aplicadas, e as diferenças declaradas estão em `DESIGN.md`. A matriz de exigências e evidências está em `REQUISITOS.md`. Por solicitação do candidato, não foi feito merge na main nem deploy; o domínio público ainda precisa ser validado na etapa posterior.
+
+As 12 auditorias atuais terminaram com código 0: medianas de performance início/detalhe mobile 90/91 e desktop 100/100; acessibilidade, boas práticas e SEO 100 nas quatro combinações. A matriz completa foi conferida e os hashes de dist coincidem com os E2E. Metas e condições não foram reduzidas.
+
+O servidor de desenvolvimento foi iniciado novamente em 5173. Em contexto novo com Chromium do sistema 154, foram verificados REST e Socket.IO em /setup, nove retratos AVIF decodificados, navegação catálogo → detalhe e ausência de erros JavaScript. Os estilos computados confirmaram as três medidas fornecidas pelo candidato para o destaque desktop. Essa verificação é da instância atual; não comprova restauração em nova máquina nem domínio publicado.

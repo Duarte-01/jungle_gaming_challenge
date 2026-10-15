@@ -1,5 +1,7 @@
 # Publicar na Vercel, passo a passo
 
+**Publicação suspensa por solicitação do candidato.** Este guia é para a etapa posterior à validação completa e à revisão. Não faça merge nem deploy enquanto houver checks vermelhos, metas pendentes ou diferenças visuais sem revisão.
+
 O enunciado exige uma URL pública funcionando. A configuração está no repositório, mas a publicação ainda precisa da sua conta e autorização no navegador. Não envie senhas, tokens nem códigos de autenticação pelo chat.
 
 ## 1. Criar sua conta
@@ -19,8 +21,8 @@ O desenvolvimento está na branch `feat/marketplace-base`. A branch `main` ainda
 2. No seletor de branch, escolha `feat/marketplace-base` e confira os arquivos `src/`, `package.json` e este guia.
 3. Abra <https://github.com/Duarte-01/jungle_gaming_challenge/compare/main...feat/marketplace-base>.
 4. Revise as alterações e crie o pull request com **Create pull request**. Um título possível é `Implementa marketplace NFT do desafio`.
-5. Revise o resultado dos checks, se disponíveis. O workflow foi preparado, mas sua execução no GitHub ainda precisa ser observada. Uma diferença visual entre browsers exige revisar a imagem antes de atualizar baseline.
-6. Quando estiver satisfeito com a revisão, use **Merge pull request** e confirme. Confira que `main` passou a conter o projeto.
+5. Exija os dois checks **validate** e **lighthouse** verdes no SHA que será integrado. Confira também os relatórios e as pendências em `REQUISITOS.md`. Uma diferença visual exige inspeção antes de atualizar a baseline.
+6. Somente após todos os critérios e a revisão solicitada, use **Merge pull request** e confirme. Confira que `main` passou a conter o projeto.
 
 O merge integra o código na branch principal. Publicar o ambiente do Codex salva o ambiente de trabalho; não executa esse merge nem publica o site.
 
