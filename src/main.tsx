@@ -8,7 +8,7 @@ import './index.css'
 async function bootstrap() {
   if (import.meta.env.VITE_ENABLE_MOCKS !== 'false') {
     const { worker } = await import('./mocks/browser')
-    await worker.start({ onUnhandledRequest: 'warn' })
+    await worker.start({ onUnhandledRequest: 'warn', quiet: true })
   }
   // Socket.IO captura WebSocket ao importar. Carregue as rotas após a interceptação.
   const { router } = await import('./app/router')
@@ -22,5 +22,6 @@ async function bootstrap() {
 }
 
 void bootstrap().catch(() => {
-  document.getElementById('root')!.textContent = 'Falha ao iniciar o ambiente. Verifique a configuração dos mocks e recarregue a página.'
+  document.getElementById('root')!.textContent =
+    'Falha ao iniciar o ambiente. Verifique a configuração dos mocks e recarregue a página.'
 })

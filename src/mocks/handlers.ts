@@ -2,10 +2,14 @@ import { delay, http, HttpResponse, ws } from 'msw'
 import { toSocketIo } from '@mswjs/socket.io-binding'
 import type { HealthResponse, RealtimeReadyEvent } from '../api/contracts'
 import { catalogHandlers } from './catalog'
+import { accountHandlers } from './account-handlers'
+import { cartHandlers } from './cart-handlers'
 
 const realtime = ws.link(/wss?:\/\/[^/]+\/realtime\/$/)
 
 export const handlers = [
+  ...accountHandlers,
+  ...cartHandlers,
   ...catalogHandlers,
   http.get('/api/health', async () => {
     await delay(200)

@@ -5,7 +5,9 @@ test('recebe REST pelo MSW e evento pelo cliente Socket.IO', async ({ page }) =>
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
   await page.goto('/setup')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('A base do marketplace começa aqui.')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'A base do marketplace começa aqui.',
+  )
   await expect(page.getByText('API simulada conectada')).toBeVisible()
   await expect(page.getByText('Evento recebido via Socket.IO')).toBeVisible()
   await page.getByRole('button', { name: 'Verificar API novamente' }).click()
@@ -13,7 +15,9 @@ test('recebe REST pelo MSW e evento pelo cliente Socket.IO', async ({ page }) =>
   await page.reload()
   await expect(page.getByText('API simulada conectada')).toBeVisible()
   await expect(page.getByText('Evento recebido via Socket.IO')).toBeVisible()
-  const horizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)
+  const horizontalOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > window.innerWidth,
+  )
   expect(horizontalOverflow).toBe(false)
   expect(errors).toEqual([])
 })

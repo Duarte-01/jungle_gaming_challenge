@@ -6,7 +6,11 @@ export function useRealtimeHealth() {
   const [status, setStatus] = useState<'connecting' | 'ready' | 'disconnected'>('connecting')
 
   useEffect(() => {
-    const socket = io(window.location.origin, { path: '/realtime', transports: ['websocket'], autoConnect: false })
+    const socket = io(window.location.origin, {
+      path: '/realtime',
+      transports: ['websocket'],
+      autoConnect: false,
+    })
     const handleReady = (event: RealtimeReadyEvent) => {
       if (event.version === 1 && event.transport === 'socket.io') setStatus('ready')
     }

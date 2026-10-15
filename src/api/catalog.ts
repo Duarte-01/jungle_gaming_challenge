@@ -1,6 +1,16 @@
 import { api } from './client'
 
-export const categories = ['Arte digital', 'Fotografia', 'Música', 'Arte 3D', 'Colecionáveis', 'Generativa', 'Jogos', 'Assinaturas', 'Utilidade'] as const
+export const categories = [
+  'Arte digital',
+  'Fotografia',
+  'Música',
+  'Arte 3D',
+  'Colecionáveis',
+  'Generativa',
+  'Jogos',
+  'Assinaturas',
+  'Utilidade',
+] as const
 export const networks = ['Ethereum', 'Polygon', 'Solana'] as const
 export type CatalogTab = 'all' | 'new' | 'trending'
 export type CatalogSort = 'recent' | 'price-asc' | 'price-desc' | 'name'
@@ -41,12 +51,21 @@ export interface CatalogResponse {
 }
 
 export const defaultSearch: CatalogSearch = {
-  q: '', category: '', network: '', min: '0', max: '100', sort: 'recent', tab: 'all', page: 1,
+  q: '',
+  category: '',
+  network: '',
+  min: '0',
+  max: '100',
+  sort: 'recent',
+  tab: 'all',
+  page: 1,
 }
 
 export function validateCatalogSearch(input: Record<string, unknown>): CatalogSearch {
-  const text = (key: string) => typeof input[key] === 'string' ? (input[key] as string).slice(0, 80) : ''
-  const decimal = (key: string, fallback: string) => /^\d+(?:\.\d{1,18})?$/.test(text(key)) ? text(key) : fallback
+  const text = (key: string) =>
+    typeof input[key] === 'string' ? (input[key] as string).slice(0, 80) : ''
+  const decimal = (key: string, fallback: string) =>
+    /^\d+(?:\.\d{1,18})?$/.test(text(key)) ? text(key) : fallback
   const page = Number(input.page)
   const min = decimal('min', '0')
   const max = decimal('max', '100')
@@ -54,14 +73,20 @@ export function validateCatalogSearch(input: Record<string, unknown>): CatalogSe
     q: text('q'),
     category: categories.some((category) => category === text('category')) ? text('category') : '',
     network: networks.some((network) => network === text('network')) ? text('network') : '',
-    min, max,
-    sort: ['recent', 'price-asc', 'price-desc', 'name'].includes(text('sort')) ? text('sort') as CatalogSort : 'recent',
-    tab: ['all', 'new', 'trending'].includes(text('tab')) ? text('tab') as CatalogTab : 'all',
+    min,
+    max,
+    sort: ['recent', 'price-asc', 'price-desc', 'name'].includes(text('sort'))
+      ? (text('sort') as CatalogSort)
+      : 'recent',
+    tab: ['all', 'new', 'trending'].includes(text('tab')) ? (text('tab') as CatalogTab) : 'all',
     page: Number.isSafeInteger(page) && page >= 1 && page <= 1000 ? page : 1,
   }
 }
 
-export async function getCatalog(search: CatalogSearch, signal?: AbortSignal): Promise<CatalogResponse> {
+export async function getCatalog(
+  search: CatalogSearch,
+  signal?: AbortSignal,
+): Promise<CatalogResponse> {
   const { data } = await api.get<CatalogResponse>('/nfts', { params: search, signal })
   return data
 }
