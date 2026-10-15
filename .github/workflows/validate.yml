@@ -15,7 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build the pinned validation environment
-        run: docker build --tag kurio-validation --file ci/Dockerfile ci
+        shell: bash
+        run: docker build --tag kurio-validation --file ci/Dockerfile ci 2>&1 | tee /tmp/kurio-validate.log
       - name: Check, build and test in the same browser environment as the baselines
         shell: bash
         run: >-
@@ -49,7 +50,8 @@ jobs:
       - name: Remove reports from previous commits
         run: rm -rf -- reports/lighthouse
       - name: Build the same pinned audit environment
-        run: docker build --tag kurio-validation --file ci/Dockerfile ci
+        shell: bash
+        run: docker build --tag kurio-validation --file ci/Dockerfile ci 2>&1 | tee /tmp/kurio-lighthouse.log
       - name: Audit all pages and enforce every Lighthouse target
         shell: bash
         run: >-

@@ -166,3 +166,11 @@ Relatório atual: `reports/playwright/index.html`. Estatísticas extraídas do p
 As **12 auditorias Lighthouse finais concluíram com código 0**. Medianas de performance: início/detalhe mobile **90/91**, desktop **100/100**. Acessibilidade, boas práticas e SEO: **100** nas quatro combinações. Os hashes dos 56 arquivos de `dist` em `reports/lighthouse/summary.json` coincidem com os de `reports/validation.json`. Metas e configuração de medição não foram reduzidas. Métricas LCP/CLS/TBT e condições estão em `PERFORMANCE.md`.
 
 A revisão dos seis critérios eliminatórios está em `REQUISITOS.md`. Fonte original, validação humana de fidelidade e deploy público continuam separados dos checks automáticos. Main e publicação permanecem suspensos por solicitação do candidato. Os checks remotos devem ser conferidos no commit correspondente; aprovação local não é apresentada como execução remota.
+
+### Reprodução do erro de construção remota
+
+O run `38804230419`, do commit `04ecde3`, falhou nos dois passos de Docker build, antes dos testes/auditorias. Uma construção local sem cache reproduziu `Version '155.0.8059.39-1~deb13u1' ... was not found`: o índice APT tinha substituído a versão fixada. Isso não é registrado como falha de um teste da aplicação nem como Lighthouse executado.
+
+A instalação foi corrigida para baixar os pacotes oficiais exatos por HTTPS e validar os SHA-256 versionados. Os arquivos de execução e scripts de manutenção conferidos coincidem com a imagem anterior (47 itens, sem diferenças; oito arquivos de documentação omitidos pela imagem slim). A construção limpa da imagem `kurio-validation:chromium-155-reproducible` concluiu com código 0; o preflight CDP e as **12 comparações visuais passaram sem atualizar qualquer baseline** em 21,6 segundos. Os dois jobs da CI repetem instalação limpa, build e validação nessa configuração.
+
+Os relatórios de 135 E2E e 12 Lighthouse acima foram produzidos com a imagem anterior já preparada, contendo a mesma versão do browser; a aplicação e os 56 hashes de `dist` não mudaram nesta correção de instalação. O workflow também passou a guardar o log da própria construção Docker, com status de erro preservado por `bash`/`pipefail`, para que uma falha nesse passo não deixe o resumo sem diagnóstico. Detalhes de download, integridade, certificado do proxy e fonte alternativa em `ci/README.md`.

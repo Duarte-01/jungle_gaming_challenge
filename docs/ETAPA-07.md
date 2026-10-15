@@ -44,3 +44,9 @@ Foram recebidos 13 PNGs de frames e capturas do início. Eles permitem inspecion
 A família IBM Plex Mono continua sendo uma aproximação declarada. Uma exportação SVG com texto editável, sem **Outline text**, pode ajudar a identificar a família em vez de consultar texto por texto. Os retratos originais têm 250 × 250 pixels; ampliá-los não cria os detalhes presentes em uma fonte de maior resolução.
 
 Não se afirma igualdade de 100%, pontuação garantida ou conclusão da entrega pública. O deploy e sua validação continuam pendentes e suspensos por solicitação do candidato; o treino final e a identificação profissional do perfil GitHub ficam para o fechamento.
+
+## Por que uma CI pode falhar com testes locais aprovados
+
+A primeira execução remota desta etapa falhou antes dos testes: o Debian atualizou o índice e deixou de listar a versão do Chromium fixada no Dockerfile. A imagem já preparada na nuvem ainda continha essa versão. Uma construção local sem cache reproduziu o erro, separando o problema de instalação do comportamento da aplicação.
+
+A correção mantém os mesmos binários e fixa também seus arquivos e SHA-256. O instalador busca o pacote oficial, verifica sua integridade e só então instala. A CI continua construindo do zero e executando todos os checks. A imagem reconstruída precisa passar pelas mesmas capturas, sem alterar PNGs para esconder esse erro. Os detalhes técnicos estão em `ci/README.md`.
