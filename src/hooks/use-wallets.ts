@@ -12,7 +12,7 @@ import type { Wallet, WalletInput } from '../domain/checkout'
 import type { Session } from '../domain/account'
 import { sessionGeneration } from '../auth/events'
 
-export function useWallets() {
+export function useWallets(onSaveStatus?: (message: string) => void) {
   const session = useQuery(sessionOptions)
   const userId = session.data?.user?.id
   const generation = sessionGeneration()
@@ -34,8 +34,14 @@ export function useWallets() {
   const save = useMutation({
     mutationKey: [...prefix, 'save-wallet'],
     mutationFn: ({ input, id }: { input: WalletInput; id?: string }) => saveWallet(input, id),
+    onMutate: () => {
+      if (current()) onSaveStatus?.('')
+    },
     onSuccess: async () => {
-      if (current()) await queryClient.invalidateQueries({ queryKey: prefix })
+      if (current()) {
+        onSaveStatus?.('Carteira salva.')
+        await queryClient.invalidateQueries({ queryKey: prefix })
+      }
     },
   })
   const connect = useMutation({

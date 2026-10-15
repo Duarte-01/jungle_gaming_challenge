@@ -17,7 +17,11 @@ export function PasswordField({
           id={id}
           type={visible ? 'text' : 'password'}
           aria-invalid={Boolean(error)}
-          aria-describedby={error ? `${id}-error` : undefined}
+          aria-describedby={
+            [props['aria-describedby'], error ? `${id}-error` : undefined]
+              .filter(Boolean)
+              .join(' ') || undefined
+          }
         />
         <button
           type="button"

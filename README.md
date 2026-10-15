@@ -1,8 +1,8 @@
 # Jungle Gaming Challenge
 
-Implementação em andamento do [desafio frontend](https://github.com/junglegaming/frontend-challenge).
+Implementação do [desafio frontend](https://github.com/junglegaming/frontend-challenge).
 
-**Estado atual:** revisão da etapa 6. Catálogo, conta e compra simulada estão implementados. **Validação local: 129 E2E e 4 unitários aprovados; metas Lighthouse atingidas nas quatro combinações, com 12 medições.** A CI usa um ambiente fixado e os dois jobs automáticos; confira os checks do commit correspondente antes de integrar na `main` ou publicar. Veja a [matriz de requisitos](docs/REQUISITOS.md), os [resultados executados](docs/VALIDACAO.md) e as [medianas Lighthouse](docs/PERFORMANCE.md). Fonte aproximada e diferenças em relação ao Figma estão declaradas em [DESIGN](docs/DESIGN.md). **Não há deploy público validado.**
+**Estado atual:** revisão da etapa 7. Catálogo, conta e compra simulada estão implementados. **Validação local: 135 E2E e 4 unitários aprovados, incluindo 12 comparações visuais. As 12 medições Lighthouse atingiram todas as metas.** Veja a [matriz de requisitos](docs/REQUISITOS.md), os [resultados executados](docs/VALIDACAO.md) e as [medianas Lighthouse](docs/PERFORMANCE.md). Fonte aproximada e diferenças em relação ao Figma estão declaradas em [DESIGN](docs/DESIGN.md). Confira os dois checks do commit correspondente antes de integrar na `main` ou publicar. **Não há deploy público validado.**
 
 ## Executar
 
@@ -70,6 +70,7 @@ Os dados do mock ficam no navegador deste endereço, não no GitHub. Trocar a po
 - [Quarta etapa explicada](docs/ETAPA-04.md): carteiras, revisão, idempotência, recibos e tempo real, com exercício passo a passo.
 - [Quinta etapa explicada](docs/ETAPA-05.md): composição dos frames, acessibilidade, novos campos e verificações, com exercício guiado.
 - [Sexta etapa explicada](docs/ETAPA-06.md): CI, baselines, carregamento e exercício para interpretar os relatórios.
+- [Sétima etapa explicada](docs/ETAPA-07.md): comparação com os frames, slider, formulários e diferenças entre baseline e Figma.
 - [Matriz de requisitos](docs/REQUISITOS.md): exigências, código, evidências e pendências.
 - [Referências visuais](docs/DESIGN.md): frames, fonte local, desvios e regressão visual.
 - [Performance](docs/PERFORMANCE.md): medianas Lighthouse, condições, relatórios e limitações.

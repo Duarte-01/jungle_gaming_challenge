@@ -93,3 +93,9 @@ Os hashes PBKDF2 das duas contas públicas de demonstração são fixtures previ
 Os retratos usam picture AVIF/WebP/PNG e dimensões explícitas. Os PNGs originais e sua integridade permanecem disponíveis; AVIF é compressão com perda declarada e WebP é verificado sem perda de pixels. Não há variante exclusiva para Lighthouse. A latência sintética padrão de catálogo/detalhe é 120 ms, consistente com as demais operações; cenários lentos e fora de ordem continuam ativos e reproduzíveis.
 
 O container `ci/Dockerfile` fixa Node, distribuição e Chromium. Os jobs de validação e Lighthouse executam independentemente em push/PR e mantêm as metas do enunciado. Consulte `ci/README.md` para reproduzir e `docs/ETAPA-06.md` para a explicação. A matriz do escopo está em `docs/REQUISITOS.md`. Por solicitação do candidato, main e deploy permanecem suspensos até a revisão e a aprovação dos checks.
+
+## Refinamentos dos frames — etapa 7
+
+A revisão visual está separada dos contratos de negócio: `src/styles/frame-alignment.css` reúne os ajustes medidos e é importado após a base. O catálogo usa duas alças nativas, com rascunho local e aplicação dos limites na URL antes da consulta REST. A faixa inicial segue o desenho (0,02–12,30 ETH); contas, estoque e preços continuam vindo da API. A escala/posição visual usa números; o transporte continua em strings e os cálculos monetários em wei.
+
+No mobile, a ordenação fica no drawer, e o resumo do checkout permite expandir itens/taxas sem esconder o total. A confirmação permanece desabilitada quando a cotação perde validade. Dados adicionais do perfil usam uma seção expansível, e o nome de exibição da carteira é derivado do perfil. Os desvios, a família tipográfica aproximada e o limite de resolução dos retratos continuam declarados em `docs/DESIGN.md` e `docs/ETAPA-07.md`.

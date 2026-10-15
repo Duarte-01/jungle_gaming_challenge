@@ -11,6 +11,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 import { HomePage } from './home'
 import { PasswordField } from '../components/password-field'
+import { BrandIcon } from '../components/brand-icon'
 
 const signUpSchema = registerSchema
   .extend({ confirmPassword: registerSchema.shape.password })
@@ -135,14 +136,12 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                 name="password"
                 placeholder="Senha"
                 autoComplete={isRegister ? 'new-password' : 'current-password'}
+                aria-describedby={isRegister ? 'signup-password-help' : undefined}
                 required
                 error={errors.password}
               />
               {isRegister && (
                 <>
-                  <p className="password-help">
-                    Use pelo menos 10 caracteres, incluindo letras e números.
-                  </p>
                   <PasswordField
                     label="Confirmar senha"
                     name="confirmPassword"
@@ -151,6 +150,9 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                     required
                     error={errors.confirmPassword}
                   />
+                  <p id="signup-password-help" className="password-help">
+                    Use pelo menos 10 caracteres, incluindo letras e números.
+                  </p>
                 </>
               )}
               {!isRegister && (
@@ -172,14 +174,23 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                 </p>
               )}
               <Button type="submit" disabled={auth.isPending}>
-                {auth.isPending ? 'Aguarde…' : isRegister ? 'Criar conta' : 'Entrar'}
+                {auth.isPending ? (
+                  'Aguarde…'
+                ) : isRegister ? (
+                  <>
+                    <span className="desktop-title">Criar conta</span>
+                    <span className="mobile-title">Criar perfil</span>
+                  </>
+                ) : (
+                  'Entrar'
+                )}
               </Button>
             </form>
             <div className="auth-divider">
               <span>Ou continue com</span>
             </div>
             <div className="social-auth">
-              {['Google', 'Facebook'].map((provider) => (
+              {(['Google', 'Facebook'] as const).map((provider) => (
                 <button
                   type="button"
                   key={provider}
@@ -190,7 +201,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                   }
                 >
                   <span className={`social-letter ${provider.toLowerCase()}`} aria-hidden="true">
-                    {provider === 'Google' ? 'G' : 'f'}
+                    <BrandIcon brand={provider} />
                   </span>
                   Continuar com {provider}
                 </button>

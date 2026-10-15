@@ -24,6 +24,29 @@ const tabs: { id: CatalogTab; label: string }[] = [
   { id: 'trending', label: 'Em alta' },
 ]
 
+function CatalogSort({
+  value,
+  onChange,
+}: {
+  value: CatalogSearch['sort']
+  onChange: (sort: CatalogSearch['sort']) => void
+}) {
+  return (
+    <label className="sort-label">
+      Ordenar por:
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value as CatalogSearch['sort'])}
+      >
+        <option value="recent">Listados recentemente</option>
+        <option value="price-asc">Menor preço</option>
+        <option value="price-desc">Maior preço</option>
+        <option value="name">Nome</option>
+      </select>
+    </label>
+  )
+}
+
 function CatalogSearchForm({
   initialValue,
   onSearch,
@@ -129,6 +152,7 @@ export function HomePage() {
                   Combine coleção, preço e rede para encontrar sua próxima peça.
                 </Dialog.Description>
                 {filters}
+                <CatalogSort value={search.sort} onChange={(sort) => change({ sort })} />
                 <Dialog.Close className="kurio-button">Ver resultados</Dialog.Close>
               </Dialog.Content>
             </Dialog.Portal>
@@ -163,13 +187,20 @@ export function HomePage() {
               EXPLORAR <ArrowRight size={17} aria-hidden="true" />
             </a>
           </div>
-          <NftArt
-            key={hero}
-            src={`/images/nfts/${heroArts[hero]}.png`}
-            name={['Emerald Ape', 'Sage Nomad', 'Neon Vessel'][hero]}
-            className="hero-art"
-            eager
-          />
+          <div className="hero-artwork">
+            <NftArt
+              key={hero}
+              src={`/images/nfts/${heroArts[hero]}.png`}
+              name={['Emerald Ape', 'Sage Nomad', 'Neon Vessel'][hero]}
+              className="hero-art"
+              eager
+            />
+            <NftArt
+              src="/images/nfts/sage-nomad.png"
+              name="Sage Nomad"
+              className="hero-secondary"
+            />
+          </div>
           <div className="hero-dots" aria-label="Selecionar destaque">
             {heroArts.map((art, index) => (
               <button
@@ -207,20 +238,9 @@ export function HomePage() {
                   </button>
                 ))}
               </div>
-              <label className="sort-label">
-                Ordenar por:
-                <select
-                  value={search.sort}
-                  onChange={(event) =>
-                    change({ sort: event.target.value as CatalogSearch['sort'] })
-                  }
-                >
-                  <option value="recent">Listados recentemente</option>
-                  <option value="price-asc">Menor preço</option>
-                  <option value="price-desc">Maior preço</option>
-                  <option value="name">Nome</option>
-                </select>
-              </label>
+              <div className="desktop-sort">
+                <CatalogSort value={search.sort} onChange={(sort) => change({ sort })} />
+              </div>
             </div>
             <p className="catalog-status" role="status" aria-live="polite">
               {catalog.isFetching
@@ -345,31 +365,52 @@ export function HomePage() {
             {[
               {
                 art: 'neon-vessel',
+                date: '12 de setembro',
+                minutes: 6,
+                excerpt: 'Aprenda a colecionar, negociar e verificar ativos digitais.',
                 title: 'Como funciona a propriedade de NFTs',
                 copy: 'Um NFT registra uma referência digital única. Ter o token não transfere automaticamente os direitos autorais da obra.',
               },
               {
                 art: 'emerald-ape',
-                title: 'Conheça os criadores digitais',
+                date: '13 de setembro',
+                minutes: 2,
+                excerpt: 'Conheça criadores que moldam a cultura digital.',
+                title: '10 artistas digitais para acompanhar',
                 copy: 'Pesquise o artista, a coleção e a origem da obra antes de colecionar.',
               },
               {
                 art: 'sage-nomad',
+                date: '15 de setembro',
+                minutes: 3,
+                excerpt: 'Entenda raridade, procedência, direitos autorais e utilidade.',
                 title: 'Raridade, atributos e procedência',
                 copy: 'Compare os atributos e a procedência. Raridade não garante valorização.',
               },
               {
                 art: 'golden-beat',
+                date: '15 de setembro',
+                minutes: 2,
+                excerpt: 'Proteja sua carteira, seus ativos e sua identidade.',
                 title: 'Como proteger sua carteira',
                 copy: 'Não compartilhe sua frase de recuperação. Nesta demonstração, use apenas dados fictícios.',
               },
             ].map((article) => (
               <article key={article.art}>
                 <NftArt src={`/images/nfts/${article.art}.png`} name={article.title} />
-                <details>
-                  <summary>{article.title}</summary>
-                  <p>{article.copy}</p>
-                </details>
+                <div className="journal-copy">
+                  <p className="journal-meta">
+                    {article.date} | Leitura de {article.minutes} min
+                  </p>
+                  <h3>{article.title}</h3>
+                  <p>{article.excerpt}</p>
+                  <details>
+                    <summary>
+                      Ler mais →<span className="sr-only">: {article.title}</span>
+                    </summary>
+                    <p>{article.copy}</p>
+                  </details>
+                </div>
               </article>
             ))}
           </div>

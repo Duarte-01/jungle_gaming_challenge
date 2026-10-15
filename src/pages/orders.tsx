@@ -131,9 +131,11 @@ function ConfirmedReceipt({ order }: { order: Order }) {
         <Link to="/pedidos" className="receipt-close" aria-label="Fechar recibo">
           ×
         </Link>
-        <MailOpen size={65} strokeWidth={1} aria-hidden="true" />
-        <h1>Pedido confirmado</h1>
-        <p role="status">Seus NFTs agora estão na sua carteira simulada.</p>
+        <MailOpen size={80} strokeWidth={1} aria-hidden="true" />
+        <h1>
+          <span className="sr-only">Pedido confirmado. </span>Seus NFTs agora estão na sua carteira
+          simulada.
+        </h1>
       </header>
       <dl className="receipt-facts">
         <div>

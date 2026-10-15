@@ -42,7 +42,9 @@ test('filtros combinados, ordenação e paginação usam os parâmetros da API',
   await expect(page).toHaveURL(/category=Arte/)
   await expect(page).toHaveURL(/network=Ethereum/)
   await expect(page).toHaveURL(/page=1/)
+  if (mobile) await page.getByRole('button', { name: 'Abrir filtros' }).click()
   await page.getByRole('combobox', { name: 'Ordenar por:' }).selectOption('price-asc')
+  if (mobile) await page.getByRole('button', { name: 'Ver resultados' }).click()
   await expect(page.locator('.nft-card').first().getByRole('heading')).toHaveText(
     'Golden Signal #160',
   )
@@ -87,4 +89,64 @@ test('mobile gerencia foco do drawer e início não tem overflow', async ({ page
     await expect(trigger).toBeFocused()
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false)
+})
+
+test('faixa de preço usa duas alças, impede inversão e restaura limites da URL', async ({
+  page,
+}, testInfo) => {
+  await page.goto('/')
+  await expect(page.locator('.nft-card')).toHaveCount(9)
+  const mobile = testInfo.project.name === 'mobile'
+  const open = async () => {
+    if (mobile) await page.getByRole('button', { name: 'Abrir filtros' }).click()
+  }
+  await open()
+  const min = page.getByRole('slider', { name: 'Preço mínimo em ETH' })
+  const max = page.getByRole('slider', { name: 'Preço máximo em ETH' })
+  await min.focus()
+  await min.press('ArrowRight')
+  await expect(min).toHaveValue('0.03')
+  await max.focus()
+  await max.press('Home')
+  await expect(max).toHaveValue('0.03')
+  await min.press('End')
+  await expect(min).toHaveValue('0.03')
+  const request = page.waitForRequest((request) => {
+    const url = new URL(request.url())
+    return (
+      url.pathname === '/api/nfts' &&
+      url.searchParams.get('min') === '0.03' &&
+      url.searchParams.get('max') === '0.03'
+    )
+  })
+  await page.getByRole('button', { name: 'Aplicar', exact: true }).click()
+  await request
+  if (mobile) await page.getByRole('button', { name: 'Ver resultados' }).click()
+  await expect(page.getByRole('heading', { name: 'Nenhum NFT encontrado' })).toBeVisible()
+  await page.reload()
+  await open()
+  await expect(min).toHaveValue('0.03')
+  await expect(max).toHaveValue('0.03')
+  await page.getByRole('button', { name: 'Limpar filtros', exact: true }).click()
+  await expect(min).toHaveValue('0.02')
+  await expect(max).toHaveValue('12.3')
+  const rail = page.locator('.price-range:visible')
+  const box = await rail.boundingBox()
+  expect(box).not.toBeNull()
+  await rail.click({ position: { x: box!.width * 0.75, y: 16 } })
+  const pointerMax = Number(await max.inputValue())
+  expect(pointerMax).toBeGreaterThan(11)
+  expect(pointerMax).toBeLessThan(13)
+  await expect(min).toHaveValue('0.02')
+  // Native thumb dragging must also work; clicking the rail is not the only interaction.
+  const track = await max.boundingBox()
+  expect(track).not.toBeNull()
+  await page.mouse.move(track!.x + 9 + ((track!.width - 18) * pointerMax) / 16, track!.y + 17)
+  await page.mouse.down()
+  await page.mouse.move(track!.x + track!.width * 0.5, track!.y + 17, { steps: 8 })
+  await page.mouse.up()
+  expect(Number(await max.inputValue())).toBeGreaterThan(7)
+  expect(Number(await max.inputValue())).toBeLessThan(9)
+  if (mobile) await page.getByRole('button', { name: 'Ver resultados' }).click()
+  await expect(page.locator('.nft-card')).toHaveCount(9)
 })

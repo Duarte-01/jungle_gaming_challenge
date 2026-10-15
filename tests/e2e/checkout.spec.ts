@@ -322,3 +322,29 @@ test('outra conta não consulta recibo nem recebe o pedido anterior', async ({ p
   await page.goto('/pedidos')
   await expect(page.getByText('Você ainda não tem pedidos.')).toBeVisible()
 })
+
+test('conta nova cadastra a primeira carteira pelo formulário inicial e recebe confirmação persistente', async ({
+  page,
+}) => {
+  await page.goto('/cadastro?redirect=%2Fcarteiras')
+  await page.getByLabel('Nome', { exact: true }).fill('Novo Colecionador')
+  await page.getByLabel('E-mail', { exact: true }).fill('primeira-carteira@kurio.test')
+  await page.getByLabel('Senha', { exact: true }).fill('KurioDemo2026!')
+  await page.getByLabel('Confirmar senha', { exact: true }).fill('KurioDemo2026!')
+  await page.getByRole('button', { name: /Criar (conta|perfil)/ }).click()
+  await expect(page.getByRole('heading', { name: 'Carteira principal', exact: true })).toBeVisible()
+  await expect(page.getByLabel('Nome de exibição', { exact: true })).toHaveAccessibleDescription(
+    'Edite seu nome na página Dados do perfil.',
+  )
+  await page.getByLabel('Nome da carteira').fill('Carteira inicial')
+  await page.getByLabel('Endereço da carteira').fill(`0x${'f'.repeat(40)}`)
+  await page.getByRole('button', { name: 'Salvar carteira', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Carteira inicial', exact: true })).toBeVisible()
+  await expect(page.getByRole('status').filter({ hasText: 'Carteira salva.' })).toBeVisible()
+  await page.reload()
+  await expect(page.getByRole('heading', { name: 'Carteira inicial', exact: true })).toBeVisible()
+  await expect(page.getByLabel('Endereço da carteira')).toHaveValue(`0x${'f'.repeat(40)}`)
+  const wallets = await page.evaluate(async () => (await fetch('/api/wallets')).json())
+  expect(wallets).toHaveLength(1)
+  expect(wallets[0].role).toBe('primary')
+})

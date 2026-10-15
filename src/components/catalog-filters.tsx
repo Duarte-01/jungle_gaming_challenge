@@ -1,5 +1,11 @@
-import { useState } from 'react'
-import { categories, networks, type CatalogSearch, type CatalogResponse } from '../api/catalog'
+import { useId, useState, type CSSProperties } from 'react'
+import {
+  categories,
+  networks,
+  defaultSearch,
+  type CatalogSearch,
+  type CatalogResponse,
+} from '../api/catalog'
 import { ethToWei } from '../lib/eth'
 
 export function CatalogFilters({
@@ -13,19 +19,24 @@ export function CatalogFilters({
 }) {
   const [min, setMin] = useState(search.min)
   const [max, setMax] = useState(search.max)
-  const [error, setError] = useState('')
+  const id = useId()
+  const ceiling = Math.min(1_000_000, Math.max(16, Number(search.max)))
+  const format = (value: string) => value.replace('.', ',')
+  const filtered = Boolean(
+    search.category ||
+    search.network ||
+    search.q ||
+    search.min !== defaultSearch.min ||
+    search.max !== defaultSearch.max,
+  )
+  const style = {
+    '--price-start': `${Math.min(100, (Number(min) / ceiling) * 100)}%`,
+    '--price-end': `${Math.min(100, (Number(max) / ceiling) * 100)}%`,
+  } as CSSProperties
   return (
     <div className="filter-panel">
       <fieldset>
         <legend>Coleções</legend>
-        <button
-          type="button"
-          className="facet"
-          aria-pressed={!search.category}
-          onClick={() => onChange({ category: '' })}
-        >
-          Todas as coleções
-        </button>
         {categories.map((category) => (
           <button
             type="button"
@@ -42,46 +53,63 @@ export function CatalogFilters({
       <form
         onSubmit={(event) => {
           event.preventDefault()
-          try {
-            if (ethToWei(min) > ethToWei(max))
-              throw new Error('O mínimo deve ser menor ou igual ao máximo.')
-            setError('')
-            onChange({ min, max })
-          } catch {
-            setError('Informe preços válidos em ETH, com mínimo menor ou igual ao máximo.')
-          }
+          onChange({ min, max })
         }}
       >
         <fieldset>
           <legend>Faixa de preço</legend>
-          <div className="price-inputs">
-            <label>
-              Mínimo
-              <input
-                inputMode="decimal"
-                aria-invalid={Boolean(error)}
-                aria-describedby={error ? 'price-error' : undefined}
-                value={min}
-                onChange={(event) => setMin(event.target.value)}
-              />
+          <div
+            className="price-range"
+            style={style}
+            onPointerDown={(event) => {
+              if (event.target instanceof HTMLInputElement) return
+              const rect = event.currentTarget.getBoundingClientRect()
+              const position = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width))
+              const value = (Math.round(position * ceiling * 100) / 100).toFixed(2)
+              const lower =
+                Math.abs(Number(value) - Number(min)) <= Math.abs(Number(value) - Number(max))
+              if (lower) setMin(ethToWei(value) <= ethToWei(max) ? value : max)
+              else setMax(ethToWei(value) >= ethToWei(min) ? value : min)
+              document.getElementById(`${id}-${lower ? 'min' : 'max'}`)?.focus()
+            }}
+          >
+            <div className="price-range-track" aria-hidden="true" />
+            <label className="sr-only" htmlFor={`${id}-min`}>
+              Preço mínimo em ETH
             </label>
-            <label>
-              Máximo
-              <input
-                inputMode="decimal"
-                aria-invalid={Boolean(error)}
-                aria-describedby={error ? 'price-error' : undefined}
-                value={max}
-                onChange={(event) => setMax(event.target.value)}
-              />
+            <input
+              id={`${id}-min`}
+              type="range"
+              min="0"
+              max={ceiling}
+              step="0.01"
+              value={min}
+              aria-valuetext={`${format(min)} ETH`}
+              aria-describedby={`${id}-value`}
+              onChange={(event) =>
+                setMin(ethToWei(event.target.value) <= ethToWei(max) ? event.target.value : max)
+              }
+            />
+            <label className="sr-only" htmlFor={`${id}-max`}>
+              Preço máximo em ETH
             </label>
+            <input
+              id={`${id}-max`}
+              type="range"
+              min="0"
+              max={ceiling}
+              step="0.01"
+              value={max}
+              aria-valuetext={`${format(max)} ETH`}
+              aria-describedby={`${id}-value`}
+              onChange={(event) =>
+                setMax(ethToWei(event.target.value) >= ethToWei(min) ? event.target.value : min)
+              }
+            />
           </div>
-          <p className="muted">Preço em ETH</p>
-          {error && (
-            <p id="price-error" role="alert">
-              {error}
-            </p>
-          )}
+          <p className="price-range-value" id={`${id}-value`}>
+            Preço: {format(min)} - {format(max)} ETH
+          </p>
           <button type="submit" className="kurio-button">
             Aplicar
           </button>
@@ -89,14 +117,6 @@ export function CatalogFilters({
       </form>
       <fieldset>
         <legend>Rede</legend>
-        <button
-          type="button"
-          className="facet"
-          aria-pressed={!search.network}
-          onClick={() => onChange({ network: '' })}
-        >
-          Todas as redes
-        </button>
         {networks.map((network) => (
           <button
             type="button"
@@ -110,13 +130,23 @@ export function CatalogFilters({
           </button>
         ))}
       </fieldset>
-      <button
-        type="button"
-        className="text-link"
-        onClick={() => onChange({ category: '', network: '', min: '0', max: '100', q: '' })}
-      >
-        Limpar filtros
-      </button>
+      {filtered && (
+        <button
+          type="button"
+          className="text-link clear-catalog-filters"
+          onClick={() =>
+            onChange({
+              category: '',
+              network: '',
+              min: defaultSearch.min,
+              max: defaultSearch.max,
+              q: '',
+            })
+          }
+        >
+          Limpar filtros
+        </button>
+      )}
     </div>
   )
 }

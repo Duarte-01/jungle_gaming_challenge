@@ -38,3 +38,18 @@ Referência: [frontend-challenge](https://github.com/junglegaming/frontend-chall
 - **Apresentação:** ensaio final solicitado para depois da validação pública; material preparatório em `APRESENTACAO.md`.
 
 Não acrescentar autenticação Google real, blockchain, pagamento real ou páginas editoriais para tentar compensar um requisito pendente. Esses recursos estão fora do escopo. Prioridade: comportamento exigido, fidelidade, evidências e explicação compreensível pelo candidato.
+
+## Conferência dos seis critérios eliminatórios — etapa 7
+
+A leitura do enunciado foi repetida em 15/10/2026. Os caminhos abaixo permitem verificar a implementação; o resultado da execução correspondente deve ser consultado em `VALIDACAO.md`.
+
+| Eliminatório                        | Verificação no código e nos testes                                                                                                                                                                                               |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Stack ausente ou apenas declarada   | Rotas e guards em `app/router.tsx`; Query nos hooks; transporte Axios em `api`; MSW na rede; cliente Socket.IO em `realtime/socket.ts`; utilitários Tailwind no botão adaptado de shadcn/ui; Playwright e Lighthouse executáveis |
+| Fluxos principais apenas visuais    | Cadastro, autenticação, perfil, carteiras, carrinho e compra executam mutations REST; E2E observam erros, persistência após refresh e respostas                                                                                  |
+| Compra confirmada sem a simulação   | `OrderPage` só renderiza `ConfirmedReceipt` quando GET retorna `status === 'confirmed'`; o POST cria pedido pendente; cenários de recusa e timeout são exercitados                                                               |
+| Dados expostos entre usuários       | Handlers derivam o titular da sessão; GET de pedido alheio retorna 403; cache privado é cancelado/removido na troca; testes usam Ana e Bruno e tentam consultar o pedido anterior                                                |
+| Eventos injetados diretamente na UI | `socket.io-client` conecta com transporte WebSocket à rede interceptada pelo binding MSW; eventos têm ID/versão, são filtrados por titular/geração e provocam reconciliação REST                                                 |
+| Ausência de E2E executáveis         | Suíte completa com os 12 grupos do enunciado, três viewports e 12 capturas; execução reproduzível no container da CI, sem serviço privado                                                                                        |
+
+O ajuste visual do slider preserva o fluxo URL → Axios → MSW. Seu teste adicional verifica limites, teclado, ponteiro e refresh. O detalhamento recolhido do pagamento continua acessível por botão e mantém o mesmo total antes/depois de expandir.

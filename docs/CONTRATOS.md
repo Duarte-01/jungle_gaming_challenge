@@ -28,6 +28,8 @@ Sessão: `{ user: { id, name, email, phone, avatarUrl, username, ens, walletNick
 
 O NFT contém identidade, nome, imagem, coleção, rede, preço ETH, criador, descrição, versão e edições com disponibilidade. Dados tipados em `src/api/catalog.ts`. Cenários de erro de favoritos retornam 503 sem modificar o estado persistido.
 
+Na listagem, os limites iniciais da interface e dos parâmetros ausentes são `min=0.02` e `max=12.30`, seguindo a faixa do frame. `min`/`max` são strings decimais; valores explícitos na URL são preservados e a API compara em wei. A escala padrão do slider termina em 16 ETH e se amplia para limites maiores recebidos pela URL. As contagens das facetas vêm do catálogo da simulação.
+
 ## Carrinho e cotação
 
 | Método e recurso          | Entrada                          | Resultado                                                                       |

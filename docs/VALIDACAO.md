@@ -1,6 +1,6 @@
 # Evidências de validação
 
-**Resultado atual: etapa 6, ao final deste documento.** As etapas anteriores são registros históricos; suas listas de pendências descrevem a versão daquela data.
+**Resultado atual: etapa 7, ao final deste documento.** As etapas anteriores são registros históricos; suas listas de pendências descrevem a versão daquela data.
 
 ## Etapa 1 — infraestrutura
 
@@ -148,3 +148,21 @@ As auditorias completas, seus alvos e condições estão em `PERFORMANCE.md`. Fo
 As 12 auditorias atuais terminaram com código 0: medianas de performance início/detalhe mobile 90/91 e desktop 100/100; acessibilidade, boas práticas e SEO 100 nas quatro combinações. A matriz completa foi conferida e os hashes de dist coincidem com os E2E. Metas e condições não foram reduzidas.
 
 O servidor de desenvolvimento foi iniciado novamente em 5173. Em contexto novo com Chromium do sistema 154, foram verificados REST e Socket.IO em /setup, nove retratos AVIF decodificados, navegação catálogo → detalhe e ausência de erros JavaScript. Os estilos computados confirmaram as três medidas fornecidas pelo candidato para o destaque desktop. Essa verificação é da instância atual; não comprova restauração em nova máquina nem domínio publicado.
+
+## Etapa 7 — revisão dos frames e nova validação completa
+
+Execução em 15/10/2026, sobre o build otimizado, usando o mesmo container Debian 13/Chromium 155/Playwright 1.64.1 da CI.
+
+- TypeScript, lint, formatação e build: passaram.
+- Unitários: **4 passaram**, sem falhas ou skips.
+- Playwright: **135 passaram**, sem falhas, flaky, retries ou skips, em **329,6 segundos**, com dois workers. São **45 casos em cada uma das larguras 390, 768 e 1440**, incluindo as **12 comparações visuais**.
+- A execução completa usou comparação normal; não usou `--update-snapshots`. As baselines foram atualizadas antes, após inspeção dos ajustes contra as referências. Tolerâncias não foram ampliadas e asserções não foram removidas.
+- Novo cenário do slider verifica duas alças, teclado, limites sem inversão, parâmetros REST, refresh, limpeza, clique na trilha e arraste. Novo cenário de conta sem carteiras cria o primeiro registro pelo formulário inicialmente aberto e confirma feedback e persistência. O pagamento mobile verifica expansão/recolhimento dos itens mantendo o total.
+- O input de avatar foi corrigido para não causar overflow em reflow/zoom. O teste de perfil continua enviando uma imagem real, verificando decodificação, persistência e erros da API.
+- Os 13 frames originais mantêm seus hashes SHA-256. Não foram substituídos por capturas da implementação. A comparação manual e as limitações de fonte/resolução estão em `DESIGN.md`.
+
+Relatório atual: `reports/playwright/index.html`. Estatísticas extraídas do próprio HTML e hashes dos 56 arquivos de `dist`: `reports/validation.json`. Comando: o container documentado executou `npm run test:e2e -- --workers=2 --retries=0`, com `CI=true` e `E2E_PREVIEW=true`.
+
+As **12 auditorias Lighthouse finais concluíram com código 0**. Medianas de performance: início/detalhe mobile **90/91**, desktop **100/100**. Acessibilidade, boas práticas e SEO: **100** nas quatro combinações. Os hashes dos 56 arquivos de `dist` em `reports/lighthouse/summary.json` coincidem com os de `reports/validation.json`. Metas e configuração de medição não foram reduzidas. Métricas LCP/CLS/TBT e condições estão em `PERFORMANCE.md`.
+
+A revisão dos seis critérios eliminatórios está em `REQUISITOS.md`. Fonte original, validação humana de fidelidade e deploy público continuam separados dos checks automáticos. Main e publicação permanecem suspensos por solicitação do candidato. Os checks remotos devem ser conferidos no commit correspondente; aprovação local não é apresentada como execução remota.

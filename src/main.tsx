@@ -1,6 +1,7 @@
 import '@fontsource/ibm-plex-mono/latin-400.css'
 import '@fontsource/ibm-plex-mono/latin-600.css'
 import './index.css'
+import './styles/frame-alignment.css'
 
 async function bootstrap() {
   // Download UI and mocks concurrently; the HTML shell stays visible meanwhile.
