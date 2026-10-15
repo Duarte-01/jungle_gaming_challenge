@@ -23,7 +23,7 @@ jobs:
           --mount type=bind,source="$GITHUB_WORKSPACE",target=/app
           --workdir /app --env npm_config_cache=/tmp/npm-cache --env XDG_CACHE_HOME=/tmp/kurio-cache --env CI=true --env E2E_PREVIEW=true
           kurio-validation sh -c '
-          node --version && chromium --version && npm ci &&
+          node --version && chromium --version && npm ci && node ci/check-browser.mjs &&
           npm run typecheck && npm run lint && npm run format:check &&
           npm run test:unit && npm run build &&
           npm run test:e2e -- --workers=2 --retries=0'
@@ -57,7 +57,7 @@ jobs:
           --mount type=bind,source="$GITHUB_WORKSPACE",target=/app
           --workdir /app --env npm_config_cache=/tmp/npm-cache --env XDG_CACHE_HOME=/tmp/kurio-cache --env CI=true
           kurio-validation sh -c '
-          node --version && chromium --version && npm ci &&
+          node --version && chromium --version && npm ci && node ci/check-browser.mjs &&
           npm run build && npm run audit:lighthouse'
           2>&1 | tee /tmp/kurio-lighthouse.log
       - name: Summarize audit failure
