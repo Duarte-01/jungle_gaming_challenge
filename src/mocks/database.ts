@@ -2,6 +2,8 @@ import type { Nft } from '../api/catalog'
 import type { User } from '../domain/account'
 import { catalogFixtures } from './fixtures/catalog'
 import { hashPassword } from './password'
+import type { MarketEvent, SavedOrder, Wallet, WalletConnection } from '../domain/checkout'
+import { broadcast } from './event-bus'
 
 export interface SavedCart {
   items: { nftId: string; editionId: string; quantity: number }[]
@@ -19,6 +21,16 @@ export interface Database {
   carts: Record<string, SavedCart>
   favorites: Record<string, string[]>
   nfts: Nft[]
+  wallets: Record<string, Wallet[]>
+  connections: Record<string, WalletConnection>
+  orders: Record<string, SavedOrder>
+  idempotency: Record<string, { fingerprint: string; orderId: string }>
+  events: MarketEvent[]
+  eventSequence: number
+  pricingVersion: number
+  networkFeeEth: string
+  expiredCoupons: string[]
+  socketOfflineUntil: number
 }
 
 export const databaseKey = 'kurio:db:v1'
@@ -42,6 +54,45 @@ async function createDatabase(): Promise<Database> {
     carts: {},
     favorites: {},
     nfts: structuredClone(catalogFixtures),
+    wallets: {
+      'collector-ana': [
+        {
+          id: 'wallet-ana-primary',
+          role: 'primary',
+          label: 'Carteira principal',
+          address: `0x${'a'.repeat(40)}`,
+          network: 'Ethereum',
+          version: 1,
+        },
+        {
+          id: 'wallet-ana-secondary',
+          role: 'secondary',
+          label: 'Carteira secundária',
+          address: `0x${'b'.repeat(40)}`,
+          network: 'Polygon',
+          version: 1,
+        },
+      ],
+      'collector-bruno': [
+        {
+          id: 'wallet-bruno-primary',
+          role: 'primary',
+          label: 'Carteira principal',
+          address: `0x${'c'.repeat(40)}`,
+          network: 'Ethereum',
+          version: 1,
+        },
+      ],
+    },
+    connections: {},
+    orders: {},
+    idempotency: {},
+    events: [],
+    eventSequence: 0,
+    pricingVersion: 1,
+    networkFeeEth: '0.005',
+    expiredCoupons: [],
+    socketOfflineUntil: 0,
   }
 }
 
@@ -51,6 +102,17 @@ export async function readDatabase(): Promise<Database> {
     const parsed = JSON.parse(saved) as Database
     if (parsed.version !== 1 || !Array.isArray(parsed.users) || !Array.isArray(parsed.nfts))
       throw new Error('Formato de banco mock incompatível')
+    // Migração aditiva: preserve contas, hashes e carrinhos criados na etapa anterior.
+    parsed.wallets ??= {}
+    parsed.connections ??= {}
+    parsed.orders ??= {}
+    parsed.idempotency ??= {}
+    parsed.events ??= []
+    parsed.eventSequence ??= 0
+    parsed.pricingVersion ??= 1
+    parsed.networkFeeEth ??= '0.005'
+    parsed.expiredCoupons ??= []
+    parsed.socketOfflineUntil ??= 0
     return parsed
   }
   initialization ??= createDatabase()
@@ -70,8 +132,10 @@ export function saveDatabase(database: Database) {
 export function transaction<T>(mutate: (database: Database) => T): Promise<T> {
   const result = pendingTransaction.then(async () => {
     const database = await readDatabase()
+    const sequence = database.eventSequence
     const value = mutate(database)
     saveDatabase(database)
+    for (const event of database.events) if (event.sequence > sequence) broadcast(event)
     return value
   })
   pendingTransaction = result.catch(() => undefined)
@@ -86,6 +150,9 @@ export async function resetDatabase() {
   const database = await createDatabase()
   saveDatabase(database)
   localStorage.removeItem('kurio:scenario')
+  for (const key of Object.keys(localStorage))
+    if (key.startsWith('kurio:checkout-attempt:') || key.startsWith('kurio:checkout-draft:'))
+      localStorage.removeItem(key)
   clearCookie('kurio_session')
   clearCookie('kurio_guest')
 }

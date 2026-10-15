@@ -935,6 +935,148 @@ a {
 .profile-form input[type='file'] {
   font-size: 12px;
 }
+
+.form-field > select {
+  padding: 12px;
+  border: 1px solid #9a744f;
+  background: #140e0b;
+  color: #f5eadd;
+  border-radius: 8px;
+  width: 100%;
+  min-width: 0;
+}
+.wallet-grid,
+.orders-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-block: 28px;
+}
+.wallet-card {
+  padding: 24px;
+  border: 1px solid #795333;
+  border-radius: 16px;
+  background: #271a14;
+}
+.wallet-card > * + * {
+  margin-top: 16px;
+}
+.wallet-card h2 {
+  font-size: 20px;
+  font-weight: 800;
+}
+.wallet-address,
+.order-id {
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.commerce-page > .profile-form {
+  max-width: 650px;
+  margin-block: 32px;
+}
+.commerce-page > .text-link {
+  display: inline-block;
+  margin-top: 24px;
+}
+.checkout-fields {
+  border: 0;
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.terms-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.terms-field input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 3px;
+  accent-color: #d48a46;
+}
+.review-items {
+  display: grid;
+  gap: 12px;
+  font-size: 13px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #795333;
+}
+.review-items li {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  overflow-wrap: anywhere;
+}
+.review-items strong {
+  text-align: right;
+}
+.confirm-purchase {
+  width: 100%;
+  margin-top: 24px;
+}
+.recovery-panel {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  border: 1px solid #d48a46;
+  border-radius: 16px;
+  margin-block: 24px;
+}
+.recovery-panel h2 {
+  font-size: 20px;
+  font-weight: 800;
+}
+.order-id {
+  margin-top: 20px;
+}
+.receipt-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 13px;
+}
+.receipt-item img {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.receipt-item h3 {
+  font-weight: 800;
+}
+.order-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-block: 24px;
+  font-size: 13px;
+}
+.connection-notice {
+  position: fixed;
+  bottom: 90px;
+  left: 16px;
+  right: 16px;
+  max-width: 600px;
+  margin: auto;
+  padding: 16px;
+  border: 1px solid #d48a46;
+  border-radius: 12px;
+  background: #271a14;
+  color: #fff1df;
+  z-index: 35;
+  font-size: 13px;
+}
+@media (max-width: 767px) {
+  .wallet-grid,
+  .orders-list {
+    grid-template-columns: 1fr;
+  }
+}
 .mock-controls {
   display: grid;
   justify-items: start;

@@ -108,7 +108,7 @@ export const cartHandlers = [
       return transaction((database) => {
         const owner = cartOwner(database, cookies)
         assertMutationAvailable()
-        validateCoupon(code)
+        validateCoupon(code, database)
         const cart = (database.carts[owner] ??= emptyCart())
         cart.coupon = code
         cart.revision++
@@ -136,8 +136,8 @@ export const cartHandlers = [
         if (!cart.items.length) throw new ApiFault(409, 'EMPTY_CART', 'Seu carrinho está vazio.')
         if (cart.items.some((item) => item.quantity > item.available))
           throw new ApiFault(409, 'AVAILABILITY_CONFLICT', 'Revise a disponibilidade dos itens.')
-        if (cart.coupon) validateCoupon(cart.coupon)
-        return HttpResponse.json(cart.quote)
+        if (cart.coupon) validateCoupon(cart.coupon, database)
+        return HttpResponse.json(cart)
       }),
     ),
   ),

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { changePassword, problemFrom, sessionOptions, updateProfile } from '../api/account'
 import { queryClient } from '../app/query-client'
 import { forgetSession } from '../auth/session-cache'
@@ -202,6 +202,14 @@ export function ProfilePage() {
       <main className="container commerce-page">
         <p className="eyebrow">Sua identidade na Kurio</p>
         <h1>Meu perfil</h1>
+        <nav className="order-links" aria-label="Minha conta">
+          <Link to="/carteiras" search={{ redirect: '/perfil' }} className="text-link">
+            Minhas carteiras
+          </Link>
+          <Link to="/pedidos" className="text-link">
+            Meus pedidos
+          </Link>
+        </nav>
         {session.data?.user && (
           <div className="profile-grid">
             <ProfileForm key={session.data.user.id} user={session.data.user} />

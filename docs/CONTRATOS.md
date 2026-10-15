@@ -30,19 +30,19 @@ O NFT contém identidade, nome, imagem, coleção, rede, preço ETH, criador, de
 
 ## Carrinho e cotação
 
-| Método e recurso          | Entrada                          | Resultado                                                         |
-| ------------------------- | -------------------------------- | ----------------------------------------------------------------- |
-| `GET /cart`               | cookie de visitante ou sessão    | carrinho e cotação atuais                                         |
-| `POST /cart/items`        | `{ nftId, editionId, quantity }` | 201, item adicionado e carrinho atualizado                        |
-| `PATCH /cart/items/:key`  | `{ quantity }`                   | 200, quantidade atualizada                                        |
-| `DELETE /cart/items/:key` | chave do item                    | 200, carrinho sem o item                                          |
-| `POST /cart/coupon`       | `{ code }`                       | 200, cupom aplicado; 422 para inválido/expirado                   |
-| `DELETE /cart/coupon`     | sem corpo                        | 200, cotação sem cupom                                            |
-| `POST /quotes`            | sessão obrigatória               | cotação revalidada; 409 se carrinho vazio ou estoque insuficiente |
+| Método e recurso          | Entrada                          | Resultado                                                                       |
+| ------------------------- | -------------------------------- | ------------------------------------------------------------------------------- |
+| `GET /cart`               | cookie de visitante ou sessão    | carrinho e cotação atuais                                                       |
+| `POST /cart/items`        | `{ nftId, editionId, quantity }` | 201, item adicionado e carrinho atualizado                                      |
+| `PATCH /cart/items/:key`  | `{ quantity }`                   | 200, quantidade atualizada                                                      |
+| `DELETE /cart/items/:key` | chave do item                    | 200, carrinho sem o item                                                        |
+| `POST /cart/coupon`       | `{ code }`                       | 200, cupom aplicado; 422 para inválido/expirado                                 |
+| `DELETE /cart/coupon`     | sem corpo                        | 200, cotação sem cupom                                                          |
+| `POST /quotes`            | sessão obrigatória               | carrinho com cotação revalidada; 409 se vazio/sem estoque; 422 se cupom expirou |
 
 A chave do item é `nftId:editionId`, codificada com `encodeURIComponent` na URL. Quantidades são números inteiros positivos. O limite é a disponibilidade da edição; violações retornam 409, sem aplicar a alteração.
 
-Carrinho: `{ items, coupon, quote }`. Cada item contém NFT, edição, quantidade, disponibilidade e total de linha. Cotação: `{ version, subtotalEth, discountEth, networkFeeEth, totalEth }`. Todos os valores ETH são strings decimais, com até 18 casas. Cálculos usam BigInt em wei.
+Carrinho: `{ items, coupon, quote, couponProblem? }`. Cada item contém NFT, edição, quantidade, disponibilidade e total de linha. Cotação: `{ version, subtotalEth, discountEth, networkFeeEth, totalEth }`. Todos os valores ETH são strings decimais, com até 18 casas. Cálculos usam BigInt em wei. A versão inclui regras de preço, revisão do carrinho, NFTs e quantidades.
 
 Cupom `KURIO10`: desconto de 10%, truncado em wei. `EXPIRED`: erro de cupom expirado. Demais códigos: inválidos. Taxa fictícia: 0.005 ETH por rede distinta presente no carrinho. Valores derivam do catálogo persistido e da quantidade atual.
 
@@ -67,6 +67,50 @@ O usuário atual é derivado da sessão; os recursos privados não aceitam um `u
 
 Valores de cenário: `default`, `slow`, `catalog-error`, `favorite-error`, `cart-error`, `session-expired`, `register-conflict`, `offline`. Controles continuam disponíveis durante a falha simulada de conexão para permitir recuperação. A interface fica em `/setup`. O reset restaura catálogo, contas, hashes, sessões, favoritos, carrinhos, cupons e cenário conhecidos desta etapa.
 
-## Ainda não implementado
+## Carteiras e conexão
 
-Carteiras, pedidos, idempotência de compra, recibos e eventos `nft.updated`/`order.updated`. O Socket.IO atual valida somente o transporte com `health.check`/`health.ready`. Os contratos correspondentes serão acrescentados com sua implementação e evidência.
+Todos exigem sessão e usam o titular do cookie.
+
+| Método e recurso            | Entrada                             | Resultado                                                     |
+| --------------------------- | ----------------------------------- | ------------------------------------------------------------- |
+| `GET /wallets`              | sessão                              | lista privada                                                 |
+| `POST /wallets`             | `{ label, address, network, role }` | 201, carteira; 409 em função/endereço duplicado               |
+| `PATCH /wallets/:id`        | mesmos campos                       | 200, versão incrementada; desconecta a carteira editada       |
+| `GET /wallet-connection`    | sessão                              | conexão da sessão ou null                                     |
+| `POST /wallets/:id/connect` | `{ network }`                       | conexão simulada; 422 para rede incompatível; 409 para recusa |
+| `DELETE /wallet-connection` | sessão                              | 204                                                           |
+
+Carteira: `{ id, version, label, address, network, role }`. `network`: Ethereum, Polygon ou Solana; `role`: primary ou secondary, no máximo uma de cada por usuário. Conexão: `{ walletId, network, connectedAt }`. Nenhuma operação transfere fundos.
+
+## Pedidos e idempotência
+
+| Método e recurso           | Entrada                                                                                                                        | Resultado                                                                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST /orders`             | header `Idempotency-Key`; `{ customer: { name, email, phone }, walletId, walletVersion, network, quoteVersion, agreed: true }` | 201 pending; 200 replay da mesma tentativa; 409 conteúdo conflitante/cotação antiga/estoque/conexão/pedido pendente; 422 validação/cupom |
+| `GET /orders`              | sessão                                                                                                                         | lista dos pedidos do titular                                                                                                             |
+| `GET /orders/attempt/:key` | sessão                                                                                                                         | pedido da mesma tentativa; 404 se ainda não existe                                                                                       |
+| `GET /orders/:id`          | sessão                                                                                                                         | pedido; 404 inexistente; 403 de outro titular                                                                                            |
+
+A chave contém 16–100 caracteres alfanuméricos, `_` ou `-`; o cliente gera UUID. A associação é por usuário e chave, com fingerprint do corpo validado. Replay retorna o mesmo pedido mesmo após mudança do mercado. Conteúdo diferente retorna `IDEMPOTENCY_CONFLICT`. Um pedido pendente por usuário; `ORDER_IN_PROGRESS` informa `details.orderId` para retomada.
+
+Pedido contém `id`, `userId`, `status`, `version`, `createdAt`, `settledAt?`, `transactionReference`, `snapshot` e `refusalReason?`. O snapshot independente contém itens, cotação, cupom, carteira, cliente e rede. Estados: pending, confirmed, declined. Somente confirmed possui referência e recibo; a referência aponta para explorador interno simulado. Recusa preserva carrinho e libera estoque; confirmação retira apenas as quantidades compradas.
+
+## Eventos de negócio
+
+Transporte Socket.IO em `/realtime/`, interceptado pelo MSW com binding de protocolo. `session.subscribe { userId }` retorna `session.ready` somente quando o cookie pertence ao usuário e está válido; caso contrário, `session.denied`.
+
+Eventos `nft.updated`, `quote.updated`, `order.updated`: `{ id, sequence, type, resourceId, version, ownerId?, actorId?, reason? }`. `order.updated` é privado. `reason` pode ser reservation ou market. Duplicatas e versões antigas são descartadas. Recurso alterado provoca reconsulta REST; reconexão reconcilia consultas ativas. `health.check`/`health.ready` continua disponível para infraestrutura.
+
+## Controles acrescentados na etapa 4
+
+Novos cenários: `out-of-order`, `wallet-rejected`, `payment-declined`, `order-timeout`, `order-pending`. O cenário de respostas fora de ordem demora mais para a busca Emerald que para as demais, permitindo observar cancelamento da busca antiga.
+
+| Endpoint de teste (POST)       | Corpo                                     | Efeito                                                           |
+| ------------------------------ | ----------------------------------------- | ---------------------------------------------------------------- |
+| `/testing/nfts/:id`            | `{ priceEth?, editionId?, available? }`   | muda mercado, incrementa versão e publica NFT                    |
+| `/testing/pricing`             | `{ expireCoupon?, networkFeeEth? }`       | muda regra e publica cotação                                     |
+| `/testing/realtime/disconnect` | `{ durationMs }` entre 250 e 10000        | fecha transporte e bloqueia reconexão pelo intervalo             |
+| `/testing/orders/:id/settle`   | `{ outcome: confirmed ou declined }`      | resolve pedido próprio pendente, preserva estado terminal        |
+| `/testing/events/replay`       | `{ type, resourceId, version?, copies? }` | retransmite evento duplicado/antigo; verifica titular se privado |
+
+O reset agora também limpa carteiras, conexões, pedidos, idempotência, eventos, rascunhos e tentativas. Erros podem incluir `details` além de `code`, `message` e `fields`; campos aninhados usam caminhos como `customer.phone`. Os controles são exclusivos da demonstração MSW.

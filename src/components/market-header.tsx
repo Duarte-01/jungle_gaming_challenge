@@ -69,6 +69,10 @@ export function MarketHeader() {
           Mercado
         </Link>
         <Link to="/favoritos">Favoritos</Link>
+        <Link to="/carteiras" search={{ redirect: '/' }}>
+          Carteiras
+        </Link>
+        <Link to="/pedidos">Pedidos</Link>
       </nav>
       <AccountActions />
     </header>

@@ -70,7 +70,10 @@ export const accountHandlers = [
   http.post('/api/auth/logout', ({ cookies }) =>
     respond(() =>
       transaction((database) => {
-        if (cookies.kurio_session) delete database.sessions[cookies.kurio_session]
+        if (cookies.kurio_session) {
+          delete database.sessions[cookies.kurio_session]
+          delete database.connections[cookies.kurio_session]
+        }
         clearSessionCookie(cookies.kurio_session)
         return new HttpResponse(null, { status: 204 })
       }),
@@ -115,7 +118,10 @@ export const accountHandlers = [
           throw new ApiFault(409, 'PASSWORD_CHANGED', 'A senha foi alterada. Entre novamente.')
         current.password = password
         for (const [token, session] of Object.entries(fresh.sessions))
-          if (session.userId === user.id) delete fresh.sessions[token]
+          if (session.userId === user.id) {
+            delete fresh.sessions[token]
+            delete fresh.connections[token]
+          }
         clearSessionCookie(cookies.kurio_session)
         return new HttpResponse(null, { status: 204 })
       })
@@ -184,6 +190,11 @@ export const accountHandlers = [
             'cart-error',
             'session-expired',
             'register-conflict',
+            'wallet-rejected',
+            'payment-declined',
+            'order-timeout',
+            'order-pending',
+            'out-of-order',
             'offline',
           ]),
         }),

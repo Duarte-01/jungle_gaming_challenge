@@ -22,6 +22,7 @@ export interface Quote {
 export interface Cart {
   items: CartItem[]
   coupon: string | null
+  couponProblem?: string
   quote: Quote
 }
 

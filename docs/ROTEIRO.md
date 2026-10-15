@@ -22,16 +22,16 @@ Não adiar a primeira publicação até o último minuto; publicar uma versão f
 
 - [x] Enunciado lido e stack identificada.
 - [x] Base da aplicação criada.
-- [ ] Fidelidade visual e assets originais: capturas desktop/mobile do início recebidas; fonte e PNGs acessíveis ao ambiente pendentes; quatro retratos visualizados no chat.
-- [ ] Catálogo e detalhe completos: listagem, filtros na URL e detalhe parcial implementados; favoritos e adição ao carrinho implementados; revisão visual e compra pendentes.
+- [ ] Fidelidade visual: capturas desktop/mobile do início e quatro PNGs originais incorporados; fonte e demais frames pendentes.
+- [ ] Catálogo e detalhe completos: fluxos funcionais implementados; revisão visual final pendente.
 - [x] Conta, sessão e isolamento de dados.
 - [x] Favoritos e rollback.
-- [x] Carrinho, cotação atual, cupons e precisão ETH; revalidação final da compra pendente.
-- [ ] Checkout, idempotência e confirmação.
+- [x] Carrinho, cotação revalidada, cupons e precisão ETH.
+- [x] Checkout, idempotência, recuperação e confirmação pela API.
 - [x] Perfil, avatar e alteração de senha.
-- [ ] Carteiras.
-- [ ] Eventos de negócio, versões e reconexão.
-- [ ] Cenários finais: controles e reset completos dos recursos da etapa 3 implementados; compra e eventos ainda pendentes.
+- [x] Carteiras e conexão simulada com validação de rede.
+- [x] Eventos de negócio, versões e reconciliação na reconexão.
+- [x] Cenários de compra, eventos, reset e controles REST da demonstração.
 - [ ] 12 grupos de E2E e regressão visual.
 - [ ] Auditorias Lighthouse e relatórios.
 - [ ] Deploy público validado.

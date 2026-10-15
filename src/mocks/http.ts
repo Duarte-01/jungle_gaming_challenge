@@ -6,11 +6,19 @@ export class ApiFault extends Error {
   status: number
   code: string
   fields?: Record<string, string>
-  constructor(status: number, code: string, message: string, fields?: Record<string, string>) {
+  details?: Record<string, unknown>
+  constructor(
+    status: number,
+    code: string,
+    message: string,
+    fields?: Record<string, string>,
+    details?: Record<string, unknown>,
+  ) {
     super(message)
     this.status = status
     this.code = code
     this.fields = fields
+    this.details = details
   }
 }
 
@@ -46,7 +54,7 @@ export async function respond(
   } catch (error) {
     if (error instanceof ApiFault)
       return HttpResponse.json(
-        { code: error.code, message: error.message, fields: error.fields },
+        { code: error.code, message: error.message, fields: error.fields, details: error.details },
         { status: error.status },
       )
     return HttpResponse.json(

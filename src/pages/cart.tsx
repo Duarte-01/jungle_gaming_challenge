@@ -154,6 +154,7 @@ export function CartPage() {
             </section>
             <aside className="order-summary" aria-label="Resumo do carrinho">
               <h2>Resumo da coleção</h2>
+              {cart.data.couponProblem && <p role="alert">{cart.data.couponProblem}</p>}
               <dl>
                 <div>
                   <dt>Subtotal</dt>
@@ -215,8 +216,9 @@ export function CartPage() {
                   Entre para continuar com sua coleção
                 </Link>
               )}
-              <Button disabled>Continuar para pagamento</Button>
-              <p className="muted">O pagamento está temporariamente indisponível.</p>
+              <Button asChild>
+                <Link to="/pagamento">Continuar para pagamento</Link>
+              </Button>
             </aside>
           </div>
         )}

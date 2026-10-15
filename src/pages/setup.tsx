@@ -4,6 +4,7 @@ import { getHealth } from '../api/health'
 import { Button } from '../components/ui/button'
 import { useRealtimeHealth } from '../realtime/use-realtime-health'
 import { MockControls } from '../components/mock-controls'
+import { MarketControls } from '../components/market-controls'
 
 export function SetupPage() {
   const health = useQuery({ queryKey: ['health'], queryFn: ({ signal }) => getHealth(signal) })
@@ -49,7 +50,12 @@ export function SetupPage() {
           </p>
         </div>
       </section>
-      {import.meta.env.VITE_ENABLE_MOCKS !== 'false' && <MockControls />}
+      {import.meta.env.VITE_ENABLE_MOCKS !== 'false' && (
+        <>
+          <MockControls />
+          <MarketControls />
+        </>
+      )}
       <div className="flex flex-wrap gap-4">
         <Button onClick={() => void health.refetch()} disabled={health.isFetching}>
           Verificar API novamente
