@@ -1,0 +1,86 @@
+[
+  {
+    "name": "emerald-ape",
+    "width": 250,
+    "height": 250,
+    "webpLossless": true,
+    "avifQuality": 90,
+    "formats": {
+      "png": {
+        "bytes": 113615,
+        "sha256": "358616ec920e300cd0dc8e5470f19481dc0a5115b413826624b5d34fc14a607a"
+      },
+      "webp": {
+        "bytes": 71856,
+        "sha256": "26d1df56a5c0d148e6e0da81e268473ecd13a6740d6c3ba65aba7e2fe3e602d5"
+      },
+      "avif": {
+        "bytes": 18393,
+        "sha256": "8e080727d56fd2c60dfcf9bdd0c2e288e7edcde335602ff0d03bfd0b8748d29d"
+      }
+    }
+  },
+  {
+    "name": "sage-nomad",
+    "width": 250,
+    "height": 250,
+    "webpLossless": true,
+    "avifQuality": 90,
+    "formats": {
+      "png": {
+        "bytes": 111819,
+        "sha256": "66c1e3e83dd0a4ae875c13e7c4576987d3c014280e155f1807689b59fda43272"
+      },
+      "webp": {
+        "bytes": 70230,
+        "sha256": "a3a542134b4c0073d9e17595045b34bdb6a51eb02e7e4f8357244832e83a0f4b"
+      },
+      "avif": {
+        "bytes": 17801,
+        "sha256": "396156321691deb19d861966a80793284401a31ca4c6f92b05fe9e80f1848e15"
+      }
+    }
+  },
+  {
+    "name": "neon-vessel",
+    "width": 250,
+    "height": 250,
+    "webpLossless": true,
+    "avifQuality": 90,
+    "formats": {
+      "png": {
+        "bytes": 107424,
+        "sha256": "77075cabfcf0b2bee451dc14e03655e1ae90abd2e165ffe746da058fd23292b2"
+      },
+      "webp": {
+        "bytes": 68326,
+        "sha256": "90fdd7efd412f09c5e19d567d5d6eaf7da3847fc077c28b192d78741c47cbe7d"
+      },
+      "avif": {
+        "bytes": 15869,
+        "sha256": "2f03a022e06b01998a95bbea4588ce52816836b03a62e93453ef787f7c4323a3"
+      }
+    }
+  },
+  {
+    "name": "golden-beat",
+    "width": 250,
+    "height": 250,
+    "webpLossless": true,
+    "avifQuality": 90,
+    "formats": {
+      "png": {
+        "bytes": 117014,
+        "sha256": "f821c01cb38ab4ce4b51888d0bc8e7af18e6ca97417a9ee04d70c55226db7277"
+      },
+      "webp": {
+        "bytes": 74930,
+        "sha256": "9b563584e435e7a98b0cd628ee6a1632eaaff92c16df6dd96f83a9d08bd1e366"
+      },
+      "avif": {
+        "bytes": 20357,
+        "sha256": "114239d8a2daeed8797e3694f505dd45d64f4cc1c40f6241750d83304a8b0aa6"
+      }
+    }
+  }
+]

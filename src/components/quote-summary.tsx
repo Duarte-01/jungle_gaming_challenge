@@ -1,4 +1,5 @@
 import type { Cart } from '../api/cart'
+import { NftImage } from './nft-image'
 
 export function QuoteSummary({ cart }: { cart: Cart }) {
   return (
@@ -7,7 +8,7 @@ export function QuoteSummary({ cart }: { cart: Cart }) {
       <ul className="review-items">
         {cart.items.map((item) => (
           <li key={item.key}>
-            <img src={item.nft.image} alt="" width={70} height={70} />
+            <NftImage src={item.nft.image} alt="" width={70} height={70} />
             <span>
               {item.quantity} × {item.nft.name}
             </span>

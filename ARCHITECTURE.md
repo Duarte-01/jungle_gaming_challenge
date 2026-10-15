@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Esta documentação descreve a base até a etapa 5. A página inicial segue a composição das capturas fornecidas e usa os quatro retratos originais. Conta, perfil, favoritos, carrinho, carteiras, checkout e pedidos estão implementados. A tela técnica fica em `/setup`. Os 13 frames recebidos foram usados na revisão; fonte original não fornecida, substituições e desvios conhecidos estão em `docs/DESIGN.md`.
+Esta documentação descreve a base até a etapa 6. A página inicial segue a composição das capturas fornecidas e usa os quatro retratos originais. Conta, perfil, favoritos, carrinho, carteiras, checkout e pedidos estão implementados. A tela técnica fica em `/setup`. Os 13 frames recebidos foram usados na revisão; fonte original não fornecida, substituições e desvios conhecidos estão em `docs/DESIGN.md`.
 
 ## Responsabilidades
 
@@ -28,13 +28,13 @@ TanStack Query: respostas frescas por 30 segundos, uma nova tentativa para queri
 
 MSW 2 é usado por compatibilidade com o peer dependency de `@mswjs/socket.io-binding` 0.2. O cliente real `socket.io-client` conecta usando apenas WebSocket. A integração intercepta o protocolo e simula a abertura e os eventos; adicionamos heartbeat Engine.IO para manter a conexão. Não se pretende reproduzir salas, namespaces ou fallback HTTP polling. Os listeners são liberados no unmount.
 
-Endpoint de transporte: `/realtime/`. As rotas são importadas dinamicamente após o início do MSW, porque o Engine.IO captura o construtor WebSocket na avaliação do módulo. O caminho dedicado evita interceptar o WebSocket do próprio Vite.
+Endpoint de transporte: `/realtime/`. A UI é baixada em paralelo aos mocks. A importação de socket.io-client acontece na criação assíncrona do socket, depois da ativação do MSW, porque Engine.IO captura o construtor WebSocket na avaliação do módulo. O caminho dedicado evita interceptar o WebSocket do próprio Vite.
 
 ## Decisões e pendências
 
-Vite simplifica desenvolvimento e build; Tailwind 4 participa pelo plugin do Vite. Um Button no padrão shadcn/ui usa Radix Slot, CVA e a composição `clsx`/`tailwind-merge`. Cores foram extraídas dos PNGs recebidos. IBM Plex Mono 400/600 local é uma aproximação, pois os exports não especificam a fonte. Lucide substitui ícones sem arquivo dedicado. Os quatro retratos permanecem originais; a galeria apresenta recortes CSS da mesma arte. As decisões visuais e ajustes de acessibilidade estão em `docs/DESIGN.md`.
+Vite simplifica desenvolvimento e build; Tailwind 4 participa pelo plugin do Vite. Um Button no padrão shadcn/ui usa Radix Slot, CVA e a composição `clsx`/`tailwind-merge`. Cores foram extraídas dos PNGs recebidos. IBM Plex Mono local (400/600 na UI e 500/700 no destaque desktop) é uma aproximação, pois os exports não especificam a fonte. Lucide substitui ícones sem arquivo dedicado. Os quatro retratos permanecem originais; a galeria apresenta recortes CSS da mesma arte. As decisões visuais e ajustes de acessibilidade estão em `docs/DESIGN.md`.
 
-Playwright cobre fluxos e falhas, com baselines para quatro telas nos três viewports. Lighthouse mede início/detalhe três vezes por perfil, no build real com mocks padrão; relatórios e análise estão em `docs/PERFORMANCE.md`. A nota de performance mobile abaixo da meta é uma limitação registrada. O deploy público ainda exige autorização no serviço e validação da URL.
+Playwright cobre fluxos e falhas, com baselines para quatro telas nos três viewports. Lighthouse mede início/detalhe três vezes por perfil, no build real com mocks padrão; relatórios e análise estão em `docs/PERFORMANCE.md`. Resultados e condições atuais devem ser conferidos em `docs/PERFORMANCE.md`; resultados antigos abaixo da meta não autorizam a publicação. O deploy público ainda exige autorização no serviço e validação da URL.
 
 Os contratos implementados estão em `docs/CONTRATOS.md`. `docs/ETAPA-04.md` explica compra e tempo real. Os registros das etapas anteriores descrevem o estado histórico; os PNGs então pendentes foram incorporados nesta etapa, conforme `docs/ASSETS.md`.
 
@@ -78,8 +78,18 @@ O painel em `/setup` altera cenários por REST e restaura as fixtures. Dados de 
 
 `components/` compartilha cabeçalho, rodapé, navegação mobile, sidebar, galeria e relacionados. Login/cadastro usam diálogo Radix no desktop e tela própria no mobile; ações auxiliares fora do escopo exibem explicações sem simular sucesso. Controles têm labels, foco visível, erros associados e mensagens de status. As abas implementam navegação por setas, Home e End.
 
-O bootstrap apresenta um shell de carregamento e inicia o MSW antes de importar a aplicação. Rotas privadas são carregadas por React.lazy; início e detalhe pertencem ao módulo público inicial. Não há variante exclusiva da aplicação para auditorias. Fontes e imagens são locais; há preload das fontes locais e do retrato de destaque para rotas conhecidas. Skeletons preservam a composição e respeitam movimento reduzido.
+O bootstrap apresenta um shell de carregamento, baixa a UI em paralelo aos mocks e aguarda a ativação do MSW antes de montar o React ou emitir consultas. As consultas públicas são antecipadas no mesmo QueryClient. Rotas privadas são carregadas por React.lazy; início e detalhe pertencem ao módulo público inicial. Não há variante exclusiva da aplicação para auditorias. Fontes e imagens são locais; há preload das fontes locais e do retrato de destaque para rotas conhecidas. Skeletons preservam a composição e respeitam movimento reduzido.
 
 Perfil, carteira e pedido incluem os campos adicionais dos frames. Schemas normalizam os campos antigos com defaults compatíveis; a migração acrescenta metadados sem substituir preços ou snapshots de pedidos. O fingerprint de idempotência antigo é normalizado pelo schema atual antes da comparação. Trocar rede, carteira ou provedor invalida a conexão/revisão apropriada; o snapshot registra o provedor efetivamente conectado.
 
 O pagamento mobile usa rolagem e dados expansíveis para preservar conexão, revisão e confirmação explícitas; ocupa mais altura que o frame estático. O recibo mantém navegação e detalhes do colecionador expansíveis. Novas telas sem frame mobile usam a mesma identidade responsiva. Essas decisões não equivalem a fidelidade pixel a pixel comprovada.
+
+## Carregamento e ambiente de CI
+
+Os handlers de operações privadas registram suas rotas imediatamente e carregam os resolvers sob demanda. A primeira requisição aguarda a implementação real do handler, sem bypass de rede ou alternativa de negócio na UI. Catálogo, sessão e consulta do carrinho permanecem disponíveis na inicialização. Helpers sem dependências de schemas evitam carregar validação dos formulários no bootstrap público; os formulários e mutations mantêm Zod. O payload de evento recebe validação explícita na fronteira, incluindo inteiros seguros e enums.
+
+Os hashes PBKDF2 das duas contas públicas de demonstração são fixtures previamente calculadas. Cada conta possui salt e hash próprios; login continua verificando a senha com o algoritmo real. Cadastros e mudanças de senha geram novos salts aleatórios. A inicialização não precisa derivar novamente duas senhas conhecidas.
+
+Os retratos usam picture AVIF/WebP/PNG e dimensões explícitas. Os PNGs originais e sua integridade permanecem disponíveis; AVIF é compressão com perda declarada e WebP é verificado sem perda de pixels. Não há variante exclusiva para Lighthouse. A latência sintética padrão de catálogo/detalhe é 120 ms, consistente com as demais operações; cenários lentos e fora de ordem continuam ativos e reproduzíveis.
+
+O container `ci/Dockerfile` fixa Node, distribuição e Chromium. Os jobs de validação e Lighthouse executam independentemente em push/PR e mantêm as metas do enunciado. Consulte `ci/README.md` para reproduzir e `docs/ETAPA-06.md` para a explicação. A matriz do escopo está em `docs/REQUISITOS.md`. Por solicitação do candidato, main e deploy permanecem suspensos até a revisão e a aprovação dos checks.

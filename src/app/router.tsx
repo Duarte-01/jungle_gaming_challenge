@@ -16,7 +16,7 @@ import { createRootRoute, createRoute, createRouter, Link, Outlet } from '@tanst
 import { defaultSearch, validateCatalogSearch } from '../api/catalog'
 import { requireSession } from '../auth/guard'
 import { SessionSync } from '../auth/session-sync'
-import { safeReturnTo } from '../domain/account'
+import { safeReturnTo } from '../domain/account-helpers'
 import { RouteError } from '../pages/route-error'
 import { MarketRealtime } from '../realtime/market-realtime'
 

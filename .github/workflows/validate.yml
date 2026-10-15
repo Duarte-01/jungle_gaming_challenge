@@ -10,21 +10,22 @@ permissions:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-      - run: npm ci
-      - run: npm run typecheck && npm run lint && npm run format:check && npm run test:unit
-      - run: npm run build
-      - run: npm run browsers:install -- --with-deps
-      - run: npm run test:e2e
-        env:
-          E2E_PREVIEW: 'true'
+      - name: Build the pinned validation environment
+        run: docker build --tag kurio-validation --file ci/Dockerfile ci
+      - name: Check, build and test in the same browser environment as the baselines
+        run: >-
+          docker run --rm --ipc=host --user "$(id -u):$(id -g)"
+          --mount type=bind,source="$GITHUB_WORKSPACE",target=/app
+          --workdir /app --env npm_config_cache=/tmp/npm-cache --env XDG_CACHE_HOME=/tmp/kurio-cache --env CI=true --env E2E_PREVIEW=true
+          kurio-validation sh -c '
+          node --version && chromium --version && npm ci &&
+          npm run typecheck && npm run lint && npm run format:check &&
+          npm run test:unit && npm run build &&
+          npm run test:e2e -- --workers=2 --retries=0'
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -35,18 +36,22 @@ jobs:
           retention-days: 14
 
   lighthouse:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      - run: npm run audit:lighthouse
+      - name: Remove reports from previous commits
+        run: rm -rf -- reports/lighthouse
+      - name: Build the same pinned audit environment
+        run: docker build --tag kurio-validation --file ci/Dockerfile ci
+      - name: Audit all pages and enforce every Lighthouse target
+        run: >-
+          docker run --rm --ipc=host --user "$(id -u):$(id -g)"
+          --mount type=bind,source="$GITHUB_WORKSPACE",target=/app
+          --workdir /app --env npm_config_cache=/tmp/npm-cache --env XDG_CACHE_HOME=/tmp/kurio-cache --env CI=true
+          kurio-validation sh -c '
+          node --version && chromium --version && npm ci &&
+          npm run build && npm run audit:lighthouse'
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -1,4 +1,4 @@
-import { delay, http, HttpResponse } from 'msw'
+import { delay, HttpResponse, type HttpResponseResolver } from 'msw'
 import { orderInputSchema } from '../domain/checkout'
 import { appendEvent } from './event-bus'
 import { transaction } from './database'
@@ -6,8 +6,8 @@ import { ApiFault, parseBody, respond } from './http'
 import { sessionUser } from './session'
 import { scheduleOrders, settleDueOrders, validateOrderCart } from './order-state'
 
-export const orderHandlers = [
-  http.post('/api/orders', ({ request, cookies }) =>
+export const orderResolvers = {
+  'POST /api/orders': ({ request, cookies }) =>
     respond(async () => {
       const input = await parseBody(request, orderInputSchema)
       const key = request.headers.get('Idempotency-Key') ?? ''
@@ -114,8 +114,7 @@ export const orderHandlers = [
       if (outcome === 'order-timeout' && !replay) await delay(1500)
       return HttpResponse.json(order, { status: replay ? 200 : 201 })
     }),
-  ),
-  http.get('/api/orders', ({ cookies }) =>
+  'GET /api/orders': ({ cookies }) =>
     respond(async () => {
       await settleDueOrders()
       return transaction((database) => {
@@ -128,8 +127,7 @@ export const orderHandlers = [
         )
       })
     }),
-  ),
-  http.get('/api/orders/attempt/:key', ({ cookies, params }) =>
+  'GET /api/orders/attempt/:key': ({ cookies, params }) =>
     respond(async () => {
       await settleDueOrders()
       return transaction((database) => {
@@ -144,8 +142,7 @@ export const orderHandlers = [
         return HttpResponse.json(database.orders[attempt.orderId].order)
       })
     }),
-  ),
-  http.get('/api/orders/:id', ({ cookies, params }) =>
+  'GET /api/orders/:id': ({ cookies, params }) =>
     respond(async () => {
       await settleDueOrders()
       return transaction((database) => {
@@ -157,5 +154,4 @@ export const orderHandlers = [
         return HttpResponse.json(saved.order)
       })
     }),
-  ),
-]
+} satisfies Record<string, HttpResponseResolver>

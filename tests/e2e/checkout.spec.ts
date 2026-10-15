@@ -21,8 +21,12 @@ async function login(page: Page, email = 'ana@kurio.test', redirect = '/nfts/eme
   await page.getByRole('button', { name: 'Entrar', exact: true }).click()
   await expect(page).not.toHaveURL(/\/login(?:\?|$)/)
 }
-async function prepare(page: Page, scenario = 'default', coupon = false) {
-  await login(page)
+async function prepare(page: Page, scenario = 'default', coupon = false, fromCatalog = false) {
+  await login(page, 'ana@kurio.test', fromCatalog ? '/' : '/nfts/emerald-ape-42')
+  if (fromCatalog) {
+    await expect(page.locator('.nft-card')).toHaveCount(9)
+    await page.locator('.nft-card').first().getByRole('link').first().click()
+  }
   await page.getByRole('button', { name: 'Adicionar ao carrinho' }).click()
   await expect(page.getByText('NFT adicionado ao carrinho.', { exact: false })).toBeVisible()
   if (coupon) {
@@ -32,7 +36,14 @@ async function prepare(page: Page, scenario = 'default', coupon = false) {
     await expect(page.getByText('Cupom aplicado:', { exact: false })).toBeVisible()
   }
   await control(page, 'scenario', { scenario })
-  await page.goto('/pagamento')
+  if (fromCatalog) {
+    await page
+      .locator('.detail-feedback')
+      .getByRole('link', { name: 'Ver carrinho', exact: true })
+      .click()
+    await expect(page.getByTestId('cart-total')).toHaveText('1.195 ETH')
+    await page.getByRole('link', { name: 'Continuar para pagamento' }).click()
+  } else await page.goto('/pagamento')
   await expect(page.getByLabel('Telefone do colecionador')).toBeAttached()
   if (!(await page.getByLabel('Telefone do colecionador').isVisible()))
     await page.getByText('Dados do colecionador', { exact: false }).first().click()
@@ -68,7 +79,7 @@ test('sessão expirada no checkout preserva dados e retoma a mesma tentativa ap�
 test('compra completa confirma apenas após a API e gera recibo e exploração simulada', async ({
   page,
 }) => {
-  await prepare(page)
+  await prepare(page, 'default', false, true)
   await expect(page.getByTestId('checkout-total')).toHaveText('1.195 ETH')
   await page.getByRole('button', { name: 'Confirmar compra simulada' }).click()
   await expect(page.getByRole('heading', { name: 'Pedido confirmado' })).toBeVisible()

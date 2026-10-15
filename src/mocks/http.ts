@@ -1,6 +1,6 @@
 import { delay, HttpResponse } from 'msw'
 import type { z } from 'zod'
-import { fieldErrors } from '../domain/account'
+import { fieldErrors } from '../domain/account-helpers'
 
 export class ApiFault extends Error {
   status: number

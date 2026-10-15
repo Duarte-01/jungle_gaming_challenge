@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw'
+import { HttpResponse, type HttpResponseResolver } from 'msw'
 import { z } from 'zod'
 import {
   changePasswordSchema,
@@ -21,20 +21,29 @@ function favoriteSnapshot(
   return { ids, items: database.nfts.filter((nft) => ids.includes(nft.id)) }
 }
 
-export const accountHandlers = [
-  http.get('/api/session', ({ cookies }) =>
-    respond(async () => {
-      const database = await readDatabase()
-      const user = sessionUser(database, cookies, false)
-      return HttpResponse.json({
-        user,
-        expiresAt: cookies.kurio_session
-          ? (database.sessions[cookies.kurio_session]?.expiresAt ?? null)
-          : null,
-      })
-    }),
-  ),
-  http.post('/api/auth/register', ({ request, cookies }) =>
+function createFavoriteResolver(method: 'put' | 'delete'): HttpResponseResolver {
+  return ({ params, cookies }) =>
+    respond(() =>
+      transaction((database) => {
+        const user = sessionUser(database, cookies)!
+        if (!database.nfts.some((nft) => nft.id === params.id))
+          throw new ApiFault(404, 'NOT_FOUND', 'NFT não encontrado.')
+        if (localStorage.getItem('kurio:scenario') === 'favorite-error')
+          throw new ApiFault(
+            503,
+            'TRANSIENT_FAILURE',
+            'Não foi possível atualizar o favorito. Tente novamente.',
+          )
+        const ids = new Set(database.favorites[user.id] ?? [])
+        if (method === 'put') ids.add(String(params.id))
+        else ids.delete(String(params.id))
+        database.favorites[user.id] = [...ids]
+        return HttpResponse.json(favoriteSnapshot(database, user.id))
+      }),
+    )
+}
+export const accountResolvers = {
+  'POST /api/auth/register': ({ request, cookies }) =>
     respond(async () => {
       const input = await parseBody(request, registerSchema)
       const password = await hashPassword(input.password)
@@ -60,8 +69,7 @@ export const accountHandlers = [
         return HttpResponse.json(createSession(database, user, cookies), { status: 201 })
       })
     }),
-  ),
-  http.post('/api/auth/login', ({ request, cookies }) =>
+  'POST /api/auth/login': ({ request, cookies }) =>
     respond(async () => {
       const input = await parseBody(request, loginSchema)
       const database = await readDatabase()
@@ -75,8 +83,7 @@ export const accountHandlers = [
         return HttpResponse.json(createSession(fresh, current.user, cookies))
       })
     }),
-  ),
-  http.post('/api/auth/logout', ({ cookies }) =>
+  'POST /api/auth/logout': ({ cookies }) =>
     respond(() =>
       transaction((database) => {
         if (cookies.kurio_session) {
@@ -87,11 +94,9 @@ export const accountHandlers = [
         return new HttpResponse(null, { status: 204 })
       }),
     ),
-  ),
-  http.get('/api/profile', ({ cookies }) =>
+  'GET /api/profile': ({ cookies }) =>
     respond(() => transaction((database) => HttpResponse.json(sessionUser(database, cookies)))),
-  ),
-  http.patch('/api/profile', ({ request, cookies }) =>
+  'PATCH /api/profile': ({ request, cookies }) =>
     respond(async () => {
       const input = await parseBody(request, profileSchema)
       return transaction((database) => {
@@ -108,8 +113,7 @@ export const accountHandlers = [
         return HttpResponse.json(user)
       })
     }),
-  ),
-  http.put('/api/profile/password', ({ request, cookies }) =>
+  'PUT /api/profile/password': ({ request, cookies }) =>
     respond(async () => {
       const input = await parseBody(request, changePasswordSchema)
       const database = await readDatabase()
@@ -135,49 +139,25 @@ export const accountHandlers = [
         return new HttpResponse(null, { status: 204 })
       })
     }),
-  ),
-  http.get('/api/favorites', ({ cookies }) =>
+  'GET /api/favorites': ({ cookies }) =>
     respond(() =>
       transaction((database) => {
         const user = sessionUser(database, cookies)!
         return HttpResponse.json(favoriteSnapshot(database, user.id))
       }),
     ),
-  ),
-  ...(['put', 'delete'] as const).map((method) =>
-    http[method]('/api/favorites/:id', ({ params, cookies }) =>
-      respond(() =>
-        transaction((database) => {
-          const user = sessionUser(database, cookies)!
-          if (!database.nfts.some((nft) => nft.id === params.id))
-            throw new ApiFault(404, 'NOT_FOUND', 'NFT não encontrado.')
-          if (localStorage.getItem('kurio:scenario') === 'favorite-error')
-            throw new ApiFault(
-              503,
-              'TRANSIENT_FAILURE',
-              'Não foi possível atualizar o favorito. Tente novamente.',
-            )
-          const ids = new Set(database.favorites[user.id] ?? [])
-          if (method === 'put') ids.add(String(params.id))
-          else ids.delete(String(params.id))
-          database.favorites[user.id] = [...ids]
-          return HttpResponse.json(favoriteSnapshot(database, user.id))
-        }),
-      ),
-    ),
-  ),
-  http.post('/api/testing/reset', () =>
+  'PUT /api/favorites/:id': createFavoriteResolver('put'),
+  'DELETE /api/favorites/:id': createFavoriteResolver('delete'),
+  'POST /api/testing/reset': () =>
     controlResponse(async () => {
       await resetDatabase()
       return HttpResponse.json({ status: 'reset' })
     }),
-  ),
-  http.get('/api/testing/scenario', () =>
+  'GET /api/testing/scenario': () =>
     controlResponse(() =>
       HttpResponse.json({ scenario: localStorage.getItem('kurio:scenario') ?? 'default' }),
     ),
-  ),
-  http.post('/api/testing/session/expire', ({ cookies }) =>
+  'POST /api/testing/session/expire': ({ cookies }) =>
     controlResponse(() =>
       transaction((database) => {
         const token = cookies.kurio_session
@@ -185,8 +165,7 @@ export const accountHandlers = [
         return HttpResponse.json({ status: 'expired' })
       }),
     ),
-  ),
-  http.put('/api/testing/scenario', ({ request }) =>
+  'PUT /api/testing/scenario': ({ request }) =>
     controlResponse(async () => {
       const { scenario } = await parseBody(
         request,
@@ -212,5 +191,4 @@ export const accountHandlers = [
       else localStorage.setItem('kurio:scenario', scenario)
       return HttpResponse.json({ scenario })
     }),
-  ),
-]
+} satisfies Record<string, HttpResponseResolver>

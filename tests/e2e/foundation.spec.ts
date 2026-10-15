@@ -5,9 +5,7 @@ test('recebe REST pelo MSW e evento pelo cliente Socket.IO', async ({ page }) =>
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
   await page.goto('/setup')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'A base do marketplace começa aqui.',
-  )
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Verificação da demonstração.')
   await expect(page.getByText('API simulada conectada')).toBeVisible()
   await expect(page.getByText('Evento recebido via Socket.IO')).toBeVisible()
   await page.getByRole('button', { name: 'Verificar API novamente' }).click()

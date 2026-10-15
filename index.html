@@ -63,7 +63,8 @@
         artworkPreload.rel = 'preload'
         artworkPreload.as = 'image'
         artworkPreload.fetchPriority = 'high'
-        artworkPreload.href = `/images/nfts/${artworkBySlug[artworkSlug]}.png`
+        artworkPreload.type = 'image/avif'
+        artworkPreload.href = `/images/nfts/${artworkBySlug[artworkSlug]}.avif`
         document.head.append(artworkPreload)
       }
     </script>

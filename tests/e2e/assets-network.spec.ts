@@ -6,14 +6,19 @@ test('retratos originais carregam e catálogo mantém a busca mais recente', asy
   await expect(page.locator('.nft-card')).toHaveCount(9)
   const images = page.locator('.nft-card img')
   await expect(images).toHaveCount(9)
-  expect(
-    await images.evaluateAll((elements) =>
-      elements.every(
-        (image) =>
-          image instanceof HTMLImageElement && image.complete && image.naturalWidth === 250,
+  await expect
+    .poll(() =>
+      images.evaluateAll((elements) =>
+        elements.every(
+          (image) =>
+            image instanceof HTMLImageElement &&
+            image.complete &&
+            image.naturalWidth === 250 &&
+            image.currentSrc.endsWith('.avif'),
+        ),
       ),
-    ),
-  ).toBe(true)
+    )
+    .toBe(true)
   const controlStatus = await page.evaluate(
     async () =>
       (

@@ -4,6 +4,45 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              name: 'module-loader',
+              test: /vite[\\/]preload-helper/,
+              priority: 100,
+            },
+            {
+              debugName: 'public-bootstrap',
+              // Follow static edges only; forms and mutation implementations stay lazy.
+              name(id, context) {
+                const reaches = (root: RegExp) => {
+                  const pending = [id]
+                  const visited = new Set<string>()
+                  while (pending.length) {
+                    const current = pending.pop()!
+                    if (visited.has(current)) continue
+                    visited.add(current)
+                    if (root.test(current)) return true
+                    pending.push(...(context.getModuleInfo(current)?.importers ?? []))
+                  }
+                  return false
+                }
+                const mock = reaches(/[\\/]src[\\/]mocks[\\/]browser\.ts$/)
+                const ui = reaches(/[\\/]src[\\/]app[\\/]mount\.tsx$/)
+                if (!mock && !ui) return null
+                if (/[\\/]node_modules[\\/]axios[\\/]/.test(id)) return 'http-client'
+                if (mock) return 'mock-network'
+                return /[\\/]node_modules[\\/]/.test(id) ? 'ui-vendor' : 'public-ui'
+              },
+            },
+          ],
+        },
+      },
+    },
+  },
   server: {
     watch: { ignored: ['**/reports/**', '**/playwright-report/**', '**/test-results/**'] },
   },

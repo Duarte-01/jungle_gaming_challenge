@@ -114,6 +114,7 @@ test('autenticação mantém foco, permite mostrar senha e explica ações auxil
 })
 
 test('conta, carteiras e pedidos adaptam conteúdo sem overflow', async ({ page }) => {
+  if (page.viewportSize()!.width === 1440) await page.setViewportSize({ width: 720, height: 450 })
   await login(page)
   for (const path of ['/perfil', '/carteiras', '/pedidos']) {
     await page.goto(path)

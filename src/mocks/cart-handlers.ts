@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw'
+import { HttpResponse, type HttpResponseResolver } from 'msw'
 import { z } from 'zod'
 import { cartSnapshot, validateCoupon } from './cart-state'
 import { emptyCart, transaction } from './database'
@@ -15,15 +15,8 @@ function assertMutationAvailable() {
     )
 }
 
-export const cartHandlers = [
-  http.get('/api/cart', ({ cookies }) =>
-    respond(() =>
-      transaction((database) =>
-        HttpResponse.json(cartSnapshot(database, cartOwner(database, cookies))),
-      ),
-    ),
-  ),
-  http.post('/api/cart/items', ({ cookies, request }) =>
+export const cartResolvers = {
+  'POST /api/cart/items': ({ cookies, request }) =>
     respond(async () => {
       const input = await parseBody(
         request,
@@ -58,8 +51,7 @@ export const cartHandlers = [
         return HttpResponse.json(cartSnapshot(database, owner), { status: 201 })
       })
     }),
-  ),
-  http.patch('/api/cart/items/:key', ({ params, cookies, request }) =>
+  'PATCH /api/cart/items/:key': ({ params, cookies, request }) =>
     respond(async () => {
       const { quantity } = await parseBody(request, z.object({ quantity: quantitySchema }))
       return transaction((database) => {
@@ -82,8 +74,7 @@ export const cartHandlers = [
         return HttpResponse.json(cartSnapshot(database, owner))
       })
     }),
-  ),
-  http.delete('/api/cart/items/:key', ({ params, cookies }) =>
+  'DELETE /api/cart/items/:key': ({ params, cookies }) =>
     respond(() =>
       transaction((database) => {
         const owner = cartOwner(database, cookies)
@@ -98,8 +89,7 @@ export const cartHandlers = [
         return HttpResponse.json(cartSnapshot(database, owner))
       }),
     ),
-  ),
-  http.post('/api/cart/coupon', ({ cookies, request }) =>
+  'POST /api/cart/coupon': ({ cookies, request }) =>
     respond(async () => {
       const { code } = await parseBody(
         request,
@@ -115,8 +105,7 @@ export const cartHandlers = [
         return HttpResponse.json(cartSnapshot(database, owner))
       })
     }),
-  ),
-  http.delete('/api/cart/coupon', ({ cookies }) =>
+  'DELETE /api/cart/coupon': ({ cookies }) =>
     respond(() =>
       transaction((database) => {
         const owner = cartOwner(database, cookies)
@@ -127,8 +116,7 @@ export const cartHandlers = [
         return HttpResponse.json(cartSnapshot(database, owner))
       }),
     ),
-  ),
-  http.post('/api/quotes', ({ cookies }) =>
+  'POST /api/quotes': ({ cookies }) =>
     respond(() =>
       transaction((database) => {
         const user = sessionUser(database, cookies)!
@@ -140,5 +128,4 @@ export const cartHandlers = [
         return HttpResponse.json(cart)
       }),
     ),
-  ),
-]
+} satisfies Record<string, HttpResponseResolver>

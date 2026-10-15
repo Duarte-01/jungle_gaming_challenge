@@ -4,7 +4,7 @@
 
 Em 15/10/2026 foram recebidos os ZIPs `modelo Desktop jungle gaming.zip` e `modelo Mobile jungle gaming.zip`. Os 13 PNGs originais estão em `docs/design-references`, com SHA-256 em `manifest.json`. O ZIP desktop inclui login, cadastro, perfil, carteiras, detalhe, carrinho, pagamento e confirmação. O ZIP mobile inclui login, cadastro, detalhe, carrinho e pagamento. A tela inicial usa as capturas desktop/mobile enviadas anteriormente no chat; essas capturas não estavam nos ZIPs.
 
-Os retratos do catálogo são os quatro PNGs originais de 250 × 250 pixels, documentados em `ASSETS.md`. Os arquivos de imagem não foram modificados. Ampliação e recortes da galeria são apresentações CSS do mesmo retrato, pois não foram recebidas quatro obras alternativas para cada NFT.
+Os retratos do catálogo são os quatro PNGs originais de 250 × 250 pixels, documentados em `ASSETS.md`. Os PNGs originais não foram modificados; a UI prefere derivados AVIF e oferece WebP/PNG como alternativas, conforme `ASSETS.md`. Ampliação e recortes da galeria são apresentações CSS do mesmo retrato, pois não foram recebidas quatro obras alternativas para cada NFT.
 
 ## Implementação
 
@@ -25,7 +25,7 @@ Os tokens estão em `src/index.css`. Tailwind participa da composição e dos ut
 
 ## Substituições e desvios conhecidos
 
-- **Fonte:** os ZIPs não incluem fonte nem especificação tipográfica. Foi usada IBM Plex Mono 400/600 local, por aproximação à referência. Não foi possível confirmar que seja a fonte original do Figma. Arquivos vêm de `@fontsource/ibm-plex-mono`; licença OFL em `public/licenses/ibm-plex-mono-OFL.txt`. A execução não depende de Google Fonts.
+- **Fonte:** os ZIPs não incluem fonte. O Figma mostrou ao candidato somente o token `font/family`, sem revelar o nome da família. Foi usada IBM Plex Mono local, por aproximação à referência (400/600 na UI; 500/700 isolados no destaque desktop). Não foi possível confirmar que seja a fonte original do Figma. As medidas fornecidas posteriormente pelo candidato foram aplicadas ao destaque desktop: saudação 14/16 px, peso 500 e tracking 10%; título 43/70 px e peso 700; descrição 14/24 px e peso 400. Arquivos vêm de `@fontsource/ibm-plex-mono`; licença OFL em `public/licenses/ibm-plex-mono-OFL.txt`. A execução não depende de Google Fonts.
 - **Ícones:** Lucide e letras nos benefícios do rodapé substituem símbolos sem asset dedicado. Os logotipos de provedores não foram extraídos dos PNGs.
 - **Acessibilidade:** controles pequenos receberam áreas de clique maiores e foco visível; abas permitem setas, Home e End; diálogos controlam e devolvem foco. Textos auxiliares explicam os campos e as operações simuladas.
 - **Dados reais da simulação:** preços, estoque, edição e itens do recibo vêm da API. Eles podem diferir dos valores estáticos do frame. Não foram fixados no componente para reproduzir um exemplo visual.
@@ -47,4 +47,6 @@ npm run build
 E2E_PREVIEW=true PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e -- visual.spec.ts --workers=2
 ```
 
-As baselines foram produzidas em Linux Debian 13, Chromium 154.0.8037.57 e Playwright 1.64.1. Em outra plataforma/browser, diferenças de renderização devem ser inspecionadas. Atualize com `--update-snapshots` somente após revisar a alteração visual; não use a atualização para esconder uma regressão.
+As baselines foram produzidas em Linux Debian 13, Chromium 154.0.8037.57 e Playwright 1.64.1. A CI usa agora o container Debian 13/Chromium 155 descrito em `ci/README.md`; as 12 capturas anteriores passaram nele antes da alteração de tipografia. Em outra plataforma/browser, diferenças de renderização devem ser inspecionadas. Atualize com `--update-snapshots` somente após revisar a alteração visual; não use a atualização para esconder uma regressão.
+
+Na etapa 6, somente `inicio-desktop-linux.png` foi atualizado após inspecionar a captura e o diff: a diferença ficou restrita ao destaque desktop, incluindo título, saudação, descrição e posição do botão. A mudança aplica as medidas fornecidas pelo candidato. As outras 11 baselines foram preservadas; tolerâncias e asserções não foram reduzidas.
