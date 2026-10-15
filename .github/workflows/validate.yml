@@ -17,6 +17,7 @@ jobs:
       - name: Build the pinned validation environment
         run: docker build --tag kurio-validation --file ci/Dockerfile ci
       - name: Check, build and test in the same browser environment as the baselines
+        shell: bash
         run: >-
           docker run --rm --ipc=host --user "$(id -u):$(id -g)"
           --mount type=bind,source="$GITHUB_WORKSPACE",target=/app
@@ -26,6 +27,10 @@ jobs:
           npm run typecheck && npm run lint && npm run format:check &&
           npm run test:unit && npm run build &&
           npm run test:e2e -- --workers=2 --retries=0'
+          2>&1 | tee /tmp/kurio-validate.log
+      - name: Summarize validation failure
+        if: failure()
+        run: python3 ci/summarize-failure.py /tmp/kurio-validate.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -33,6 +38,7 @@ jobs:
           path: |
             playwright-report/
             test-results/
+            /tmp/kurio-validate.log
           retention-days: 14
 
   lighthouse:
@@ -45,6 +51,7 @@ jobs:
       - name: Build the same pinned audit environment
         run: docker build --tag kurio-validation --file ci/Dockerfile ci
       - name: Audit all pages and enforce every Lighthouse target
+        shell: bash
         run: >-
           docker run --rm --ipc=host --user "$(id -u):$(id -g)"
           --mount type=bind,source="$GITHUB_WORKSPACE",target=/app
@@ -52,9 +59,15 @@ jobs:
           kurio-validation sh -c '
           node --version && chromium --version && npm ci &&
           npm run build && npm run audit:lighthouse'
+          2>&1 | tee /tmp/kurio-lighthouse.log
+      - name: Summarize audit failure
+        if: failure()
+        run: python3 ci/summarize-failure.py /tmp/kurio-lighthouse.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: lighthouse-reports
-          path: reports/lighthouse/
+          path: |
+            reports/lighthouse/
+            /tmp/kurio-lighthouse.log
           retention-days: 14
