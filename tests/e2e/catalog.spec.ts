@@ -1,8 +1,10 @@
 import { expect, test } from '@playwright/test'
+import { openCatalogSearch } from './helpers.js'
 
 test('busca compõe a URL e restaura após refresh e histórico', async ({ page }) => {
   await page.goto('/')
   await expect(page.locator('.nft-card')).toHaveCount(9)
+  await openCatalogSearch(page)
   const search = page.getByRole('searchbox', { name: 'Buscar NFTs' })
   await search.fill('Emerald')
   await search.press('Enter')
@@ -11,6 +13,8 @@ test('busca compõe a URL e restaura após refresh e histórico', async ({ page 
   await page.reload()
   await expect(search).toHaveValue('Emerald')
   await expect(page.locator('.nft-card')).toHaveCount(4)
+  await openCatalogSearch(page)
+  await expect(page).toHaveURL(/q=Emerald/)
   await search.fill('não existe')
   await search.press('Enter')
   await expect(page.getByRole('heading', { name: 'Nenhum NFT encontrado' })).toBeVisible()
@@ -60,6 +64,7 @@ test('carregamento lento, falha REST e recuperação pela interface', async ({ p
   await expect(page.getByLabel('Carregando catálogo')).toBeVisible()
   await expect(page.locator('.nft-card')).toHaveCount(9)
   await page.evaluate(() => localStorage.setItem('kurio:scenario', 'catalog-error'))
+  await openCatalogSearch(page)
   await page.getByRole('searchbox', { name: 'Buscar NFTs' }).fill('Sage')
   await page.getByRole('searchbox', { name: 'Buscar NFTs' }).press('Enter')
   await expect(

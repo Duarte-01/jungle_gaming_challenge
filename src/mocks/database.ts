@@ -1,9 +1,10 @@
 import type { Nft } from '../api/catalog'
-import type { User } from '../domain/account'
+import { suggestedCollectorHandle, type User } from '../domain/account'
 import { catalogFixtures } from './fixtures/catalog'
 import { hashPassword } from './password'
 import type { MarketEvent, SavedOrder, Wallet, WalletConnection } from '../domain/checkout'
 import { broadcast } from './event-bus'
+import { walletSchema } from '../domain/checkout'
 
 export interface SavedCart {
   items: { nftId: string; editionId: string; quantity: number }[]
@@ -43,7 +44,14 @@ async function createDatabase(): Promise<Database> {
       { id: 'collector-ana', name: 'Ana Colecionadora', email: 'ana@kurio.test' },
       { id: 'collector-bruno', name: 'Bruno Colecionador', email: 'bruno@kurio.test' },
     ].map(async (user) => ({
-      user: { ...user, phone: '', avatarUrl: null },
+      user: {
+        ...user,
+        username: user.email.split('@')[0],
+        ens: user.email.split('@')[0],
+        walletNickname: 'Minha carteira',
+        phone: '',
+        avatarUrl: null,
+      },
       password: await hashPassword('KurioDemo2026!'),
     })),
   )
@@ -59,6 +67,12 @@ async function createDatabase(): Promise<Database> {
         {
           id: 'wallet-ana-primary',
           role: 'primary',
+          provider: 'MetaMask',
+          profileName: 'Colecionador Kurio',
+          email: 'ana@kurio.test',
+          ens: 'ana',
+          referralCode: 'KURIO',
+          secondaryAddress: '',
           label: 'Carteira principal',
           address: `0x${'a'.repeat(40)}`,
           network: 'Ethereum',
@@ -67,6 +81,12 @@ async function createDatabase(): Promise<Database> {
         {
           id: 'wallet-ana-secondary',
           role: 'secondary',
+          provider: 'Coinbase Wallet',
+          profileName: 'Colecionador Kurio',
+          email: 'ana@kurio.test',
+          ens: 'ana',
+          referralCode: 'KURIO',
+          secondaryAddress: '',
           label: 'Carteira secundária',
           address: `0x${'b'.repeat(40)}`,
           network: 'Polygon',
@@ -77,6 +97,12 @@ async function createDatabase(): Promise<Database> {
         {
           id: 'wallet-bruno-primary',
           role: 'primary',
+          provider: 'MetaMask',
+          profileName: 'Colecionador Kurio',
+          email: 'bruno@kurio.test',
+          ens: 'bruno',
+          referralCode: 'KURIO',
+          secondaryAddress: '',
           label: 'Carteira principal',
           address: `0x${'c'.repeat(40)}`,
           network: 'Ethereum',
@@ -103,8 +129,28 @@ export async function readDatabase(): Promise<Database> {
     if (parsed.version !== 1 || !Array.isArray(parsed.users) || !Array.isArray(parsed.nfts))
       throw new Error('Formato de banco mock incompatível')
     // Migração aditiva: preserve contas, hashes e carrinhos criados na etapa anterior.
+    for (const nft of parsed.nfts) {
+      const original = catalogFixtures.find((item) => item.id === nft.id)
+      if (!original) continue
+      nft.collection ??= original.collection
+      nft.attributes ??= original.attributes
+      nft.rating ??= original.rating
+      nft.reviewCount ??= original.reviewCount
+      for (const edition of original.editions)
+        if (!nft.editions.some((item) => item.id === edition.id))
+          nft.editions.push(structuredClone(edition))
+    }
     parsed.wallets ??= {}
+    for (const record of parsed.users) {
+      const slug = suggestedCollectorHandle(record.user.email)
+      record.user.username ??= slug
+      record.user.ens ??= slug
+      record.user.walletNickname ??= 'Minha carteira'
+    }
+    for (const wallets of Object.values(parsed.wallets))
+      for (const wallet of wallets) Object.assign(wallet, walletSchema.parse(wallet))
     parsed.connections ??= {}
+    for (const connection of Object.values(parsed.connections)) connection.provider ??= 'MetaMask'
     parsed.orders ??= {}
     parsed.idempotency ??= {}
     parsed.events ??= []

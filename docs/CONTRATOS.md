@@ -4,17 +4,17 @@ Base: `/api`. Todas as chamadas da aplicação passam por Axios. Os handlers MSW
 
 ## Sessão, conta e perfil
 
-| Método e recurso        | Entrada                             | Resultado                                                                |
-| ----------------------- | ----------------------------------- | ------------------------------------------------------------------------ |
-| `POST /auth/register`   | `{ name, email, password }`         | 201, sessão com usuário; 409 se e-mail já cadastrado                     |
-| `POST /auth/login`      | `{ email, password }`               | 200, sessão; 401 para credenciais inválidas                              |
-| `GET /session`          | cookie                              | 200 com `{ user, expiresAt }`; usuário null sem sessão; 401 na expiração |
-| `POST /auth/logout`     | cookie                              | 204, invalidação da sessão                                               |
-| `GET /profile`          | sessão obrigatória                  | 200, perfil do usuário atual                                             |
-| `PATCH /profile`        | `{ name, email, phone, avatarUrl }` | 200, perfil atualizado; 409 em conflito de e-mail                        |
-| `PUT /profile/password` | `{ currentPassword, newPassword }`  | 204 e invalidação das sessões da conta; 422 se senha atual incorreta     |
+| Método e recurso        | Entrada                                                            | Resultado                                                                |
+| ----------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| `POST /auth/register`   | `{ name, email, password }`                                        | 201, sessão com usuário; 409 se e-mail já cadastrado                     |
+| `POST /auth/login`      | `{ email, password }`                                              | 200, sessão; 401 para credenciais inválidas                              |
+| `GET /session`          | cookie                                                             | 200 com `{ user, expiresAt }`; usuário null sem sessão; 401 na expiração |
+| `POST /auth/logout`     | cookie                                                             | 204, invalidação da sessão                                               |
+| `GET /profile`          | sessão obrigatória                                                 | 200, perfil do usuário atual                                             |
+| `PATCH /profile`        | `{ name, email, phone, avatarUrl, username, ens, walletNickname }` | 200, perfil atualizado; 409 em conflito de e-mail                        |
+| `PUT /profile/password` | `{ currentPassword, newPassword }`                                 | 204 e invalidação das sessões da conta; 422 se senha atual incorreta     |
 
-Sessão: `{ user: { id, name, email, phone, avatarUrl } | null, expiresAt: number | null, notices?: string[] }`. O horário de expiração está em milissegundos Unix. O identificador opaco fica em cookie, não na resposta JSON. Senhas e hashes não são retornados nos endpoints de perfil/sessão.
+Sessão: `{ user: { id, name, email, phone, avatarUrl, username, ens, walletNickname } | null, expiresAt: number | null, notices?: string[] }`. O horário de expiração está em milissegundos Unix. O identificador opaco fica em cookie, não na resposta JSON. Senhas e hashes não são retornados nos endpoints de perfil/sessão.
 
 ## Catálogo e favoritos
 
@@ -71,25 +71,25 @@ Valores de cenário: `default`, `slow`, `catalog-error`, `favorite-error`, `cart
 
 Todos exigem sessão e usam o titular do cookie.
 
-| Método e recurso            | Entrada                             | Resultado                                                     |
-| --------------------------- | ----------------------------------- | ------------------------------------------------------------- |
-| `GET /wallets`              | sessão                              | lista privada                                                 |
-| `POST /wallets`             | `{ label, address, network, role }` | 201, carteira; 409 em função/endereço duplicado               |
-| `PATCH /wallets/:id`        | mesmos campos                       | 200, versão incrementada; desconecta a carteira editada       |
-| `GET /wallet-connection`    | sessão                              | conexão da sessão ou null                                     |
-| `POST /wallets/:id/connect` | `{ network }`                       | conexão simulada; 422 para rede incompatível; 409 para recusa |
-| `DELETE /wallet-connection` | sessão                              | 204                                                           |
+| Método e recurso            | Entrada                                                                                                      | Resultado                                                     |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| `GET /wallets`              | sessão                                                                                                       | lista privada                                                 |
+| `POST /wallets`             | `{ label, address, network, role, provider?, profileName?, email?, ens?, referralCode?, secondaryAddress? }` | 201, carteira; 409 em função/endereço duplicado               |
+| `PATCH /wallets/:id`        | mesmos campos                                                                                                | 200, versão incrementada; desconecta a carteira editada       |
+| `GET /wallet-connection`    | sessão                                                                                                       | conexão da sessão ou null                                     |
+| `POST /wallets/:id/connect` | `{ network, provider? }`                                                                                     | conexão simulada; 422 para rede incompatível; 409 para recusa |
+| `DELETE /wallet-connection` | sessão                                                                                                       | 204                                                           |
 
-Carteira: `{ id, version, label, address, network, role }`. `network`: Ethereum, Polygon ou Solana; `role`: primary ou secondary, no máximo uma de cada por usuário. Conexão: `{ walletId, network, connectedAt }`. Nenhuma operação transfere fundos.
+Carteira: `{ id, version, label, address, network, role }`. `network`: Ethereum, Polygon ou Solana; `role`: primary ou secondary, no máximo uma de cada por usuário. Conexão: `{ walletId, network, provider, connectedAt }`. Nenhuma operação transfere fundos.
 
 ## Pedidos e idempotência
 
-| Método e recurso           | Entrada                                                                                                                        | Resultado                                                                                                                                |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `POST /orders`             | header `Idempotency-Key`; `{ customer: { name, email, phone }, walletId, walletVersion, network, quoteVersion, agreed: true }` | 201 pending; 200 replay da mesma tentativa; 409 conteúdo conflitante/cotação antiga/estoque/conexão/pedido pendente; 422 validação/cupom |
-| `GET /orders`              | sessão                                                                                                                         | lista dos pedidos do titular                                                                                                             |
-| `GET /orders/attempt/:key` | sessão                                                                                                                         | pedido da mesma tentativa; 404 se ainda não existe                                                                                       |
-| `GET /orders/:id`          | sessão                                                                                                                         | pedido; 404 inexistente; 403 de outro titular                                                                                            |
+| Método e recurso           | Entrada                                                                                                                                   | Resultado                                                                                                                                |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST /orders`             | header `Idempotency-Key`; `{ customer: { name, email, phone }, walletId, walletVersion, network, provider?, quoteVersion, agreed: true }` | 201 pending; 200 replay da mesma tentativa; 409 conteúdo conflitante/cotação antiga/estoque/conexão/pedido pendente; 422 validação/cupom |
+| `GET /orders`              | sessão                                                                                                                                    | lista dos pedidos do titular                                                                                                             |
+| `GET /orders/attempt/:key` | sessão                                                                                                                                    | pedido da mesma tentativa; 404 se ainda não existe                                                                                       |
+| `GET /orders/:id`          | sessão                                                                                                                                    | pedido; 404 inexistente; 403 de outro titular                                                                                            |
 
 A chave contém 16–100 caracteres alfanuméricos, `_` ou `-`; o cliente gera UUID. A associação é por usuário e chave, com fingerprint do corpo validado. Replay retorna o mesmo pedido mesmo após mudança do mercado. Conteúdo diferente retorna `IDEMPOTENCY_CONFLICT`. Um pedido pendente por usuário; `ORDER_IN_PROGRESS` informa `details.orderId` para retomada.
 
@@ -114,3 +114,13 @@ Novos cenários: `out-of-order`, `wallet-rejected`, `payment-declined`, `order-t
 | `/testing/events/replay`       | `{ type, resourceId, version?, copies? }` | retransmite evento duplicado/antigo; verifica titular se privado |
 
 O reset agora também limpa carteiras, conexões, pedidos, idempotência, eventos, rascunhos e tentativas. Erros podem incluir `details` além de `code`, `message` e `fields`; campos aninhados usam caminhos como `customer.phone`. Os controles são exclusivos da demonstração MSW.
+
+## Campos acrescentados após receber os frames
+
+Perfil inclui `username`, `ens` e `walletNickname`, validados e persistidos. `username` aceita letras ASCII, números, ponto, sublinhado e hífen (2–50 caracteres); `ens` aceita letras, números e hífen (2–50). A interface apresenta o sufixo ENS.
+
+Carteira acrescenta `profileName`, `email`, `ens`, `referralCode`, `secondaryAddress` e `provider` (`MetaMask`, `WalletConnect`, `Coinbase Wallet`). Campos novos têm defaults para compatibilidade com dados da etapa anterior. Endereço secundário vazio é permitido; quando preenchido deve ser ENS ou endereço em formato aceito. O endereço principal continua validado conforme a rede. Conexão registra também `provider`.
+
+Cliente do pedido acrescenta os campos do perfil, `profileName`, `referralCode` e `note` opcional de até 1.000 caracteres. A criação exige que rede, carteira e provedor coincidam com a conexão simulada atual. O snapshot preserva esses dados e o provedor conectado. A mesma chave idempotente com payload normalizado diferente continua retornando conflito; tentativas antigas são comparadas depois da aplicação dos defaults novos.
+
+Detalhe do NFT inclui coleção, descrição, atributos, avaliação agregada e total de avaliações simuladas. Edições incluem padrão, limitada, única e aberta, com disponibilidade devolvida pela API. Não há API de publicação de avaliações nem compra real.

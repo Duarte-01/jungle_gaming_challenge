@@ -115,7 +115,7 @@ test('cadastro valida campos, cria sessão e não persiste a senha em claro', as
   await page.getByRole('button', { name: 'Criar conta' }).click()
   await expect(page.getByLabel('Nome', { exact: true })).toHaveAttribute('aria-invalid', 'true')
   await page.getByLabel('Nome', { exact: true }).fill('Clara Digital')
-  await page.getByLabel('E-mail', { exact: true }).fill('clara@kurio.test')
+  await page.getByLabel('E-mail', { exact: true }).fill('a@kurio.test')
   await page.getByLabel('Senha', { exact: true }).fill('MinhaSenha2026!')
   await page.getByLabel('Confirmar senha', { exact: true }).fill('Diferente2026!')
   await page.getByRole('button', { name: 'Criar conta' }).click()
@@ -123,6 +123,8 @@ test('cadastro valida campos, cria sessão e não persiste a senha em claro', as
   await page.getByLabel('Confirmar senha', { exact: true }).fill('MinhaSenha2026!')
   await page.getByRole('button', { name: 'Criar conta' }).click()
   await expect(page.getByRole('heading', { name: 'Meu perfil' })).toBeVisible()
+  await page.getByRole('button', { name: 'Salvar perfil' }).click()
+  await expect(page.getByText('Perfil atualizado.', { exact: true })).toBeVisible()
   await page.reload()
   await expect(page.getByLabel('Nome', { exact: true })).toHaveValue('Clara Digital')
   expect(
@@ -185,7 +187,7 @@ test('carrinho calcula cupom, respeita quantidade e permite remoção', async ({
   await page.getByRole('button', { name: 'Remover cupom' }).click()
   await expect(page.getByTestId('cart-total')).toHaveText('3.575 ETH')
   await page.getByRole('spinbutton', { name: 'Quantidade de Emerald Ape #042' }).fill('5')
-  await page.getByRole('button', { name: 'Atualizar quantidade de Emerald Ape #042' }).click()
+  await page.getByRole('spinbutton', { name: 'Quantidade de Emerald Ape #042' }).press('Enter')
   await expect(page.getByTestId('cart-subtotal')).toHaveText('5.95 ETH')
   await expect(
     page.getByRole('button', { name: 'Aumentar quantidade de Emerald Ape #042' }),
@@ -205,6 +207,7 @@ test('favorito otimista faz rollback na falha e persiste no sucesso', async ({ p
     page.getByRole('status').filter({ hasText: 'Não foi possível atualizar o favorito.' }),
   ).toBeVisible()
   await expect(favorite).toHaveAttribute('aria-pressed', 'false')
+  await page.getByRole('button', { name: 'Fechar aviso', exact: true }).click()
   await scenario(page, 'default')
   await favorite.click()
   await expect(
@@ -305,6 +308,7 @@ test('perfil, avatar e senha persistem e tratam validação da API', async ({ pa
   await expect(page.getByRole('alert')).toHaveText('Este e-mail já está cadastrado.')
   await page.getByLabel('Senha atual', { exact: true }).fill('Errada2026!')
   await page.getByLabel('Nova senha', { exact: true }).fill('NovaSenha2026!')
+  await page.getByLabel('Confirmar nova senha', { exact: true }).fill('NovaSenha2026!')
   await page.getByRole('button', { name: 'Alterar senha', exact: true }).click()
   await expect(page.getByRole('alert').filter({ hasText: 'Senha atual incorreta.' })).toBeVisible()
   await page.getByLabel('Senha atual', { exact: true }).fill(password)

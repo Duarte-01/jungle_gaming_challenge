@@ -8,6 +8,8 @@ import { useCart } from '../hooks/use-cart'
 import { MarketHeader } from '../components/market-header'
 import { NftArt } from '../components/nft-art'
 import { Button } from '../components/ui/button'
+import { MarketFooter } from '../components/market-footer'
+import { RelatedNfts } from '../components/related-nfts'
 
 function CartRow({
   item,
@@ -29,10 +31,16 @@ function CartRow({
         <Link to="/nfts/$nftId" params={{ nftId: item.nft.id }}>
           <h2>{item.nft.name}</h2>
         </Link>
-        <p className="muted">
-          {item.editionLabel} · {item.nft.network}
+        <p className="cart-edition muted">
+          Edição:{' '}
+          {item.editionId === 'standard'
+            ? '1/50'
+            : item.editionId === 'limited'
+              ? '1/10'
+              : item.editionLabel}
         </p>
-        <p className="nft-price">{item.nft.priceEth} ETH</p>
+        <p className="cart-token muted">ID do token: #{item.nft.name.split('#')[1]}</p>
+        <p className="cart-unit-price nft-price">{item.nft.priceEth} ETH</p>
         {item.quantity > item.available && (
           <p role="alert">A disponibilidade mudou. Restam {item.available} unidades.</p>
         )}
@@ -70,7 +78,7 @@ function CartRow({
             onChange={(event) => setQuantity(event.target.value)}
             disabled={busy || !item.available}
             aria-invalid={Boolean(error)}
-            aria-describedby={error ? `quantity-error-${item.key}` : undefined}
+            aria-describedby={`quantity-help-${item.key}${error ? ` quantity-error-${item.key}` : ''}`}
           />
           <button
             type="button"
@@ -89,6 +97,9 @@ function CartRow({
             Atualizar
           </button>
         </form>
+        <p className="sr-only" id={`quantity-help-${item.key}`}>
+          Digite uma quantidade e pressione Enter para atualizar, ou use os botões de mais e menos.
+        </p>
         {error && (
           <p className="field-error" id={`quantity-error-${item.key}`} role="alert">
             {error}
@@ -115,10 +126,10 @@ export function CartPage() {
   const { cart, mutation, session } = useCart()
   const [coupon, setCoupon] = useState('')
   return (
-    <div className="kurio-app">
-      <MarketHeader />
+    <div className="kurio-app cart-app">
+      <MarketHeader title="Carrinho de NFTs" />
       <main className="container commerce-page">
-        <p className="eyebrow">Sua coleção está crescendo</p>
+        <p className="breadcrumbs">Início / Mercado / Carrinho</p>
         <h1>Carrinho de NFTs</h1>
         {cart.isPending ? (
           <div className="cart-skeleton shimmer" aria-label="Carregando carrinho" />
@@ -139,7 +150,17 @@ export function CartPage() {
           </section>
         ) : (
           <div className="cart-layout">
-            <section aria-label="Itens do carrinho" aria-busy={mutation.isPending}>
+            <section
+              className="cart-items"
+              aria-label="Itens do carrinho"
+              aria-busy={mutation.isPending}
+            >
+              <div className="cart-table-heading" aria-hidden="true">
+                <span>NFTs</span>
+                <span>Preço</span>
+                <span>Edições</span>
+                <span>Total</span>
+              </div>
               {cart.data.items.map((item) => (
                 <CartRow
                   key={`${item.key}:${item.quantity}`}
@@ -153,7 +174,7 @@ export function CartPage() {
               ))}
             </section>
             <aside className="order-summary" aria-label="Resumo do carrinho">
-              <h2>Resumo da coleção</h2>
+              <h2>Resumo da carteira</h2>
               {cart.data.couponProblem && <p role="alert">{cart.data.couponProblem}</p>}
               <dl>
                 <div>
@@ -161,7 +182,7 @@ export function CartPage() {
                   <dd data-testid="cart-subtotal">{cart.data.quote.subtotalEth} ETH</dd>
                 </div>
                 <div>
-                  <dt>Desconto</dt>
+                  <dt>Desconto do lançamento</dt>
                   <dd data-testid="cart-discount">−{cart.data.quote.discountEth} ETH</dd>
                 </div>
                 <div>
@@ -204,9 +225,15 @@ export function CartPage() {
                       onChange={(event) => setCoupon(event.target.value)}
                       maxLength={30}
                       required
+                      placeholder="Digite o código promocional..."
                     />
-                    <button type="submit" className="kurio-button" disabled={mutation.isPending}>
-                      Aplicar cupom
+                    <button
+                      type="submit"
+                      className="kurio-button"
+                      aria-label="Aplicar cupom"
+                      disabled={mutation.isPending}
+                    >
+                      Aplicar
                     </button>
                   </div>
                 </form>
@@ -217,8 +244,13 @@ export function CartPage() {
                 </Link>
               )}
               <Button asChild>
-                <Link to="/pagamento">Continuar para pagamento</Link>
+                <Link to="/pagamento" aria-label="Continuar para pagamento">
+                  Conectar e finalizar
+                </Link>
               </Button>
+              <Link to="/" search={defaultSearch} className="continue-shopping">
+                Continuar explorando
+              </Link>
             </aside>
           </div>
         )}
@@ -232,7 +264,9 @@ export function CartPage() {
             Carrinho atualizado.
           </p>
         )}
+        <RelatedNfts title="Colecionadores também viram" />
       </main>
+      <MarketFooter />
     </div>
   )
 }

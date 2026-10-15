@@ -10,7 +10,7 @@ O treino será feito depois de concluir e validar a entrega. Este arquivo guarda
 4. Entrar, favoritar, mostrar uma falha e o rollback.
 5. Adicionar ao carrinho, aplicar cupom e explicar a precisão dos valores.
 6. Demonstrar compra, timeout recuperado pela mesma chave, recibo e reconciliação em tempo real. Usar os exercícios da etapa 4.
-7. Mostrar testes, regressão visual, Lighthouse e deploy — **evidências finais ainda pendentes**.
+7. Mostrar testes, regressão visual e Lighthouse, incluindo limitações documentadas. Demonstrar o deploy somente depois da validação pública.
 8. Encerrar com decisões, limitações e o que faria numa aplicação de produção.
 
 ## Perguntas que vamos praticar
@@ -27,5 +27,7 @@ O treino será feito depois de concluir e validar a entrega. Este arquivo guarda
 - Como conciliar eventos Socket.IO com a API após reconexão?
 - Por que o recibo usa uma cópia dos dados da compra?
 - Quais limitações do mock impedem usá-lo como autenticação de produção?
+- O que as baselines visuais detectam e o que não comprovam sobre o Figma?
+- Por que uma nota mobile abaixo da meta deve ser documentada, mesmo quando os testes passam?
 
 Vamos ensaiar respostas com suas palavras e depois fazer uma entrevista simulada com perguntas de acompanhamento. Não é necessário decorar o código; é necessário saber localizar as responsabilidades e explicar o comportamento observado.

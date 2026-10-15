@@ -1,0 +1,54 @@
+[
+  {
+    "path": "desktop/Cadastro.png",
+    "sha256": "0f32fbcc2245d11c3f8aa914e7d09d501af571dd55f8e504ee6bd21c67fcdddb"
+  },
+  {
+    "path": "desktop/Carrinho de NFTs.png",
+    "sha256": "657872a77b2b15f89ce6d3ce9c0df94103cb9366969e12da2a2caa1fc5049247"
+  },
+  {
+    "path": "desktop/Carteiras.png",
+    "sha256": "47599ec976c86d2804156ba0513c995873e68e147174530b4656755013e9704f"
+  },
+  {
+    "path": "desktop/Confirmação de Pedido.png",
+    "sha256": "786c2e029b83a488c120325b86089ee6cb661eb506d4b6ba79b7895759dca1e8"
+  },
+  {
+    "path": "desktop/Detalhes do NFT.png",
+    "sha256": "ecf97468b3eefcd2b65a85eb194972275f857f1ed0f6fec736c6b513a9dc138f"
+  },
+  {
+    "path": "desktop/Login.png",
+    "sha256": "bb5b0e8580c3f56478206101995d4b781e85f0c3cf8ddd17907c78923dbefd70"
+  },
+  {
+    "path": "desktop/Pagamento.png",
+    "sha256": "150bdfcaa3056d7cc1f1928e9c36fa8094bba333e7c78cc661d0b1998840fd7e"
+  },
+  {
+    "path": "desktop/Perfil do Colecionador.png",
+    "sha256": "4b6fe1590dc8412bd7c4f81b965cd59bd10d7b3bed10fdf4ea52711d6918d181"
+  },
+  {
+    "path": "mobile/Cadastro.png",
+    "sha256": "448fffe89b23096e31e89c6451f89eb796532e2f1d3a6ff57b195cf90fdd3f17"
+  },
+  {
+    "path": "mobile/Carrinho de NFTs.png",
+    "sha256": "4c2dc7b511229661a39b6ff8e41a151767d28a8d7251c67ad193dcefe3dad3c4"
+  },
+  {
+    "path": "mobile/Detalhes do NFT.png",
+    "sha256": "705ddea892b04265607e47959e847ac52139127726d48138833cd93f87654655"
+  },
+  {
+    "path": "mobile/Login.png",
+    "sha256": "0defb81b141bc4c1d512a27f5b104bccdbfbecebf27ce6b3ecb538a0a83cc7fd"
+  },
+  {
+    "path": "mobile/Pagamento.png",
+    "sha256": "3897cb0296e172ec6515522a808c7cb7738b4e6abeff960bb01a883aa3d29815"
+  }
+]

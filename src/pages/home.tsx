@@ -1,23 +1,21 @@
 import { useState } from 'react'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
-import { Link, useNavigate, useSearch } from '@tanstack/react-router'
+import { Link, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import * as Dialog from '@radix-ui/react-dialog'
+import { ArrowRight, ChevronRight, Search, SlidersHorizontal, X } from 'lucide-react'
 import {
-  ArrowRight,
-  ChevronRight,
-  Heart,
-  Home,
-  Search,
-  ShoppingCart,
-  SlidersHorizontal,
-  UserRound,
-  X,
-} from 'lucide-react'
-import { defaultSearch, getCatalog, type CatalogSearch, type CatalogTab } from '../api/catalog'
+  defaultSearch,
+  getCatalog,
+  validateCatalogSearch,
+  type CatalogSearch,
+  type CatalogTab,
+} from '../api/catalog'
 import { CatalogFilters } from '../components/catalog-filters'
 import { NftArt } from '../components/nft-art'
 import { AccountActions } from '../components/market-header'
 import { FavoriteButton } from '../components/favorite-button'
+import { MarketFooter } from '../components/market-footer'
+import { MobileNav } from '../components/mobile-nav'
 
 const heroArts = ['emerald-ape', 'sage-nomad', 'neon-vessel']
 const tabs: { id: CatalogTab; label: string }[] = [
@@ -62,7 +60,8 @@ function CatalogSearchForm({
 }
 
 export function HomePage() {
-  const search = useSearch({ from: '/' })
+  const search = validateCatalogSearch(useSearch({ strict: false }))
+  const location = useLocation()
   const navigate = useNavigate({ from: '/' })
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [hero, setHero] = useState(0)
@@ -75,6 +74,7 @@ export function HomePage() {
     void navigate({
       search: (previous) => ({ ...previous, ...patch, page: patch.page ?? 1 }),
       resetScroll: false,
+      hash: window.location.hash.slice(1),
     })
   const filters = (
     <CatalogFilters
@@ -99,10 +99,14 @@ export function HomePage() {
           <a href="#criadores">Criadores</a>
           <a href="#aprenda">Aprenda</a>
         </nav>
-        <AccountActions />
+        <AccountActions catalogSearch={search} />
       </header>
       <main className="container" id="inicio">
-        <div className="search-row" id="busca">
+        <div
+          className="search-row"
+          id="busca"
+          data-open={location.hash.replace(/^#/, '') === 'busca'}
+        >
           <CatalogSearchForm
             key={search.q}
             initialValue={search.q}
@@ -261,10 +265,10 @@ export function HomePage() {
               </div>
             ) : (
               <div className="nft-grid" aria-busy={catalog.isFetching}>
-                {catalog.data?.items.map((nft) => (
+                {catalog.data?.items.map((nft, index) => (
                   <article className="nft-card" key={nft.id}>
                     <Link to="/nfts/$nftId" params={{ nftId: nft.id }}>
-                      <NftArt src={nft.image} name={nft.name} />
+                      <NftArt src={nft.image} name={nft.name} eager={index === 0} />
                       <h2>{nft.name}</h2>
                       <p className="nft-price">
                         {nft.priceEth} ETH{' '}
@@ -370,33 +374,9 @@ export function HomePage() {
             ))}
           </div>
         </section>
-        <footer className="kurio-footer">
-          <p className="brand">KURIO</p>
-          <p>
-            Feito para colecionadores,
-            <br />
-            criadores e cultura
-          </p>
-          <p>© 2026 Kurio. Propriedade digital para todos.</p>
-        </footer>
       </main>
-      <nav className="mobile-nav" aria-label="Navegação mobile">
-        <a href="#inicio" aria-current="page" aria-label="Início">
-          <Home />
-        </a>
-        <Link to="/favoritos" aria-label="Favoritos">
-          <Heart />
-        </Link>
-        <a href="#catalogo" className="mobile-explore" aria-label="Explorar NFTs">
-          <SlidersHorizontal />
-        </a>
-        <Link to="/carrinho" aria-label="Carrinho">
-          <ShoppingCart />
-        </Link>
-        <Link to="/perfil" aria-label="Meu perfil">
-          <UserRound />
-        </Link>
-      </nav>
+      <MarketFooter />
+      <MobileNav />
     </div>
   )
 }

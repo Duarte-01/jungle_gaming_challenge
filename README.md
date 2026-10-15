@@ -2,7 +2,7 @@
 
 Implementação em andamento do [desafio frontend](https://github.com/junglegaming/frontend-challenge).
 
-**Estado atual:** etapa 4. Início, catálogo, detalhe, contas, favoritos, perfil, carrinho, carteiras e compra simulada funcionam pela API MSW. A compra inclui revisão de valores, idempotência, recuperação de timeout, pedidos e recibo imutável. Eventos de negócio usam o cliente Socket.IO, com reconciliação REST na reconexão. Os quatro retratos originais recebidos no ZIP estão em `public/images/nfts/`. Ainda faltam a revisão visual com os demais frames do Figma, baselines visuais, auditorias Lighthouse e deploy público validado.
+**Estado atual:** etapa 5. Os fluxos de catálogo, conta e compra simulada estão implementados e foram revisados com os frames desktop/mobile recebidos. O projeto inclui baselines visuais, configuração e relatórios Lighthouse. Fonte aproximada e ajustes em relação ao Figma estão documentados em [DESIGN](docs/DESIGN.md). A publicação pública ainda depende da conta/autorização na Vercel e da validação da URL; veja o [passo a passo de deploy](docs/DEPLOY.md). Resultados e limitações das auditorias estão em [PERFORMANCE](docs/PERFORMANCE.md).
 
 ## Executar
 
@@ -25,6 +25,7 @@ npm run preview
 npm run browsers:install
 npm run test:e2e
 npm run test:report
+npm run audit:lighthouse
 ```
 
 Em um Linux sem as bibliotecas necessárias ao Chromium, instale as dependências do Playwright conforme sua documentação. No ambiente de nuvem, essa necessidade será diagnosticada durante a execução.
@@ -37,7 +38,7 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e
 
 Esse override é opcional: em outra máquina, `npm run browsers:install` e `npm run test:e2e` usam o browser do Playwright normalmente. A versão do Chromium da nuvem deve ser registrada junto dos resultados.
 
-Os testes atuais verificam infraestrutura, catálogo, contas, favoritos, carrinho, carteiras, checkout e pedidos nas larguras 390, 768 e 1440. Incluem recusa, timeout, reconexão, revisão de preços, estoque, cupons, taxas e isolamento de pedidos. Os testes unitários verificam precisão ETH e destinos de retorno após login. Os resultados executados estão em [VALIDACAO](docs/VALIDACAO.md); a cobertura visual e as auditorias ainda não estão concluídas. Relatórios HTML ficam em `playwright-report/`, e traces de falhas em `test-results/`. Os browsers ficam em `.cache/browsers/`.
+Os testes atuais verificam infraestrutura, catálogo, contas, favoritos, carrinho, carteiras, checkout e pedidos nas larguras 390, 768 e 1440. Incluem recusa, timeout, reconexão, revisão de preços, estoque, cupons, taxas e isolamento de pedidos. Os testes unitários verificam precisão ETH e destinos de retorno após login. Os resultados executados estão em [VALIDACAO](docs/VALIDACAO.md). As 12 baselines cobrem início, detalhe, carrinho e pagamento nos três tamanhos. Relatórios atuais são gerados em `playwright-report/`, e traces de falhas em `test-results/`. A entrega preserva uma cópia do relatório em `reports/playwright/` e as 12 auditorias HTML/JSON em `reports/lighthouse/`. Os browsers ficam em `.cache/browsers/`.
 
 ## Testar a demonstração manualmente
 
@@ -52,7 +53,7 @@ Abra um NFT, escolha uma edição e adicione ao carrinho. Favoritos exigem login
 
 Ana e Bruno **já estão cadastrados nas fixtures** para permitir testes imediatos. Você também pode usar `/cadastro` com um e-mail fictício novo; o cadastro cria a conta e inicia a sessão. Um e-mail desconhecido não entra pelo formulário de login.
 
-Para comprar, vá do carrinho para `/pagamento`, preencha o telefone, conecte a carteira simulada na rede cadastrada, marque a revisão dos dados e clique em **Revisar pedido**. Confira o resumo antes de **Confirmar compra simulada**. Só o retorno confirmado da API libera o recibo. Se sua base veio da etapa 3 ou a conta é nova, cadastre primeiro a carteira em `/carteiras`; a migração preserva seus dados anteriores. Endereço fictício Ethereum válido: `0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`.
+Para comprar, vá do carrinho para `/pagamento`, abra os dados do colecionador no mobile e preencha o telefone, conecte a carteira simulada na rede cadastrada, marque a revisão dos dados e clique em **Revisar pedido**. Confira o resumo antes de **Confirmar compra simulada**. Só o retorno confirmado da API libera o recibo. Se sua base veio da etapa 3 ou a conta é nova, cadastre primeiro a carteira em `/carteiras`; a migração preserva seus dados anteriores. Endereço fictício Ethereum válido: `0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`.
 
 Acesse `/setup` para selecionar cenários de falha, pagamento recusado, timeout após criar pedido ou pedido pendente. O painel de mercado altera preço/estoque, expira o cupom, interrompe o socket e conclui pedidos pendentes por requisições REST. Os eventos resultantes trafegam pelo Socket.IO. Retorne ao cenário **Padrão** para compras normais. **Restaurar dados de demonstração** apaga contas criadas e alterações locais, incluindo pedidos, carteiras e tentativas, e restaura as fixtures. O controle de reset continua acessível durante a falha simulada de conexão.
 
@@ -67,14 +68,18 @@ Os dados do mock ficam no navegador deste endereço, não no GitHub. Trocar a po
 - [Segunda etapa explicada](docs/ETAPA-02.md): URL, filtros, mocks e precisão ETH.
 - [Terceira etapa explicada](docs/ETAPA-03.md): sessão, isolamento, favoritos otimistas e carrinho.
 - [Quarta etapa explicada](docs/ETAPA-04.md): carteiras, revisão, idempotência, recibos e tempo real, com exercício passo a passo.
+- [Quinta etapa explicada](docs/ETAPA-05.md): composição dos frames, acessibilidade, novos campos e verificações, com exercício guiado.
+- [Referências visuais](docs/DESIGN.md): frames, fonte local, desvios e regressão visual.
+- [Performance](docs/PERFORMANCE.md): medianas Lighthouse, condições, relatórios e limitações.
+- [Publicação na Vercel](docs/DEPLOY.md): conta, branches, importação e validação pública.
 - [Imagens recebidas](docs/ASSETS.md): origem, dimensões e integridade dos PNGs.
 - [Contratos REST](docs/CONTRATOS.md): recursos, entradas, respostas e erros implementados.
 - [Preparação para apresentação](docs/APRESENTACAO.md): roteiro de estudo e perguntas do treino final.
 - [Arquitetura](ARCHITECTURE.md): decisões atuais e limites da base.
 - [Figma do desafio](https://www.figma.com/design/Ff0SksUi7UFtPWUO8kyNtw/Frontend-Challenge?node-id=0-1).
 
-## Publicação futura
+## Publicação
 
-Build: `npm run build`; diretório de saída: `dist`. Vercel é a opção inicial, com fallback de rotas em `vercel.json`. O arquivo `public/_redirects` prepara esse fallback para Netlify. A publicação e a validação de acesso direto às rotas ainda estão pendentes. Os mocks precisam permanecer ativos no deploy.
+Build: `npm run build`; saída: `dist`; mocks ativos por padrão, sem credenciais privadas. `vercel.json` prepara build e fallback de rotas; `netlify.toml` e `public/_redirects` preparam a alternativa Netlify. A configuração de hospedagem ainda precisa ser validada no serviço publicado.
 
-Esta versão permite demonstrar os fluxos de compra, mas ainda não é a entrega final do desafio. As pendências visuais, auditorias e publicação estão no roteiro.
+O código de desenvolvimento está na branch `feat/marketplace-base`. Revise e integre à `main` antes de importar a produção pela Vercel. **Publicar o ambiente do Codex**, **enviar commits ao GitHub** e **publicar o site** são operações diferentes. O guia [DEPLOY](docs/DEPLOY.md) explica cada passo. Nenhuma URL pública está declarada como validada nesta entrega local.

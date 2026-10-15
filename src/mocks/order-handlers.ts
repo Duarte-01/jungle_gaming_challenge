@@ -25,7 +25,9 @@ export const orderHandlers = [
         const fingerprint = JSON.stringify(input)
         const existing = database.idempotency[`${user.id}:${key}`]
         if (existing) {
-          if (existing.fingerprint !== fingerprint)
+          if (
+            JSON.stringify(orderInputSchema.parse(JSON.parse(existing.fingerprint))) !== fingerprint
+          )
             throw new ApiFault(
               409,
               'IDEMPOTENCY_CONFLICT',
@@ -59,6 +61,7 @@ export const orderHandlers = [
           !connection ||
           connection.walletId !== wallet.id ||
           connection.network !== input.network ||
+          connection.provider !== input.provider ||
           wallet.network !== input.network
         )
           throw new ApiFault(
@@ -78,7 +81,7 @@ export const orderHandlers = [
             items: cart.items,
             quote: cart.quote,
             coupon: cart.coupon,
-            wallet,
+            wallet: { ...wallet, provider: input.provider },
             customer: input.customer,
             network: input.network,
           }),

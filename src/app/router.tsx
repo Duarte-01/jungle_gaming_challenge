@@ -1,19 +1,23 @@
+import {
+  SetupPage,
+  HomePage,
+  NftDetailPage,
+  AuthPage,
+  CartPage,
+  FavoritesPage,
+  ProfilePage,
+  WalletsPage,
+  CheckoutPage,
+  ExplorerPage,
+  OrderPage,
+  OrdersPage,
+} from './route-components'
 import { createRootRoute, createRoute, createRouter, Link, Outlet } from '@tanstack/react-router'
-import { SetupPage } from '../pages/setup'
-import { HomePage } from '../pages/home'
-import { NftDetailPage } from '../pages/nft-detail'
 import { defaultSearch, validateCatalogSearch } from '../api/catalog'
-import { AuthPage } from '../pages/auth'
-import { CartPage } from '../pages/cart'
-import { FavoritesPage } from '../pages/favorites'
-import { ProfilePage } from '../pages/profile'
 import { requireSession } from '../auth/guard'
 import { SessionSync } from '../auth/session-sync'
 import { safeReturnTo } from '../domain/account'
 import { RouteError } from '../pages/route-error'
-import { WalletsPage } from '../pages/wallets'
-import { CheckoutPage } from '../pages/checkout'
-import { ExplorerPage, OrderPage, OrdersPage } from '../pages/orders'
 import { MarketRealtime } from '../realtime/market-realtime'
 
 const rootRoute = createRootRoute({

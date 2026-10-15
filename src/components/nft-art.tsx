@@ -25,6 +25,9 @@ export function NftArt({
         <img
           src={src}
           alt={name}
+          width={250}
+          height={250}
+          fetchPriority={eager ? 'high' : 'auto'}
           loading={eager ? 'eager' : 'lazy'}
           decoding="async"
           onError={() => setFailed(true)}

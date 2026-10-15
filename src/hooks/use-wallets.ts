@@ -40,8 +40,15 @@ export function useWallets() {
   })
   const connect = useMutation({
     mutationKey: [...prefix, 'connect-wallet'],
-    mutationFn: ({ id, network }: { id: string; network: Wallet['network'] }) =>
-      connectWallet(id, network),
+    mutationFn: ({
+      id,
+      network,
+      provider,
+    }: {
+      id: string
+      network: Wallet['network']
+      provider?: Wallet['provider']
+    }) => connectWallet(id, network, provider),
     onSuccess: (value) => {
       if (current()) queryClient.setQueryData([...prefix, 'connection'], value)
     },

@@ -24,13 +24,20 @@ export const catalogFixtures: Nft[] = Array.from({ length: 36 }, (_, index) => {
     priceEth,
     previousPriceEth: index === 2 ? '2.29' : undefined,
     creator: 'Kurio Studio',
+    collection: 'Kurio Apes',
+    attributes:
+      index % 9 === 0 ? ['Óculos', 'Esmeralda', 'Raro'] : ['Edição Kurio', 'Colecionável'],
+    rating: '4.8',
+    reviewCount: 19,
     description:
-      'Uma edição de arte digital da coleção Kurio. Explore a identidade, a expressão e os detalhes que tornam cada peça singular.',
+      'Um colecionável digital finalizado à mão da coleção Kurio Editions, verificado na Ethereum, com arte desbloqueável e acesso para colecionadores.',
     newRelease: index % 2 === 0,
     trending: index % 3 === 0,
     version: 1,
     editions: [
       { id: 'standard', label: 'Edição original', available: index === 35 ? 0 : 5 },
+      { id: 'unique', label: 'Edição única', available: 1 },
+      { id: 'open', label: 'Edição aberta', available: 10 },
       { id: 'limited', label: 'Edição limitada', available: index % 4 === 0 ? 0 : 2 },
     ],
   }

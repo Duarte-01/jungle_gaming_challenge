@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { z } from 'zod'
-import { networkSchema, walletSchema } from '../domain/checkout'
+import { networkSchema, providerSchema, walletSchema } from '../domain/checkout'
 import { transaction } from './database'
 import { ApiFault, parseBody, respond } from './http'
 import { sessionUser } from './session'
@@ -74,7 +74,10 @@ export const walletHandlers = [
   ),
   http.post('/api/wallets/:id/connect', ({ request, params, cookies }) =>
     respond(async () => {
-      const { network } = await parseBody(request, z.object({ network: networkSchema }))
+      const { network, provider } = await parseBody(
+        request,
+        z.object({ network: networkSchema, provider: providerSchema.default('MetaMask') }),
+      )
       return transaction((database) => {
         const user = sessionUser(database, cookies)!
         const wallet = database.wallets[user.id]?.find((entry) => entry.id === params.id)
@@ -92,7 +95,7 @@ export const walletHandlers = [
             'CONNECTION_REJECTED',
             'A conexão foi recusada pela carteira simulada.',
           )
-        const connection = { walletId: wallet.id, network, connectedAt: Date.now() }
+        const connection = { walletId: wallet.id, network, provider, connectedAt: Date.now() }
         database.connections[cookies.kurio_session!] = connection
         return HttpResponse.json(connection)
       })

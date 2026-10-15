@@ -7,10 +7,82 @@
       name="description"
       content="Projeto do desafio frontend Jungle Gaming: marketplace de NFTs com dados simulados."
     />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#140d0a" />
+    <style>
+      html {
+        background: #140d0a;
+        color: #f5f1eb;
+      }
+      body {
+        margin: 0;
+        min-width: 320px;
+      }
+      #root {
+        min-height: 100svh;
+      }
+      .bootstrap-header {
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        width: min(1200px, calc(100% - 48px));
+        height: 70px;
+        margin: auto;
+        font:
+          12px ui-monospace,
+          monospace;
+        border-bottom: 1px solid #3f2319;
+      }
+    </style>
+    <script>
+      // Request the visible artwork while the application and MSW initialize.
+      const artworkBySlug = {
+        'emerald-ape': 'emerald-ape',
+        'sage-nomad': 'sage-nomad',
+        'neon-vessel': 'neon-vessel',
+        'cosmic-bloom': 'sage-nomad',
+        'violet-nomad': 'sage-nomad',
+        'ivory-baron': 'neon-vessel',
+        'golden-beat': 'golden-beat',
+        'golden-echo': 'golden-beat',
+        'golden-signal': 'golden-beat',
+      }
+      const artworkSlug =
+        location.pathname === '/'
+          ? 'emerald-ape'
+          : location.pathname.startsWith('/nfts/')
+            ? location.pathname
+                .split('/')[2]
+                .replace(/-edition-\d+$/, '')
+                .replace(/-\d+$/, '')
+            : ''
+      if (artworkBySlug[artworkSlug]) {
+        const artworkPreload = document.createElement('link')
+        artworkPreload.rel = 'preload'
+        artworkPreload.as = 'image'
+        artworkPreload.fetchPriority = 'high'
+        artworkPreload.href = `/images/nfts/${artworkBySlug[artworkSlug]}.png`
+        document.head.append(artworkPreload)
+      }
+    </script>
     <title>Jungle Gaming — NFT Marketplace</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="kurio-app bootstrap-loading" role="status" aria-label="Preparando o marketplace">
+        <div class="container bootstrap-header">
+          <span class="brand">KURIO</span><span>Preparando sua experiência…</span>
+        </div>
+        <div class="container bootstrap-body">
+          <div class="shimmer"></div>
+          <div class="shimmer"></div>
+          <div class="shimmer"></div>
+        </div>
+      </div>
+    </div>
+    <noscript>Ative o JavaScript para explorar o catálogo e sua coleção.</noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

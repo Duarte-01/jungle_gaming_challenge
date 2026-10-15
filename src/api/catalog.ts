@@ -34,6 +34,10 @@ export interface Nft {
   network: string
   priceEth: string
   previousPriceEth?: string
+  collection?: string
+  attributes?: string[]
+  rating?: string
+  reviewCount?: number
   creator: string
   description: string
   newRelease: boolean
