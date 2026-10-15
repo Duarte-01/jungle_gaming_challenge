@@ -14,7 +14,9 @@
     "test:e2e:ui": "node scripts/playwright.mjs test --ui",
     "test:report": "node scripts/playwright.mjs show-report",
     "browsers:install": "node scripts/playwright.mjs install chromium",
-    "test:unit": "node --test tests/unit/*.test.mjs"
+    "test:unit": "node --test tests/unit/*.test.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@mswjs/socket.io-binding": "^0.2.0",
@@ -32,7 +34,8 @@
     "react-dom": "^19.2.8",
     "socket.io-client": "^4.8.4",
     "tailwind-merge": "^3.7.0",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
@@ -42,6 +45,7 @@
     "@vitejs/plugin-react": "^6.1.1",
     "lighthouse": "^13.5.0",
     "oxlint": "^1.81.0",
+    "prettier": "^3.9.10",
     "typescript": "~6.0.2",
     "vite": "^8.3.0"
   },

@@ -19,7 +19,9 @@ test('busca compõe a URL e restaura após refresh e histórico', async ({ page 
   await expect(page.locator('.nft-card')).toHaveCount(4)
 })
 
-test('filtros combinados, ordenação e paginação usam os parâmetros da API', async ({ page }, testInfo) => {
+test('filtros combinados, ordenação e paginação usam os parâmetros da API', async ({
+  page,
+}, testInfo) => {
   await page.goto('/')
   await expect(page.locator('.nft-card')).toHaveCount(9)
   await page.getByRole('button', { name: 'Página 2', exact: true }).click()
@@ -27,7 +29,9 @@ test('filtros combinados, ordenação e paginação usam os parâmetros da API',
   await expect(page.getByRole('heading', { name: 'Emerald Ape #609' })).toBeVisible()
   const mobile = testInfo.project.name === 'mobile'
   if (mobile) await page.getByRole('button', { name: 'Abrir filtros' }).click()
-  const filters = mobile ? page.getByRole('dialog') : page.getByRole('complementary', { name: 'Filtros de catálogo' })
+  const filters = mobile
+    ? page.getByRole('dialog')
+    : page.getByRole('complementary', { name: 'Filtros de catálogo' })
   await filters.getByRole('button', { name: /^Arte digital/ }).click()
   await filters.getByRole('button', { name: /^Ethereum/ }).click()
   if (mobile) await page.getByRole('button', { name: 'Ver resultados' }).click()
@@ -35,7 +39,9 @@ test('filtros combinados, ordenação e paginação usam os parâmetros da API',
   await expect(page).toHaveURL(/network=Ethereum/)
   await expect(page).toHaveURL(/page=1/)
   await page.getByRole('combobox', { name: 'Ordenar por:' }).selectOption('price-asc')
-  await expect(page.locator('.nft-card').first().getByRole('heading')).toHaveText('Golden Signal #160')
+  await expect(page.locator('.nft-card').first().getByRole('heading')).toHaveText(
+    'Golden Signal #160',
+  )
   await expect(page.locator('.catalog-status')).toHaveText('12 NFTs encontrados')
 })
 
@@ -56,7 +62,9 @@ test('carregamento lento, falha REST e recuperação pela interface', async ({ p
   await page.evaluate(() => localStorage.setItem('kurio:scenario', 'catalog-error'))
   await page.getByRole('searchbox', { name: 'Buscar NFTs' }).fill('Sage')
   await page.getByRole('searchbox', { name: 'Buscar NFTs' }).press('Enter')
-  await expect(page.getByRole('heading', { name: 'Não foi possível carregar os NFTs.' })).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'Não foi possível carregar os NFTs.' }),
+  ).toBeVisible()
   await page.evaluate(() => localStorage.removeItem('kurio:scenario'))
   await page.getByRole('button', { name: 'Tentar novamente' }).click()
   await expect(page.locator('.nft-card')).toHaveCount(4)

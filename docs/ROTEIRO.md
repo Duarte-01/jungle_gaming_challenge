@@ -22,15 +22,16 @@ Não adiar a primeira publicação até o último minuto; publicar uma versão f
 
 - [x] Enunciado lido e stack identificada.
 - [x] Base da aplicação criada.
-- [ ] Fidelidade visual e assets originais: capturas desktop/mobile do início recebidas; fonte e retratos isolados pendentes.
-- [ ] Catálogo e detalhe completos: listagem, filtros na URL e detalhe parcial implementados; favoritos e ações de compra pendentes.
-- [ ] Conta, sessão e isolamento de dados.
-- [ ] Favoritos e rollback.
-- [ ] Carrinho, cotação e precisão ETH.
+- [ ] Fidelidade visual e assets originais: capturas desktop/mobile do início recebidas; fonte e PNGs acessíveis ao ambiente pendentes; quatro retratos visualizados no chat.
+- [ ] Catálogo e detalhe completos: listagem, filtros na URL e detalhe parcial implementados; favoritos e adição ao carrinho implementados; revisão visual e compra pendentes.
+- [x] Conta, sessão e isolamento de dados.
+- [x] Favoritos e rollback.
+- [x] Carrinho, cotação atual, cupons e precisão ETH; revalidação final da compra pendente.
 - [ ] Checkout, idempotência e confirmação.
-- [ ] Perfil e carteiras.
+- [x] Perfil, avatar e alteração de senha.
+- [ ] Carteiras.
 - [ ] Eventos de negócio, versões e reconexão.
-- [ ] Cenários determinísticos e reset completo.
+- [ ] Cenários finais: controles e reset completos dos recursos da etapa 3 implementados; compra e eventos ainda pendentes.
 - [ ] 12 grupos de E2E e regressão visual.
 - [ ] Auditorias Lighthouse e relatórios.
 - [ ] Deploy público validado.
@@ -41,3 +42,5 @@ Não adiar a primeira publicação até o último minuto; publicar uma versão f
 Não trocar tecnologias obrigatórias, confirmar compra sem resposta da API, simular eventos diretamente na UI ou desativar testes para obter resultados positivos. Cada recurso deve incluir o tratamento de erro e sua evidência. Lacunas devem ser registradas claramente, sem apresentá-las como concluídas.
 
 O candidato deve conseguir explicar: URL como estado de filtros, cache por usuário, precisão dos preços, idempotência, reconciliação REST/Socket.IO e o que os testes observam.
+
+O treino final de apresentação está registrado em `docs/APRESENTACAO.md`. Ele será feito com os recursos e as evidências reais da entrega, sem antecipar a conclusão de itens pendentes.

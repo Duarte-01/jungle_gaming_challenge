@@ -44,3 +44,19 @@ Após as capturas fornecidas pelo candidato, foram adicionados início responsiv
 Cobertura adicionada: busca e histórico, refresh, filtros combinados, ordenação, paginação, detalhe direto, NFT inexistente, edição esgotada, carregamento lento, erro MSW 503 e nova tentativa. O mobile também verifica o foco do diálogo de filtros e o retorno do foco após Escape.
 
 Os retratos originais ainda faltam. As capturas locais da interface mostram fallbacks, portanto esta execução **não valida fidelidade visual**, assets finais, Lighthouse, favoritos, sessão, carrinho ou compra. Não há baselines visuais finais nem deploy público.
+
+## Etapa 3 — sessão, favoritos, carrinho e perfil
+
+Ambiente: Node.js 24.19.0, Chromium do sistema 154.0.8037.57, Playwright 1.64.1. A execução final usou o build otimizado (`E2E_PREVIEW=true`) e dois workers.
+
+- Build e TypeScript: passaram.
+- Lint: passou, sem avisos.
+- Prettier: passou.
+- Testes unitários: **3 passaram** (precisão ETH e validação do retorno após login).
+- Playwright: **57 passaram**, sem falhas ou skips, em aproximadamente 1,4 minuto. São 19 casos em cada um dos três viewports, não 57 cenários diferentes.
+
+Os 12 casos adicionados por viewport verificam cadastro e confirmação de senha, conflito de e-mail e login inválido, carrinho visitante persistente, combinação com carrinho existente e ajuste de estoque, cupons e quantidades, favoritos otimistas e rollback, troca de usuário, expiração e retomada, falha de mutation, perfil/avatar/senha, negação de recursos privados e reset.
+
+O teste de reset espera a interface comprovar o início do MSW antes de emitir requisições de controle, e aguarda o reload real após a restauração. O teste de favoritos aguarda a confirmação posterior à resposta da API antes de recarregar a página. As asserções incluem interface, respostas HTTP e persistência, sem substituir os handlers MSW por respostas do Playwright.
+
+As evidências atuais não validam carteiras, compra idempotente, pagamento, recibos, eventos de negócio, reconexão de pedido, regressão visual final, Lighthouse ou deploy público. As imagens aparecem no chat, mas os arquivos originais ainda não estão acessíveis ao checkout. A composição das novas telas também depende dos frames correspondentes do Figma.
