@@ -59,6 +59,7 @@ export interface ApiProblem {
   code: string
   message: string
   fields?: Record<string, string>
+  details?: Record<string, unknown>
 }
 
 export type RegisterInput = z.infer<typeof registerSchema>
@@ -67,7 +68,7 @@ export type ProfileInput = z.infer<typeof profileSchema>
 
 export function fieldErrors(error: z.ZodError): Record<string, string> {
   return Object.fromEntries(
-    error.issues.map((issue) => [String(issue.path[0] ?? 'form'), issue.message]),
+    error.issues.map((issue) => [issue.path.length ? issue.path.join('.') : 'form', issue.message]),
   )
 }
 

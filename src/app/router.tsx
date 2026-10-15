@@ -11,12 +11,17 @@ import { requireSession } from '../auth/guard'
 import { SessionSync } from '../auth/session-sync'
 import { safeReturnTo } from '../domain/account'
 import { RouteError } from '../pages/route-error'
+import { WalletsPage } from '../pages/wallets'
+import { CheckoutPage } from '../pages/checkout'
+import { ExplorerPage, OrderPage, OrdersPage } from '../pages/orders'
+import { MarketRealtime } from '../realtime/market-realtime'
 
 const rootRoute = createRootRoute({
   errorComponent: RouteError,
   component: () => (
     <>
       <SessionSync />
+      <MarketRealtime />
       <Outlet />
     </>
   ),
@@ -75,6 +80,37 @@ const profileRoute = createRoute({
   beforeLoad: requireSession,
   component: ProfilePage,
 })
+const walletsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/carteiras',
+  validateSearch: (input: Record<string, unknown>) => ({ redirect: safeReturnTo(input.redirect) }),
+  beforeLoad: requireSession,
+  component: WalletsPage,
+})
+const checkoutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/pagamento',
+  beforeLoad: requireSession,
+  component: CheckoutPage,
+})
+const ordersRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/pedidos',
+  beforeLoad: requireSession,
+  component: OrdersPage,
+})
+const orderRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/pedidos/$orderId',
+  beforeLoad: requireSession,
+  component: OrderPage,
+})
+const explorerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/explorador/$reference',
+  beforeLoad: requireSession,
+  component: ExplorerPage,
+})
 export const router = createRouter({
   routeTree: rootRoute.addChildren([
     indexRoute,
@@ -85,6 +121,11 @@ export const router = createRouter({
     cartRoute,
     favoritesRoute,
     profileRoute,
+    walletsRoute,
+    checkoutRoute,
+    ordersRoute,
+    orderRoute,
+    explorerRoute,
   ]),
 })
 

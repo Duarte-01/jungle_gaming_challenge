@@ -8,7 +8,15 @@ export const catalogHandlers = [
     const url = new URL(request.url)
     const search = validateCatalogSearch(Object.fromEntries(url.searchParams))
     const scenario = localStorage.getItem('kurio:scenario')
-    await delay(scenario === 'slow' ? 2000 : 250)
+    await delay(
+      scenario === 'slow'
+        ? 2000
+        : scenario === 'out-of-order'
+          ? search.q.toLowerCase().includes('emerald')
+            ? 1000
+            : 100
+          : 250,
+    )
     if (scenario === 'offline') return HttpResponse.error()
     if (scenario === 'catalog-error')
       return HttpResponse.json(

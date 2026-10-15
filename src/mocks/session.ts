@@ -41,7 +41,15 @@ export function createSession(
   cookies: Record<string, string | undefined>,
 ): Session {
   const previousToken = cookies.kurio_session
-  if (previousToken) delete database.sessions[previousToken]
+  if (previousToken) {
+    delete database.sessions[previousToken]
+    delete database.connections[previousToken]
+  }
+  for (const [key, session] of Object.entries(database.sessions))
+    if (session.expiresAt <= Date.now()) {
+      delete database.sessions[key]
+      delete database.connections[key]
+    }
   const token = crypto.randomUUID()
   const expiresAt = Date.now() + 30 * 60_000
   database.sessions[token] = { userId: user.id, expiresAt }
@@ -51,6 +59,7 @@ export function createSession(
   const cart = (database.carts[owner] ??= emptyCart())
   const notices: string[] = []
   if (visitorCart) {
+    const changed = visitorCart.items.length > 0 || Boolean(!cart.coupon && visitorCart.coupon)
     for (const item of visitorCart.items) {
       const nft = database.nfts.find((entry) => entry.id === item.nftId)
       const edition = nft?.editions.find((entry) => entry.id === item.editionId)
@@ -71,7 +80,7 @@ export function createSession(
       else cart.items.push({ ...item, quantity })
     }
     cart.coupon ||= visitorCart.coupon
-    cart.revision++
+    if (changed) cart.revision++
     database.carts[visitorKey] = emptyCart()
   }
   setCookie('kurio_session', token)
