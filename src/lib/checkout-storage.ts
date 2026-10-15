@@ -29,6 +29,13 @@ export function clearAttempt(userId: string, orderId?: string) {
 }
 
 const draftSchema = z.object({
+  username: z.string().default('colecionador'),
+  ens: z.string().default('colecionador'),
+  walletNickname: z.string().default('Minha carteira'),
+  profileName: z.string().default('Colecionador Kurio'),
+  referralCode: z.string().default('KURIO'),
+  note: z.string().default(''),
+  provider: z.enum(['WalletConnect', 'MetaMask', 'Coinbase Wallet']).default('MetaMask'),
   name: z.string(),
   email: z.string(),
   phone: z.string(),

@@ -1,6 +1,12 @@
 import { http, HttpResponse } from 'msw'
 import { z } from 'zod'
-import { changePasswordSchema, loginSchema, profileSchema, registerSchema } from '../domain/account'
+import {
+  changePasswordSchema,
+  loginSchema,
+  profileSchema,
+  registerSchema,
+  suggestedCollectorHandle,
+} from '../domain/account'
 import type { Favorites } from '../api/cart'
 import { clearSessionCookie, readDatabase, resetDatabase, transaction } from './database'
 import { ApiFault, controlResponse, parseBody, respond } from './http'
@@ -43,6 +49,9 @@ export const accountHandlers = [
         const user = {
           id: crypto.randomUUID(),
           name: input.name,
+          username: suggestedCollectorHandle(input.email),
+          ens: suggestedCollectorHandle(input.email),
+          walletNickname: 'Minha carteira',
           email: input.email,
           phone: '',
           avatarUrl: null,

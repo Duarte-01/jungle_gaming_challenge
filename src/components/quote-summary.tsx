@@ -3,10 +3,11 @@ import type { Cart } from '../api/cart'
 export function QuoteSummary({ cart }: { cart: Cart }) {
   return (
     <aside className="order-summary" aria-label="Resumo do pedido">
-      <h2>Resumo do pedido</h2>
+      <h2>Seus NFTs</h2>
       <ul className="review-items">
         {cart.items.map((item) => (
           <li key={item.key}>
+            <img src={item.nft.image} alt="" width={70} height={70} />
             <span>
               {item.quantity} × {item.nft.name}
             </span>

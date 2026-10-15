@@ -1,6 +1,6 @@
 # Evidências de validação
 
-**Resultado atual: etapa 4, ao final deste documento.** As etapas anteriores são registros históricos; suas listas de pendências descrevem a versão daquela data.
+**Resultado atual: etapa 5, ao final deste documento.** As etapas anteriores são registros históricos; suas listas de pendências descrevem a versão daquela data.
 
 ## Etapa 1 — infraestrutura
 
@@ -99,3 +99,30 @@ A inspeção adicional gerou capturas de início, pagamento revisado e recibo na
 O timeout de abertura do socket foi ajustado para 1 s após reproduzir uma interrupção durante o handshake. Os testes de reconexão foram repetidos com o transporte real da simulação e passaram; o estado não foi substituído por um controle direto da interface.
 
 O relatório HTML local da execução completa fica em `playwright-report/index.html`. Os resultados e capturas temporárias não são artefatos finais versionados. Ainda faltam baselines visuais, auditorias Lighthouse com relatórios e medianas, comparação dos demais frames e validação de deploy público. Não há evidência de conclusão desses requisitos.
+
+## Etapa 5 — frames, campos, acessibilidade e evidências
+
+Execução em 15/10/2026, Debian 13, Node.js 24.19.0, npm 11.9.0, Playwright 1.64.1 e Chromium do sistema 154.0.8037.57. Build de produção, quatro workers, retries desativados.
+
+- TypeScript, lint sem avisos, formatação e build: passaram.
+- Unitários: **3 passaram**, sem falhas ou skips.
+- Playwright: **129 passaram**, sem falhas, skips ou casos flaky, em aproximadamente 3,7 minutos. São 43 casos em cada uma das larguras 390, 768 e 1440 px.
+- Os 129 incluem **12 comparações de screenshots**: início, detalhe, carrinho e pagamento nos três tamanhos. As baselines foram criadas, inspecionadas e depois comparadas sem `--update-snapshots`.
+- `npm ci` foi reproduzido com o novo lockfile; checks e build passaram após a reinstalação. As correções posteriores também passaram pela verificação de tipos/lint/build e pela suíte acima.
+- Integridade confirmada dos 13 PNGs de referência e dos quatro retratos originais. Fontes são locais e têm licença incluída.
+
+Comando da suíte completa:
+
+```bash
+CI=true E2E_PREVIEW=true PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e -- --workers=4 --retries=0
+```
+
+O relatório HTML dessa execução está preservado em `reports/playwright/index.html`. `reports/validation.json` contém estatísticas extraídas do próprio relatório, condições e hashes do build. Os relatórios normais continuam sendo gerados em `playwright-report/`.
+
+Uma execução anterior terminou com 128 aprovações e uma falha de clique no favorito mobile: o aviso global de erro cobria o controle. O teste seguinte passou a fechar o aviso pelo botão disponível antes da nova tentativa, preservando as verificações de falha, rollback e persistência. A execução anterior, seu screenshot e trace estão em `reports/playwright-before-notice-dismiss/`; ela não é apresentada como aprovada. Os testes não usam force click, respostas de negócio via `page.route`, troca de cache ou setters de UI para contornar os fluxos.
+
+Além dos 12 grupos do enunciado cobertos pela suíte anterior, a etapa acrescenta galeria e retorno de foco, abas por teclado, estabilidade do detalhe lento, validação/persistência dos novos campos de perfil, reconexão e nova revisão ao trocar provedor, snapshot de dados do colecionador, mostrar/ocultar senha, feedback de ações fora do escopo e ausência de overflow nas telas da conta. O cadastro com e-mail de identificador curto também consegue salvar o perfil gerado. A busca desktop é aberta pelo ícone real, preserva filtros e volta aberta após refresh. Quantidade digitada no carrinho é confirmada por Enter.
+
+As referências e diferenças visuais estão em `DESIGN.md`. As baselines verificam regressão da implementação; não são prova de igualdade pixel a pixel com o Figma. Fonte original não fornecida. A performance e as 12 auditorias Lighthouse são detalhadas em `PERFORMANCE.md`. A publicação pública e sua validação continuam pendentes da conta/autorização do usuário; configuração de hospedagem não é evidência de deploy. O workflow do GitHub foi preparado, mas sua execução remota ainda não foi validada.
+
+O servidor de desenvolvimento foi reiniciado após a instalação. Um contexto de browser novo completou o caminho catálogo → detalhe → carrinho → login → pagamento → confirmação → refresh do recibo, seguido da verificação REST/Socket.IO em `/setup`, sem erros JavaScript. Isso valida a execução atual de desenvolvimento, além do build E2E; não comprova o deploy público. O lint exclui `reports/**`, que contém JavaScript gerado do visualizador de traces do Playwright; o código da aplicação, testes, scripts e configurações continuam sendo analisados.

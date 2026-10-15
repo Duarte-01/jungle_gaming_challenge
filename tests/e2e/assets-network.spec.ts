@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { openCatalogSearch } from './helpers.js'
 
 test('retratos originais carregam e catálogo mantém a busca mais recente', async ({ page }) => {
   await page.goto('/')
@@ -24,6 +25,7 @@ test('retratos originais carregam e catálogo mantém a busca mais recente', asy
       ).status,
   )
   expect(controlStatus).toBe(200)
+  await openCatalogSearch(page)
   const search = page.getByRole('searchbox', { name: 'Buscar NFTs' })
   await search.fill('Emerald')
   await Promise.all([

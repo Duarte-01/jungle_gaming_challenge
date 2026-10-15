@@ -16,9 +16,11 @@
     "browsers:install": "node scripts/playwright.mjs install chromium",
     "test:unit": "node --test tests/unit/*.test.mjs",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "audit:lighthouse": "node scripts/lighthouse.mjs"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-mono": "5.3.0",
     "@mswjs/socket.io-binding": "^0.2.0",
     "@radix-ui/react-dialog": "^1.3.1",
     "@radix-ui/react-slot": "^1.5.0",

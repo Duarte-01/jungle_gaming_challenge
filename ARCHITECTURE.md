@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Esta documentação descreve a base até a etapa 4. A página inicial segue a composição das capturas fornecidas e usa os quatro retratos originais. Conta, perfil, favoritos, carrinho, carteiras, checkout e pedidos estão implementados. A tela técnica fica em `/setup`. A comparação visual completa depende dos demais frames e da fonte do Figma.
+Esta documentação descreve a base até a etapa 5. A página inicial segue a composição das capturas fornecidas e usa os quatro retratos originais. Conta, perfil, favoritos, carrinho, carteiras, checkout e pedidos estão implementados. A tela técnica fica em `/setup`. Os 13 frames recebidos foram usados na revisão; fonte original não fornecida, substituições e desvios conhecidos estão em `docs/DESIGN.md`.
 
 ## Responsabilidades
 
@@ -32,9 +32,9 @@ Endpoint de transporte: `/realtime/`. As rotas são importadas dinamicamente ap�
 
 ## Decisões e pendências
 
-Vite simplifica desenvolvimento e build; Tailwind 4 participa pelo plugin do Vite. Um Button no padrão shadcn/ui usa Radix Slot, CVA e a composição `clsx`/`tailwind-merge`. As cores e fontes atuais são provisórias; dependem do acesso ao layout. Nenhuma substituição de asset do Figma foi aprovada ou avaliada.
+Vite simplifica desenvolvimento e build; Tailwind 4 participa pelo plugin do Vite. Um Button no padrão shadcn/ui usa Radix Slot, CVA e a composição `clsx`/`tailwind-merge`. Cores foram extraídas dos PNGs recebidos. IBM Plex Mono 400/600 local é uma aproximação, pois os exports não especificam a fonte. Lucide substitui ícones sem arquivo dedicado. Os quatro retratos permanecem originais; a galeria apresenta recortes CSS da mesma arte. As decisões visuais e ajustes de acessibilidade estão em `docs/DESIGN.md`.
 
-Os testes iniciais exercitam rede e navegador, mas não comprovam o atendimento ao desafio. Lighthouse está instalado; os scripts específicos, as medições e a análise serão feitos sobre páginas funcionais e assets finais. O deploy ainda não foi executado.
+Playwright cobre fluxos e falhas, com baselines para quatro telas nos três viewports. Lighthouse mede início/detalhe três vezes por perfil, no build real com mocks padrão; relatórios e análise estão em `docs/PERFORMANCE.md`. A nota de performance mobile abaixo da meta é uma limitação registrada. O deploy público ainda exige autorização no serviço e validação da URL.
 
 Os contratos implementados estão em `docs/CONTRATOS.md`. `docs/ETAPA-04.md` explica compra e tempo real. Os registros das etapas anteriores descrevem o estado histórico; os PNGs então pendentes foram incorporados nesta etapa, conforme `docs/ASSETS.md`.
 
@@ -70,6 +70,16 @@ Reconexão revalida recursos REST ativos, sem depender de receber todo o histór
 
 ## Validação e desenvolvimento
 
-Schemas Zod são usados no formulário e no handler. A API pode retornar erros de campo mesmo após validação no cliente, como e-mail em conflito e senha atual incorreta. Prettier padroniza a formatação; oxlint, TypeScript, testes unitários e Playwright verificam o código. As telas novas seguem a identidade provisória, com comparação aos frames correspondentes ainda pendente.
+Schemas Zod são usados no formulário e no handler. A API pode retornar erros de campo mesmo após validação no cliente, como e-mail em conflito e senha atual incorreta. Prettier padroniza a formatação; oxlint, TypeScript, testes unitários e Playwright verificam o código. As telas seguem a composição dos frames recebidos, com diferenças explícitas em `docs/DESIGN.md`.
 
 O painel em `/setup` altera cenários por REST e restaura as fixtures. Dados de negócio não são injetados diretamente nos componentes ou no cache pelos controles. Avisos internos sobre respostas HTTP continuam separados dos eventos de negócio Socket.IO. Testes verificam respostas, interface e persistência usando os handlers reais da simulação.
+
+## Composição visual e carregamento
+
+`components/` compartilha cabeçalho, rodapé, navegação mobile, sidebar, galeria e relacionados. Login/cadastro usam diálogo Radix no desktop e tela própria no mobile; ações auxiliares fora do escopo exibem explicações sem simular sucesso. Controles têm labels, foco visível, erros associados e mensagens de status. As abas implementam navegação por setas, Home e End.
+
+O bootstrap apresenta um shell de carregamento e inicia o MSW antes de importar a aplicação. Rotas privadas são carregadas por React.lazy; início e detalhe pertencem ao módulo público inicial. Não há variante exclusiva da aplicação para auditorias. Fontes e imagens são locais; há preload das fontes locais e do retrato de destaque para rotas conhecidas. Skeletons preservam a composição e respeitam movimento reduzido.
+
+Perfil, carteira e pedido incluem os campos adicionais dos frames. Schemas normalizam os campos antigos com defaults compatíveis; a migração acrescenta metadados sem substituir preços ou snapshots de pedidos. O fingerprint de idempotência antigo é normalizado pelo schema atual antes da comparação. Trocar rede, carteira ou provedor invalida a conexão/revisão apropriada; o snapshot registra o provedor efetivamente conectado.
+
+O pagamento mobile usa rolagem e dados expansíveis para preservar conexão, revisão e confirmação explícitas; ocupa mais altura que o frame estático. O recibo mantém navegação e detalhes do colecionador expansíveis. Novas telas sem frame mobile usam a mesma identidade responsiva. Essas decisões não equivalem a fidelidade pixel a pixel comprovada.

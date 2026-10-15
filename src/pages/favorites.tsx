@@ -4,13 +4,14 @@ import { problemFrom } from '../api/account'
 import { useFavorites } from '../hooks/use-favorites'
 import { MarketHeader } from '../components/market-header'
 import { NftArt } from '../components/nft-art'
+import { MobileNav } from '../components/mobile-nav'
 import { FavoriteButton } from '../components/favorite-button'
 
 export function FavoritesPage() {
   const { favorites } = useFavorites()
   return (
     <div className="kurio-app">
-      <MarketHeader />
+      <MarketHeader title="Meus favoritos" />
       <main className="container commerce-page">
         <p className="eyebrow">Arte que chamou sua atenção</p>
         <h1>Meus favoritos</h1>
@@ -45,6 +46,7 @@ export function FavoritesPage() {
           </div>
         )}
       </main>
+      <MobileNav active="favorites" />
     </div>
   )
 }

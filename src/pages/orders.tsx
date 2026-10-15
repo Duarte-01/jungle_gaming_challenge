@@ -9,6 +9,8 @@ import { MarketHeader } from '../components/market-header'
 import { QuoteSummary } from '../components/quote-summary'
 import { clearAttempt } from '../lib/checkout-storage'
 import { Button } from '../components/ui/button'
+import { MailOpen } from 'lucide-react'
+import type { Order } from '../domain/checkout'
 
 export function OrderPage() {
   const { orderId } = useParams({ from: '/pedidos/$orderId' })
@@ -28,8 +30,8 @@ export function OrderPage() {
   }, [userId, order.data?.status, orderId])
   const data = order.data
   return (
-    <div className="kurio-app">
-      <MarketHeader />
+    <div className={`kurio-app ${data?.status === 'confirmed' ? 'receipt-app' : ''}`}>
+      <MarketHeader title="Pedido" />
       <main className="container commerce-page">
         {order.isPending ? (
           <div className="cart-skeleton shimmer" aria-label="Consultando pedido" />
@@ -42,29 +44,24 @@ export function OrderPage() {
             </button>
           </section>
         ) : (
-          data && (
+          data &&
+          (data.status === 'confirmed' ? (
+            <ConfirmedReceipt order={data} />
+          ) : (
             <>
               <p className="eyebrow">Sua jornada de coleção</p>
-              <h1>
-                {data.status === 'confirmed'
-                  ? 'Pedido confirmado'
-                  : data.status === 'declined'
-                    ? 'Pagamento recusado'
-                    : 'Pedido em andamento'}
-              </h1>
+              <h1>{data.status === 'declined' ? 'Pagamento recusado' : 'Pedido em andamento'}</h1>
               <p role="status">
                 {data.status === 'pending'
                   ? 'Aguardando a resposta da carteira simulada. Você pode atualizar esta página com segurança.'
-                  : data.status === 'confirmed'
-                    ? 'A compra foi confirmada pela simulação.'
-                    : data.refusalReason}
+                  : data.refusalReason}
               </p>
               <p className="order-id">
                 Pedido <span data-testid="order-id">{data.id}</span>
               </p>
               <div className="cart-layout">
                 <section className="profile-form">
-                  <h2>{data.status === 'confirmed' ? 'Recibo da coleção' : 'Dados do pedido'}</h2>
+                  <h2>Dados do pedido</h2>
                   {data.snapshot.items.map((item) => (
                     <div className="receipt-item" key={item.key}>
                       <img src={item.nft.image} alt={item.nft.name} width={64} height={64} />
@@ -85,19 +82,6 @@ export function OrderPage() {
                     {data.snapshot.wallet.label} · {data.snapshot.network}
                   </p>
                   <p className="wallet-address">{data.snapshot.wallet.address}</p>
-                  {data.status === 'confirmed' && data.transactionReference && (
-                    <>
-                      <h2>Transação simulada</h2>
-                      <code className="wallet-address">{data.transactionReference}</code>
-                      <Link
-                        to="/explorador/$reference"
-                        params={{ reference: data.transactionReference }}
-                        className="text-link"
-                      >
-                        Explorar transação simulada
-                      </Link>
-                    </>
-                  )}
                 </section>
                 <div>
                   <QuoteSummary
@@ -132,10 +116,123 @@ export function OrderPage() {
                 </Link>
               </div>
             </>
-          )
+          ))
         )}
       </main>
     </div>
+  )
+}
+
+function ConfirmedReceipt({ order }: { order: Order }) {
+  const { snapshot } = order
+  return (
+    <article className="confirmed-receipt">
+      <header>
+        <Link to="/pedidos" className="receipt-close" aria-label="Fechar recibo">
+          ×
+        </Link>
+        <MailOpen size={65} strokeWidth={1} aria-hidden="true" />
+        <h1>Pedido confirmado</h1>
+        <p role="status">Seus NFTs agora estão na sua carteira simulada.</p>
+      </header>
+      <dl className="receipt-facts">
+        <div>
+          <dt>ID da transação</dt>
+          <dd>
+            {order.transactionReference?.slice(0, 8)}…{order.transactionReference?.slice(-4)}
+          </dd>
+        </div>
+        <div>
+          <dt>Data</dt>
+          <dd>
+            {new Intl.DateTimeFormat('pt-BR', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+              timeZone: 'UTC',
+            }).format(order.settledAt ?? order.createdAt)}
+          </dd>
+        </div>
+        <div>
+          <dt>Total</dt>
+          <dd>{snapshot.quote.totalEth} ETH</dd>
+        </div>
+        <div>
+          <dt>Carteira</dt>
+          <dd>{snapshot.wallet.provider ?? 'MetaMask'}</dd>
+        </div>
+      </dl>
+      <section className="receipt-transactions">
+        <h2>Recibo da coleção</h2>
+        <p className="order-id">
+          Pedido <span data-testid="order-id">{order.id}</span>
+        </p>
+        <div className="receipt-table-heading">
+          <span>NFTs</span>
+          <span>Edições</span>
+          <span>Subtotal</span>
+        </div>
+        {snapshot.items.map((item) => (
+          <div className="receipt-item" key={item.key}>
+            <img src={item.nft.image} alt={item.nft.name} width={70} height={70} />
+            <div>
+              <h3>{item.nft.name}</h3>
+              <p>ID do token: #{item.nft.name.split('#')[1]}</p>
+            </div>
+            <span>× {item.quantity}</span>
+            <strong>{item.lineTotalEth} ETH</strong>
+          </div>
+        ))}
+        <dl className="receipt-totals">
+          <div>
+            <dt>Subtotal</dt>
+            <dd>{snapshot.quote.subtotalEth} ETH</dd>
+          </div>
+          <div>
+            <dt>Desconto</dt>
+            <dd>−{snapshot.quote.discountEth} ETH</dd>
+          </div>
+          <div>
+            <dt>Taxa de rede</dt>
+            <dd>{snapshot.quote.networkFeeEth} ETH</dd>
+          </div>
+          <div className="summary-total">
+            <dt>Total</dt>
+            <dd data-testid="checkout-total">{snapshot.quote.totalEth} ETH</dd>
+          </div>
+        </dl>
+        <p className="receipt-explanation">
+          Transação confirmada na simulação de {snapshot.network}. Os itens foram registrados para
+          sua carteira nesta demonstração.
+        </p>
+        {order.transactionReference && (
+          <Link
+            to="/explorador/$reference"
+            params={{ reference: order.transactionReference }}
+            className="kurio-button"
+          >
+            Explorar transação simulada
+          </Link>
+        )}
+        <details className="receipt-collector">
+          <summary>Dados do colecionador e da carteira</summary>
+          <p>{snapshot.customer.name}</p>
+          <p>{snapshot.customer.email}</p>
+          <p>
+            {snapshot.wallet.label} · {snapshot.network}
+          </p>
+          <p className="wallet-address">{snapshot.wallet.address}</p>
+          <p className="wallet-address">{order.transactionReference}</p>
+        </details>
+        <div className="order-links">
+          <Link to="/pedidos">Meus pedidos</Link>
+          <Link to="/carrinho">Ver carrinho</Link>
+          <Link to="/" search={defaultSearch}>
+            Continuar explorando
+          </Link>
+        </div>
+      </section>
+    </article>
   )
 }
 

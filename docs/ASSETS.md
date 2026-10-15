@@ -9,4 +9,4 @@ Fonte: arquivo `Imagens projeto jungle gaming.zip` fornecido pelo candidato em 1
 | `neon-vessel.png`  | `77075cabfcf0b2bee451dc14e03655e1ae90abd2e165ffe746da058fd23292b2` |
 | `golden-beat.png`  | `f821c01cb38ab4ce4b51888d0bc8e7af18e6ca97417a9ee04d70c55226db7277` |
 
-As variantes do catálogo reutilizam esses quatro retratos, conforme as capturas disponíveis. Há teste de carregamento dos nove cards da primeira página, com verificação da resolução natural. Os PNGs não incluem a fonte, ícones exclusivos nem os frames de detalhe, conta, carteira e pagamento. Esses itens continuam sujeitos à comparação com o Figma.
+As variantes do catálogo reutilizam esses quatro retratos, conforme as capturas disponíveis. Há teste de carregamento dos nove cards da primeira página, com verificação da resolução natural. Posteriormente foram recebidos os frames de detalhe, conta, carteira e pagamento, preservados em `docs/design-references/`. Os ZIPs não incluem fonte ou ícones separados. A fonte local aproximada, sua licença e os desvios conhecidos estão em [DESIGN](DESIGN.md).

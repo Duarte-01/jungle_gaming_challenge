@@ -22,8 +22,8 @@ Não adiar a primeira publicação até o último minuto; publicar uma versão f
 
 - [x] Enunciado lido e stack identificada.
 - [x] Base da aplicação criada.
-- [ ] Fidelidade visual: capturas desktop/mobile do início e quatro PNGs originais incorporados; fonte e demais frames pendentes.
-- [ ] Catálogo e detalhe completos: fluxos funcionais implementados; revisão visual final pendente.
+- [ ] Fidelidade visual: composição revisada com 13 frames e capturas do início; fonte original não fornecida e diferenças conhecidas em `DESIGN.md`.
+- [x] Catálogo e detalhe funcionais, com galeria e metadados.
 - [x] Conta, sessão e isolamento de dados.
 - [x] Favoritos e rollback.
 - [x] Carrinho, cotação revalidada, cupons e precisão ETH.
@@ -32,10 +32,11 @@ Não adiar a primeira publicação até o último minuto; publicar uma versão f
 - [x] Carteiras e conexão simulada com validação de rede.
 - [x] Eventos de negócio, versões e reconciliação na reconexão.
 - [x] Cenários de compra, eventos, reset e controles REST da demonstração.
-- [ ] 12 grupos de E2E e regressão visual.
-- [ ] Auditorias Lighthouse e relatórios.
+- [x] 12 grupos de E2E e regressão visual: 129 execuções passaram; 12 baselines versionadas.
+- [x] Auditorias Lighthouse: 12 relatórios HTML/JSON e medianas; performance mobile abaixo de 90, com diagnóstico em `PERFORMANCE.md`.
 - [ ] Deploy público validado.
-- [ ] Documentação final e revisão para apresentação.
+- [x] Documentação das etapas, contratos, design, performance e guia da Vercel.
+- [ ] Treino final de apresentação, após validar a publicação.
 
 ## Regras para proteger a entrega
 

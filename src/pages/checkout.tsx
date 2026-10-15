@@ -26,6 +26,7 @@ import { MarketHeader } from '../components/market-header'
 import { QuoteSummary } from '../components/quote-summary'
 import { FormField } from '../components/form-field'
 import { Button } from '../components/ui/button'
+import { MarketFooter } from '../components/market-footer'
 
 function CheckoutForm({ user }: { user: User }) {
   const { cart } = useCart()
@@ -33,12 +34,22 @@ function CheckoutForm({ user }: { user: User }) {
   const navigate = useNavigate()
   const [draft, setDraft] = useState(() =>
     loadDraft(user.id, {
+      username: user.username ?? user.email.split('@')[0],
+      ens: user.ens ?? user.email.split('@')[0].replace(/[^a-zA-Z0-9-]/g, '-'),
+      walletNickname: user.walletNickname ?? 'Minha carteira',
+      profileName: user.name,
+      referralCode: 'KURIO',
+      note: '',
+      provider: 'MetaMask',
       name: user.name,
       email: user.email,
       phone: user.phone,
       walletId: '',
       agreed: false,
     }),
+  )
+  const [detailsOpen, setDetailsOpen] = useState(
+    () => window.matchMedia('(min-width: 768px)').matches,
   )
   const [review, setReview] = useState<Cart | null>(null)
   const [attempt, setAttempt] = useState(() => loadAttempt(user.id))
@@ -59,7 +70,10 @@ function CheckoutForm({ user }: { user: User }) {
     wallets.data?.[0]
   const network = draft.network ?? selected?.network ?? 'Ethereum'
   const connected = Boolean(
-    selected && connection.data?.walletId === selected.id && connection.data.network === network,
+    selected &&
+    connection.data?.walletId === selected.id &&
+    connection.data.network === network &&
+    connection.data.provider === draft.provider,
   )
   const setField = (patch: Partial<CheckoutDraft>) => {
     const next = { ...draft, ...patch }
@@ -134,6 +148,7 @@ function CheckoutForm({ user }: { user: User }) {
     onSuccess: (value) => {
       if (current()) {
         setReview(value)
+        if (window.matchMedia('(max-width: 767px)').matches) setDetailsOpen(false)
         setMessage('')
       }
     },
@@ -156,8 +171,8 @@ function CheckoutForm({ user }: { user: User }) {
     purchase.mutate(saved)
   }
   return (
-    <main className="container commerce-page">
-      <p className="eyebrow">Revise cada detalhe da sua coleção</p>
+    <main className="container commerce-page checkout-page">
+      <p className="breadcrumbs">Início / Mercado / Pagamento</p>
       <h1>Pagamento</h1>
       <p className="muted">Compra de demonstração, sem transferência real de fundos.</p>
       {message && (
@@ -199,14 +214,15 @@ function CheckoutForm({ user }: { user: User }) {
           </Link>
         </section>
       ) : (
-        <div className="cart-layout">
+        <div className="cart-layout checkout-layout">
           <form
             className="profile-form"
             noValidate
             onSubmit={(event) => {
               event.preventDefault()
               const result = orderInputSchema.safeParse({
-                customer: { name: draft.name, email: draft.email, phone: draft.phone },
+                customer: { ...draft },
+                provider: draft.provider,
                 walletId: selected?.id ?? '',
                 walletVersion: selected?.version ?? 1,
                 network,
@@ -214,6 +230,7 @@ function CheckoutForm({ user }: { user: User }) {
                 agreed: draft.agreed,
               })
               if (!result.success) {
+                setDetailsOpen(true)
                 setErrors(fieldErrors(result.error))
                 setMessage('Confira os dados do colecionador e a revisão.')
                 return
@@ -226,99 +243,176 @@ function CheckoutForm({ user }: { user: User }) {
               quote.mutate()
             }}
           >
-            <h2>Dados do colecionador</h2>
-            <fieldset disabled={Boolean(attempt)} className="checkout-fields">
-              <FormField
-                label="Nome completo"
-                value={draft.name}
-                autoComplete="name"
-                onChange={(event) => setField({ name: event.target.value })}
-                error={errors['customer.name']}
-              />
-              <FormField
-                label="E-mail do colecionador"
-                type="email"
-                error={errors['customer.email']}
-                value={draft.email}
-                autoComplete="email"
-                onChange={(event) => setField({ email: event.target.value })}
-              />
-              <FormField
-                label="Telefone do colecionador"
-                type="tel"
-                error={errors['customer.phone']}
-                value={draft.phone}
-                autoComplete="tel"
-                onChange={(event) => setField({ phone: event.target.value })}
-              />
-            </fieldset>
-            <h2>Carteira e rede</h2>
-            <Link to="/carteiras" search={{ redirect: '/pagamento' }} className="text-link">
-              Gerenciar carteiras
-            </Link>
-            {wallets.data?.length ? (
-              <>
+            <details
+              className="collector-checkout-details"
+              open={detailsOpen}
+              onToggle={(event) => setDetailsOpen(event.currentTarget.open)}
+            >
+              <summary>
+                Dados do colecionador <span>{draft.name}</span>
+              </summary>
+              <fieldset disabled={Boolean(attempt)} className="checkout-fields">
+                <FormField
+                  label="Nome completo"
+                  value={draft.name}
+                  autoComplete="name"
+                  onChange={(event) => setField({ name: event.target.value })}
+                  error={errors['customer.name']}
+                />
+                <FormField
+                  label="E-mail do colecionador"
+                  type="email"
+                  error={errors['customer.email']}
+                  value={draft.email}
+                  autoComplete="email"
+                  onChange={(event) => setField({ email: event.target.value })}
+                />
+                <FormField
+                  label="Telefone do colecionador"
+                  type="tel"
+                  error={errors['customer.phone']}
+                  value={draft.phone}
+                  autoComplete="tel"
+                  onChange={(event) => setField({ phone: event.target.value })}
+                />
+                <FormField
+                  label="Nome de usuário"
+                  value={draft.username}
+                  error={errors['customer.username']}
+                  onChange={(event) => setField({ username: event.target.value })}
+                  required
+                />
+                <FormField
+                  label="Nome do perfil"
+                  value={draft.profileName}
+                  error={errors['customer.profileName']}
+                  onChange={(event) => setField({ profileName: event.target.value })}
+                  required
+                />
+                <FormField
+                  label="Código de indicação"
+                  value={draft.referralCode}
+                  error={errors['customer.referralCode']}
+                  onChange={(event) => setField({ referralCode: event.target.value })}
+                  required
+                />
+                <FormField
+                  label="Nome ENS"
+                  value={draft.ens}
+                  error={errors['customer.ens']}
+                  onChange={(event) => setField({ ens: event.target.value })}
+                  required
+                />
                 <div className="form-field">
-                  <label htmlFor="checkout-wallet">Carteira</label>
-                  <select
-                    id="checkout-wallet"
-                    value={selected?.id ?? ''}
-                    disabled={Boolean(attempt)}
-                    onChange={(event) => {
-                      const wallet = wallets.data.find((item) => item.id === event.target.value)
-                      setField({ walletId: event.target.value, network: wallet?.network })
-                    }}
+                  <label htmlFor="collector-note">Observação do colecionador (opcional)</label>
+                  <textarea
+                    id="collector-note"
+                    value={draft.note}
+                    maxLength={1000}
+                    onChange={(event) => setField({ note: event.target.value })}
+                  />
+                </div>
+              </fieldset>
+            </details>
+            <section className="checkout-wallet-section">
+              <h2>Carteira conectada</h2>
+              <Link to="/carteiras" search={{ redirect: '/pagamento' }} className="text-link">
+                Gerenciar carteiras
+              </Link>
+              {wallets.data?.length ? (
+                <>
+                  <div
+                    className="checkout-wallet-options"
+                    role="radiogroup"
+                    aria-label="Carteiras cadastradas"
                   >
                     {wallets.data.map((wallet) => (
-                      <option value={wallet.id} key={wallet.id}>
-                        {wallet.label} · {wallet.network}
-                      </option>
+                      <label key={wallet.id} className="checkout-wallet-option">
+                        <input
+                          type="radio"
+                          name="registered-wallet"
+                          value={wallet.id}
+                          checked={selected?.id === wallet.id}
+                          disabled={Boolean(attempt)}
+                          onChange={() =>
+                            setField({ walletId: wallet.id, network: wallet.network })
+                          }
+                        />
+                        <span>
+                          <strong>{wallet.label}</strong>
+                          <span className="wallet-address">{wallet.address}</span>
+                          <span>Rede {wallet.network}</span>
+                        </span>
+                      </label>
                     ))}
-                  </select>
-                </div>
-                <p className="wallet-address">{selected?.address}</p>
-                <div className="form-field">
-                  <label htmlFor="checkout-network">Rede</label>
-                  <select
-                    id="checkout-network"
-                    value={network}
-                    disabled={Boolean(attempt)}
-                    onChange={(event) =>
-                      setField({ network: event.target.value as typeof network })
-                    }
-                  >
-                    {networks.map((value) => (
-                      <option key={value}>{value}</option>
-                    ))}
-                  </select>
-                </div>
-                {connected ? (
-                  <>
-                    <p role="status">Carteira conectada à rede {network}.</p>
-                    <button
-                      type="button"
-                      className="text-link"
-                      disabled={disconnect.isPending || purchase.isPending}
-                      onClick={() => disconnect.mutate()}
+                  </div>
+                  <div className="form-field checkout-wallet-select">
+                    <label htmlFor="checkout-wallet">Carteira</label>
+                    <select
+                      id="checkout-wallet"
+                      value={selected?.id ?? ''}
+                      disabled={Boolean(attempt)}
+                      onChange={(event) => {
+                        const wallet = wallets.data.find((item) => item.id === event.target.value)
+                        setField({ walletId: event.target.value, network: wallet?.network })
+                      }}
                     >
-                      Desconectar carteira
-                    </button>
-                  </>
-                ) : (
-                  <Button
-                    type="button"
-                    disabled={connect.isPending || !selected}
-                    onClick={() => selected && connect.mutate({ id: selected.id, network })}
-                  >
-                    {connect.isPending ? 'Conectando…' : 'Conectar carteira simulada'}
-                  </Button>
-                )}
-                {connect.isError && <p role="alert">{problemFrom(connect.error).message}</p>}
-                {disconnect.isError && <p role="alert">{problemFrom(disconnect.error).message}</p>}
-              </>
-            ) : (
-              <p>Cadastre uma carteira principal para continuar.</p>
-            )}
+                      {wallets.data.map((wallet) => (
+                        <option value={wallet.id} key={wallet.id}>
+                          {wallet.label} · {wallet.network}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <p className="wallet-address">{selected?.address}</p>
+                  <div className="form-field">
+                    <label htmlFor="checkout-network">Rede</label>
+                    <select
+                      id="checkout-network"
+                      value={network}
+                      disabled={Boolean(attempt)}
+                      onChange={(event) =>
+                        setField({ network: event.target.value as typeof network })
+                      }
+                    >
+                      {networks.map((value) => (
+                        <option key={value}>{value}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {connected ? (
+                    <>
+                      <p role="status">Carteira conectada à rede {network}.</p>
+                      <button
+                        type="button"
+                        className="text-link"
+                        disabled={disconnect.isPending || purchase.isPending}
+                        onClick={() => disconnect.mutate()}
+                      >
+                        Desconectar carteira
+                      </button>
+                    </>
+                  ) : (
+                    <Button
+                      type="button"
+                      disabled={connect.isPending || !selected}
+                      onClick={() =>
+                        selected &&
+                        connect.mutate({ id: selected.id, network, provider: draft.provider })
+                      }
+                    >
+                      {connect.isPending ? 'Conectando…' : 'Conectar carteira simulada'}
+                    </Button>
+                  )}
+                  {connect.isError && <p role="alert">{problemFrom(connect.error).message}</p>}
+                  {disconnect.isError && (
+                    <p role="alert">{problemFrom(disconnect.error).message}</p>
+                  )}
+                </>
+              ) : (
+                <p>Cadastre uma carteira principal para continuar.</p>
+              )}
+            </section>
             <label className="terms-field">
               <input
                 type="checkbox"
@@ -343,7 +437,26 @@ function CheckoutForm({ user }: { user: User }) {
               </Button>
             )}
           </form>
-          <div>
+          <div className="checkout-summary">
+            <fieldset className="provider-options">
+              <legend>Carteira e rede</legend>
+              {(['WalletConnect', 'MetaMask', 'Coinbase Wallet'] as const).map((provider) => (
+                <label className="provider-option" key={provider}>
+                  <span className="provider-symbol" aria-hidden="true">
+                    {provider.slice(0, 1)}
+                  </span>
+                  <span>{provider}</span>
+                  <input
+                    type="radio"
+                    name="checkout-provider"
+                    value={provider}
+                    checked={draft.provider === provider}
+                    disabled={Boolean(attempt)}
+                    onChange={() => setField({ provider })}
+                  />
+                </label>
+              ))}
+            </fieldset>
             {review && (
               <>
                 <QuoteSummary cart={review} />
@@ -358,7 +471,8 @@ function CheckoutForm({ user }: { user: User }) {
                     disabled={stale || !connected || cart.isFetching || purchase.isPending}
                     onClick={() => {
                       const result = orderInputSchema.safeParse({
-                        customer: { name: draft.name, email: draft.email, phone: draft.phone },
+                        customer: { ...draft },
+                        provider: draft.provider,
                         walletId: selected?.id ?? '',
                         walletVersion: selected?.version ?? 1,
                         network,
@@ -384,9 +498,10 @@ function CheckoutForm({ user }: { user: User }) {
 export function CheckoutPage() {
   const session = useQuery(sessionOptions)
   return (
-    <div className="kurio-app">
-      <MarketHeader />
+    <div className="kurio-app checkout-app">
+      <MarketHeader title="Pagamento com carteira" />
       {session.data?.user && <CheckoutForm key={session.data.user.id} user={session.data.user} />}
+      <MarketFooter />
     </div>
   )
 }

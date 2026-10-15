@@ -13,9 +13,16 @@ export async function saveWallet(input: WalletInput, id?: string) {
 export async function getConnection(signal?: AbortSignal) {
   return (await api.get<WalletConnection | null>('/wallet-connection', { signal })).data
 }
-export async function connectWallet(id: string, network: Wallet['network']) {
+export async function connectWallet(
+  id: string,
+  network: Wallet['network'],
+  provider: Wallet['provider'] = 'MetaMask',
+) {
   return (
-    await api.post<WalletConnection>(`/wallets/${encodeURIComponent(id)}/connect`, { network })
+    await api.post<WalletConnection>(`/wallets/${encodeURIComponent(id)}/connect`, {
+      network,
+      provider,
+    })
   ).data
 }
 export async function disconnectWallet() {

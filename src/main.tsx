@@ -1,9 +1,23 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { QueryClientProvider } from '@tanstack/react-query'
-import { RouterProvider } from '@tanstack/react-router'
-import { queryClient } from './app/query-client'
+import '@fontsource/ibm-plex-mono/latin-400.css'
+import '@fontsource/ibm-plex-mono/latin-600.css'
 import './index.css'
+
+const root = createRoot(document.getElementById('root')!)
+root.render(
+  <div className="kurio-app bootstrap-loading" role="status" aria-label="Preparando o marketplace">
+    <div className="container bootstrap-header">
+      <span className="brand">KURIO</span>
+      <span>Preparando sua experiência…</span>
+    </div>
+    <div className="container bootstrap-body">
+      <div className="shimmer" />
+      <div className="shimmer" />
+      <div className="shimmer" />
+    </div>
+  </div>,
+)
 
 async function bootstrap() {
   if (import.meta.env.VITE_ENABLE_MOCKS !== 'false') {
@@ -11,17 +25,19 @@ async function bootstrap() {
     await worker.start({ onUnhandledRequest: 'warn', quiet: true })
   }
   // Socket.IO captura WebSocket ao importar. Carregue as rotas após a interceptação.
-  const { router } = await import('./app/router')
-  createRoot(document.getElementById('root')!).render(
+  const { Application } = await import('./app/application')
+  root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
+      <Application />
     </StrictMode>,
   )
 }
 
 void bootstrap().catch(() => {
-  document.getElementById('root')!.textContent =
-    'Falha ao iniciar o ambiente. Verifique a configuração dos mocks e recarregue a página.'
+  root.render(
+    <main role="alert" className="container commerce-page">
+      <h1>Não foi possível iniciar a experiência</h1>
+      <p>Confira sua conexão e recarregue a página.</p>
+    </main>,
+  )
 })

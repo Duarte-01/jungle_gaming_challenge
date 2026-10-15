@@ -72,7 +72,7 @@ export const catalogHandlers = [
     })
   }),
   http.get('/api/nfts/:id', async ({ params }) => {
-    await delay(200)
+    await delay(localStorage.getItem('kurio:scenario') === 'slow' ? 2000 : 200)
     if (localStorage.getItem('kurio:scenario') === 'offline') return HttpResponse.error()
     const { nfts } = await readDatabase()
     const nft = nfts.find((item) => item.id === params.id)

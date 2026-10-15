@@ -1,0 +1,8 @@
+{
+  "runs": 3,
+  "pages": { "home": "/", "detail": "/nfts/emerald-ape-42" },
+  "profiles": ["mobile", "desktop"],
+  "categories": ["performance", "accessibility", "best-practices", "seo"],
+  "targets": { "performance": 90, "accessibility": 95, "best-practices": 95, "seo": 90 },
+  "chromeFlags": ["--headless", "--no-sandbox", "--disable-dev-shm-usage"]
+}

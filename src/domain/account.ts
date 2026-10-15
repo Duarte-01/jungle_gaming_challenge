@@ -21,7 +21,37 @@ export const loginSchema = z.object({
   email: emailSchema,
   password: z.string().min(1, 'Informe a senha.').max(128),
 })
+export const usernameSchema = z
+  .string()
+  .trim()
+  .min(2, 'Use pelo menos 2 caracteres.')
+  .max(50)
+  .regex(/^[a-zA-Z0-9._-]+$/, 'Use letras, números, ponto, hífen ou sublinhado.')
+export const ensSchema = z
+  .string()
+  .trim()
+  .min(2, 'Informe o nome ENS simulado.')
+  .max(50)
+  .regex(/^[a-zA-Z0-9-]+$/, 'Use letras, números ou hífen, sem o sufixo .eth.')
+export const collectorFields = {
+  username: usernameSchema.default('colecionador'),
+  ens: ensSchema.default('colecionador'),
+  walletNickname: z
+    .string()
+    .trim()
+    .min(2, 'Informe o apelido da carteira.')
+    .max(50)
+    .default('Minha carteira'),
+}
+export function suggestedCollectorHandle(email: string) {
+  return email
+    .split('@')[0]
+    .replace(/[^a-zA-Z0-9-]/g, '-')
+    .slice(0, 50)
+    .padEnd(2, '-')
+}
 export const profileSchema = registerSchema.pick({ name: true, email: true }).extend({
+  ...collectorFields,
   phone: z
     .string()
     .trim()
@@ -47,6 +77,9 @@ export interface User {
   email: string
   phone: string
   avatarUrl: string | null
+  username?: string
+  ens?: string
+  walletNickname?: string
 }
 
 export interface Session {
