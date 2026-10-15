@@ -112,16 +112,16 @@ test('API privada nega visitante e reset restaura dados completos da etapa', asy
 
 test('cadastro valida campos, cria sessão e não persiste a senha em claro', async ({ page }) => {
   await page.goto('/cadastro?redirect=/perfil')
-  await page.getByRole('button', { name: 'Criar conta' }).click()
+  await page.getByRole('button', { name: /Criar (conta|perfil)/ }).click()
   await expect(page.getByLabel('Nome', { exact: true })).toHaveAttribute('aria-invalid', 'true')
   await page.getByLabel('Nome', { exact: true }).fill('Clara Digital')
   await page.getByLabel('E-mail', { exact: true }).fill('a@kurio.test')
   await page.getByLabel('Senha', { exact: true }).fill('MinhaSenha2026!')
   await page.getByLabel('Confirmar senha', { exact: true }).fill('Diferente2026!')
-  await page.getByRole('button', { name: 'Criar conta' }).click()
+  await page.getByRole('button', { name: /Criar (conta|perfil)/ }).click()
   await expect(page.getByText('As senhas devem ser iguais.')).toBeVisible()
   await page.getByLabel('Confirmar senha', { exact: true }).fill('MinhaSenha2026!')
-  await page.getByRole('button', { name: 'Criar conta' }).click()
+  await page.getByRole('button', { name: /Criar (conta|perfil)/ }).click()
   await expect(page.getByRole('heading', { name: 'Meu perfil' })).toBeVisible()
   await page.getByRole('button', { name: 'Salvar perfil' }).click()
   await expect(page.getByText('Perfil atualizado.', { exact: true })).toBeVisible()
@@ -138,7 +138,7 @@ test('conflito de cadastro e credenciais inválidas têm feedback da API', async
   await page.getByLabel('E-mail', { exact: true }).fill('ana@kurio.test')
   await page.getByLabel('Senha', { exact: true }).fill(password)
   await page.getByLabel('Confirmar senha', { exact: true }).fill(password)
-  await page.getByRole('button', { name: 'Criar conta' }).click()
+  await page.getByRole('button', { name: /Criar (conta|perfil)/ }).click()
   await expect(page.getByRole('alert')).toHaveText('Este e-mail já está cadastrado.')
   await expect(page.getByLabel('E-mail', { exact: true })).toHaveAttribute('aria-invalid', 'true')
   await page.goto('/login')
@@ -284,6 +284,7 @@ test('perfil, avatar e senha persistem e tratam validação da API', async ({ pa
   test.setTimeout(60_000)
   await loginAs(page)
   await page.getByLabel('Nome', { exact: true }).fill('Ana Digital')
+  await page.locator('.profile-additional > summary').click()
   await page.getByLabel('Telefone', { exact: true }).fill('+55 11 99999-1234')
   await page.getByLabel('Avatar', { exact: true }).setInputFiles({
     name: 'avatar.png',

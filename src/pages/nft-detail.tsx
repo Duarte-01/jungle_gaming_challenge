@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from '@tanstack/react-router'
 import * as Dialog from '@radix-ui/react-dialog'
 import { isAxiosError } from 'axios'
-import { ChevronLeft, Minus, Plus, Search, ShoppingCart, Star, X } from 'lucide-react'
+import { ChevronLeft, Mail, Minus, Plus, Search, ShoppingCart, Star, X } from 'lucide-react'
 import { defaultSearch, getNft } from '../api/catalog'
 import { NftArt } from '../components/nft-art'
 import { FavoriteButton } from '../components/favorite-button'
@@ -13,6 +13,7 @@ import { RelatedNfts } from '../components/related-nfts'
 import { useCart } from '../hooks/use-cart'
 import { problemFrom } from '../api/account'
 import { Button } from '../components/ui/button'
+import { BrandIcon } from '../components/brand-icon'
 
 export function NftDetailPage() {
   const { nftId } = useParams({ from: '/nfts/$nftId' })
@@ -114,37 +115,57 @@ function NftDetailContent({ nftId }: { nftId: string }) {
                   <div className="nft-title-row">
                     <h1>{nft.name}</h1>
                     <span className="nft-rating">
-                      <Star size={15} fill="currentColor" aria-hidden="true" />{' '}
-                      {nft.rating ?? '4.8'} <span>({nft.reviewCount ?? 19})</span>
+                      <span className="desktop-rating-stars" aria-hidden="true">
+                        ★★★★★
+                      </span>
+                      <span className="rating-number">
+                        <Star size={15} fill="currentColor" aria-hidden="true" />{' '}
+                        {nft.rating ?? '4.8'}
+                      </span>{' '}
+                      <span>
+                        ({nft.reviewCount ?? 19}
+                        <span className="desktop-review-label"> avaliações</span>)
+                      </span>
                     </span>
                   </div>
                   <p className="detail-price nft-price">{nft.priceEth} ETH</p>
                   <h2 className="detail-about">Sobre este NFT:</h2>
-                  <p className="detail-description">{nft.description}</p>
+                  <p className="detail-description">
+                    <span className="desktop-description">{nft.description}</span>
+                    <span className="mobile-description">
+                      {nft.description.split(', com ')[0].replace(/[.!?]$/, '')}.
+                    </span>
+                  </p>
                   <fieldset className="edition-picker">
                     <legend>Edição:</legend>
-                    {nft.editions.map((item) => (
-                      <button
-                        type="button"
-                        key={item.id}
-                        className="edition-option"
-                        disabled={item.available === 0}
-                        aria-label={`${item.label} · ${item.available ? `${item.available} disponíveis` : 'Esgotada'}`}
-                        aria-pressed={editionId === item.id}
-                        onClick={() => {
-                          setEditionId(item.id)
-                          setQuantity(1)
-                        }}
-                      >
-                        {item.id === 'standard'
-                          ? '1/50'
-                          : item.id === 'limited'
-                            ? '1/10'
-                            : item.id === 'unique'
-                              ? '1/1'
-                              : 'ABERTA'}
-                      </button>
-                    ))}
+                    {[...nft.editions]
+                      .sort(
+                        (a, b) =>
+                          ['unique', 'limited', 'standard', 'open'].indexOf(a.id) -
+                          ['unique', 'limited', 'standard', 'open'].indexOf(b.id),
+                      )
+                      .map((item) => (
+                        <button
+                          type="button"
+                          key={item.id}
+                          className="edition-option"
+                          disabled={item.available === 0}
+                          aria-label={`${item.label} · ${item.available ? `${item.available} disponíveis` : 'Esgotada'}`}
+                          aria-pressed={editionId === item.id}
+                          onClick={() => {
+                            setEditionId(item.id)
+                            setQuantity(1)
+                          }}
+                        >
+                          {item.id === 'standard'
+                            ? '1/50'
+                            : item.id === 'limited'
+                              ? '1/10'
+                              : item.id === 'unique'
+                                ? '1/1'
+                                : 'ABERTA'}
+                        </button>
+                      ))}
                   </fieldset>
                   <div className="nft-purchase">
                     <div className="detail-quantity">
@@ -225,9 +246,34 @@ function NftDetailContent({ nftId }: { nftId: string }) {
                       <dd>{(nft.attributes ?? ['Arte digital', 'Colecionável']).join(', ')}</dd>
                     </div>
                   </dl>
-                  <p className="nft-creator">
+                  <p className="nft-creator sr-only">
                     Criado por {nft.creator} · {nft.network}
                   </p>
+                  <div className="nft-share">
+                    <span>Compartilhar este NFT:</span>
+                    <a
+                      href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="Compartilhar no LinkedIn"
+                    >
+                      <BrandIcon brand="LinkedIn" size={16} />
+                    </a>
+                    <a
+                      href={`mailto:?subject=${encodeURIComponent(nft.name)}&body=${encodeURIComponent(window.location.href)}`}
+                      aria-label="Compartilhar por e-mail"
+                    >
+                      <Mail size={16} />
+                    </a>
+                    <a
+                      href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(nft.name)}&url=${encodeURIComponent(window.location.href)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="Compartilhar no Twitter"
+                    >
+                      <BrandIcon brand="Twitter" size={16} />
+                    </a>
+                  </div>
                   {mutation.isError && (
                     <p role="alert" className="form-message error">
                       {problemFrom(mutation.error).message}

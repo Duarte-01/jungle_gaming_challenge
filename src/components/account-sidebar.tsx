@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
+import { SignOutButton } from './market-header'
 import {
   CircleHelp,
   Download,
@@ -55,6 +56,7 @@ export function AccountSidebar({
           </button>
         ))}
       </nav>
+      <SignOutButton sidebar />
       {notice && <p role="status">{notice}</p>}
     </aside>
   )

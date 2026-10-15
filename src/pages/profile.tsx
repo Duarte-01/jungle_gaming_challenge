@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Image as ImageIcon } from 'lucide-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { changePassword, problemFrom, sessionOptions, updateProfile } from '../api/account'
@@ -38,7 +39,7 @@ function ProfileForm({ user }: { user: User }) {
   })
   return (
     <form
-      className="profile-form"
+      className="profile-form collector-profile-form"
       noValidate
       onSubmit={(event) => {
         event.preventDefault()
@@ -55,12 +56,19 @@ function ProfileForm({ user }: { user: User }) {
     >
       <h2>Perfil do colecionador</h2>
       <div className="avatar-editor">
-        {avatar && <img src={avatar} alt={`Avatar de ${user.name}`} className="profile-avatar" />}
+        {avatar ? (
+          <img src={avatar} alt={`Avatar de ${user.name}`} className="profile-avatar" />
+        ) : (
+          <span className="profile-avatar avatar-placeholder" aria-hidden="true">
+            <ImageIcon size={22} />
+          </span>
+        )}
         <div className="form-field">
           <label htmlFor="avatar-file">Avatar</label>
           <input
             id="avatar-file"
             type="file"
+            className="sr-only"
             accept="image/png,image/jpeg,image/webp"
             aria-describedby={avatarError ? 'avatar-error' : 'avatar-help'}
             aria-invalid={Boolean(avatarError)}
@@ -86,7 +94,7 @@ function ProfileForm({ user }: { user: User }) {
           <label htmlFor="avatar-file" className="avatar-upload-button kurio-button">
             Alterar
           </label>
-          <p id="avatar-help" className="muted">
+          <p id="avatar-help" className="sr-only">
             PNG, JPEG ou WebP, até 250 KB.
           </p>
           {avatarError && (
@@ -95,11 +103,15 @@ function ProfileForm({ user }: { user: User }) {
             </p>
           )}
         </div>
-        {avatar && (
-          <button type="button" className="text-link" onClick={() => setAvatar(null)}>
-            Remover avatar
-          </button>
-        )}
+        <button
+          type="button"
+          className="text-link remove-avatar"
+          disabled={!avatar}
+          aria-label="Remover avatar"
+          onClick={() => setAvatar(null)}
+        >
+          Remover
+        </button>
       </div>
       <FormField
         containerClassName="profile-name"
@@ -109,6 +121,7 @@ function ProfileForm({ user }: { user: User }) {
         autoComplete="name"
         defaultValue={user.name}
         error={errors.name}
+        required
       />
       <FormField
         containerClassName="profile-email"
@@ -118,16 +131,19 @@ function ProfileForm({ user }: { user: User }) {
         autoComplete="email"
         defaultValue={user.email}
         error={errors.email}
+        required
       />
-      <FormField
-        containerClassName="profile-phone"
-        label="Telefone"
-        name="phone"
-        type="tel"
-        autoComplete="tel"
-        defaultValue={user.phone}
-        error={errors.phone}
-      />
+      <details className="profile-additional">
+        <summary>Dados adicionais</summary>
+        <FormField
+          label="Telefone"
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          defaultValue={user.phone}
+          error={errors.phone}
+        />
+      </details>
       <FormField
         containerClassName="profile-username"
         label="Nome de usuário"
@@ -164,7 +180,11 @@ function ProfileForm({ user }: { user: User }) {
           Perfil atualizado.
         </p>
       )}
-      <Button type="submit" disabled={mutation.isPending || Boolean(avatarError)}>
+      <Button
+        className="save-profile"
+        type="submit"
+        disabled={mutation.isPending || Boolean(avatarError)}
+      >
         {mutation.isPending ? 'Salvando…' : 'Salvar perfil'}
       </Button>
     </form>
@@ -208,12 +228,15 @@ function PasswordForm() {
       }}
     >
       <h2>Alterar senha</h2>
-      <p className="muted">Após a alteração, entre novamente com sua nova senha.</p>
+      <p id="password-session-help" className="password-session-help sr-only">
+        Após a alteração, entre novamente com sua nova senha.
+      </p>
       <PasswordField
         label="Senha atual"
         name="currentPassword"
         type="password"
         autoComplete="current-password"
+        aria-describedby="password-session-help"
         error={errors.currentPassword}
       />
       <PasswordField

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { ArrowUpRight } from 'lucide-react'
 import { defaultSearch } from '../api/catalog'
+import { BrandIcon } from './brand-icon'
 
 export function MarketFooter() {
   const [notice, setNotice] = useState('')
@@ -113,11 +114,9 @@ export function MarketFooter() {
         <section>
           <h2>Redes sociais</h2>
           <div className="footer-social">
-            {['Facebook', 'Instagram', 'Twitter', 'LinkedIn', 'YouTube'].map((label) => (
+            {(['Facebook', 'Instagram', 'Twitter', 'LinkedIn', 'YouTube'] as const).map((label) => (
               <button type="button" key={label} aria-label={label} onClick={auxiliary}>
-                <span aria-hidden="true">
-                  {label === 'LinkedIn' ? 'in' : label.slice(0, 1).toLowerCase()}
-                </span>
+                <BrandIcon brand={label} size={16} />
               </button>
             ))}
           </div>

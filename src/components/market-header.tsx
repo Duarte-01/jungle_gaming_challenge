@@ -7,8 +7,7 @@ import { forgetSession } from '../auth/session-cache'
 import { useCart } from '../hooks/use-cart'
 import { sessionGeneration } from '../auth/events'
 
-export function AccountActions({ catalogSearch }: { catalogSearch?: CatalogSearch }) {
-  const { session, cart } = useCart()
+export function SignOutButton({ sidebar = false }: { sidebar?: boolean }) {
   const navigate = useNavigate()
   const signOut = useMutation({
     mutationKey: ['account-logout'],
@@ -21,6 +20,25 @@ export function AccountActions({ catalogSearch }: { catalogSearch?: CatalogSearc
       await navigate({ to: '/', search: defaultSearch })
     },
   })
+  return (
+    <>
+      <button
+        type="button"
+        className={sidebar ? 'sidebar-sign-out' : undefined}
+        onClick={() => signOut.mutate()}
+        disabled={signOut.isPending}
+        aria-label={sidebar ? 'Sair do perfil' : 'Sair da conta'}
+      >
+        <LogOut size={18} />
+        {sidebar && 'Sair'}
+      </button>
+      {signOut.isError && <p role="alert">{problemFrom(signOut.error).message}</p>}
+    </>
+  )
+}
+
+export function AccountActions({ catalogSearch }: { catalogSearch?: CatalogSearch }) {
+  const { session, cart } = useCart()
   const count = cart.data?.items.reduce((total, item) => total + item.quantity, 0) ?? 0
   return (
     <div className="header-actions">
@@ -46,14 +64,7 @@ export function AccountActions({ catalogSearch }: { catalogSearch?: CatalogSearc
             <UserRound size={18} />
             {session.data.user.name.split(' ')[0]}
           </Link>
-          <button
-            type="button"
-            onClick={() => signOut.mutate()}
-            disabled={signOut.isPending}
-            aria-label="Sair da conta"
-          >
-            <LogOut size={18} />
-          </button>
+          <SignOutButton />
         </>
       ) : (
         <Link
@@ -65,7 +76,6 @@ export function AccountActions({ catalogSearch }: { catalogSearch?: CatalogSearc
           Entrar
         </Link>
       )}
-      {signOut.isError && <p role="alert">{problemFrom(signOut.error).message}</p>}
     </div>
   )
 }

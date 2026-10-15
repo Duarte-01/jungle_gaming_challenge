@@ -58,8 +58,8 @@ export const defaultSearch: CatalogSearch = {
   q: '',
   category: '',
   network: '',
-  min: '0',
-  max: '100',
+  min: '0.02',
+  max: '12.30',
   sort: 'recent',
   tab: 'all',
   page: 1,
@@ -71,8 +71,8 @@ export function validateCatalogSearch(input: Record<string, unknown>): CatalogSe
   const decimal = (key: string, fallback: string) =>
     /^\d+(?:\.\d{1,18})?$/.test(text(key)) ? text(key) : fallback
   const page = Number(input.page)
-  const min = decimal('min', '0')
-  const max = decimal('max', '100')
+  const min = decimal('min', defaultSearch.min)
+  const max = decimal('max', defaultSearch.max)
   return {
     q: text('q'),
     category: categories.some((category) => category === text('category')) ? text('category') : '',

@@ -27,6 +27,7 @@ import { QuoteSummary } from '../components/quote-summary'
 import { FormField } from '../components/form-field'
 import { Button } from '../components/ui/button'
 import { MarketFooter } from '../components/market-footer'
+import { BrandIcon } from '../components/brand-icon'
 
 function CheckoutForm({ user }: { user: User }) {
   const { cart } = useCart()
@@ -315,10 +316,12 @@ function CheckoutForm({ user }: { user: User }) {
               </fieldset>
             </details>
             <section className="checkout-wallet-section">
-              <h2>Carteira conectada</h2>
-              <Link to="/carteiras" search={{ redirect: '/pagamento' }} className="text-link">
-                Gerenciar carteiras
-              </Link>
+              <div className="checkout-wallet-title">
+                <h2>Carteira conectada</h2>
+                <Link to="/carteiras" search={{ redirect: '/pagamento' }} className="text-link">
+                  Trocar carteira
+                </Link>
+              </div>
               {wallets.data?.length ? (
                 <>
                   <div
@@ -340,7 +343,12 @@ function CheckoutForm({ user }: { user: User }) {
                         />
                         <span>
                           <strong>{wallet.label}</strong>
-                          <span className="wallet-address">{wallet.address}</span>
+                          <span className="wallet-address" title={wallet.address}>
+                            <span aria-hidden="true">
+                              {wallet.address.slice(0, 6)}…{wallet.address.slice(-4)}
+                            </span>
+                            <span className="sr-only">{wallet.address}</span>
+                          </span>
                           <span>Rede {wallet.network}</span>
                         </span>
                       </label>
@@ -364,50 +372,52 @@ function CheckoutForm({ user }: { user: User }) {
                       ))}
                     </select>
                   </div>
-                  <p className="wallet-address">{selected?.address}</p>
-                  <div className="form-field">
-                    <label htmlFor="checkout-network">Rede</label>
-                    <select
-                      id="checkout-network"
-                      value={network}
-                      disabled={Boolean(attempt)}
-                      onChange={(event) =>
-                        setField({ network: event.target.value as typeof network })
-                      }
-                    >
-                      {networks.map((value) => (
-                        <option key={value}>{value}</option>
-                      ))}
-                    </select>
-                  </div>
-                  {connected ? (
-                    <>
-                      <p role="status">Carteira conectada à rede {network}.</p>
-                      <button
-                        type="button"
-                        className="text-link"
-                        disabled={disconnect.isPending || purchase.isPending}
-                        onClick={() => disconnect.mutate()}
+                  <div className="checkout-connection-controls">
+                    <p className="wallet-address">{selected?.address}</p>
+                    <div className="form-field">
+                      <label htmlFor="checkout-network">Rede</label>
+                      <select
+                        id="checkout-network"
+                        value={network}
+                        disabled={Boolean(attempt)}
+                        onChange={(event) =>
+                          setField({ network: event.target.value as typeof network })
+                        }
                       >
-                        Desconectar carteira
-                      </button>
-                    </>
-                  ) : (
-                    <Button
-                      type="button"
-                      disabled={connect.isPending || !selected}
-                      onClick={() =>
-                        selected &&
-                        connect.mutate({ id: selected.id, network, provider: draft.provider })
-                      }
-                    >
-                      {connect.isPending ? 'Conectando…' : 'Conectar carteira simulada'}
-                    </Button>
-                  )}
-                  {connect.isError && <p role="alert">{problemFrom(connect.error).message}</p>}
-                  {disconnect.isError && (
-                    <p role="alert">{problemFrom(disconnect.error).message}</p>
-                  )}
+                        {networks.map((value) => (
+                          <option key={value}>{value}</option>
+                        ))}
+                      </select>
+                    </div>
+                    {connected ? (
+                      <>
+                        <p role="status">Carteira conectada à rede {network}.</p>
+                        <button
+                          type="button"
+                          className="text-link"
+                          disabled={disconnect.isPending || purchase.isPending}
+                          onClick={() => disconnect.mutate()}
+                        >
+                          Desconectar carteira
+                        </button>
+                      </>
+                    ) : (
+                      <Button
+                        type="button"
+                        disabled={connect.isPending || !selected}
+                        onClick={() =>
+                          selected &&
+                          connect.mutate({ id: selected.id, network, provider: draft.provider })
+                        }
+                      >
+                        {connect.isPending ? 'Conectando…' : 'Conectar carteira simulada'}
+                      </Button>
+                    )}
+                    {connect.isError && <p role="alert">{problemFrom(connect.error).message}</p>}
+                    {disconnect.isError && (
+                      <p role="alert">{problemFrom(disconnect.error).message}</p>
+                    )}
+                  </div>
                 </>
               ) : (
                 <p>Cadastre uma carteira principal para continuar.</p>
@@ -443,7 +453,7 @@ function CheckoutForm({ user }: { user: User }) {
               {(['WalletConnect', 'MetaMask', 'Coinbase Wallet'] as const).map((provider) => (
                 <label className="provider-option" key={provider}>
                   <span className="provider-symbol" aria-hidden="true">
-                    {provider.slice(0, 1)}
+                    <BrandIcon brand={provider} size={28} />
                   </span>
                   <span>{provider}</span>
                   <input
@@ -459,7 +469,7 @@ function CheckoutForm({ user }: { user: User }) {
             </fieldset>
             {review && (
               <>
-                <QuoteSummary cart={review} />
+                <QuoteSummary cart={review} compactMobile />
                 {stale && (
                   <p role="alert" className="form-message error">
                     Preço, estoque, cupom ou taxas mudaram. Revise os valores e confirme novamente.
@@ -487,7 +497,7 @@ function CheckoutForm({ user }: { user: User }) {
                 )}
               </>
             )}
-            {!review && cart.data && <QuoteSummary cart={cart.data} />}
+            {!review && cart.data && <QuoteSummary cart={cart.data} compactMobile />}
           </div>
         </div>
       )}

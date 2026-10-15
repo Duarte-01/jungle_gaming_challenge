@@ -1,6 +1,6 @@
 # Plano de entrega em dois dias
 
-Prazo de trabalho informado: dois dias a partir de 14/10/2026. Confirmar o horário de entrega com a empresa; não presumir que seja o fim do dia 16. Os blocos abaixo são estimativas, não garantias.
+Prazo atualizado pelo candidato: manhã de 16/10/2026. Não foi informado um horário exato; não presumir que seja o fim do dia 16. Os blocos abaixo são estimativas, não garantias.
 
 ## Dia 1 — estrutura e fluxo de compra
 
@@ -22,7 +22,7 @@ Por solicitação do candidato, a integração na main e a publicação ficam su
 
 - [x] Enunciado lido e stack identificada.
 - [x] Base da aplicação criada.
-- [ ] Fidelidade visual: composição revisada com 13 frames e capturas do início; fonte original não fornecida e diferenças conhecidas em `DESIGN.md`.
+- [ ] Fidelidade visual: composição revisada na etapa 7 com 13 frames e capturas do início; fonte original e revisão humana final permanecem pendentes, com diferenças declaradas em `DESIGN.md`.
 - [x] Catálogo e detalhe funcionais, com galeria e metadados.
 - [x] Conta, sessão e isolamento de dados.
 - [x] Favoritos e rollback.
@@ -32,10 +32,11 @@ Por solicitação do candidato, a integração na main e a publicação ficam su
 - [x] Carteiras e conexão simulada com validação de rede.
 - [x] Eventos de negócio, versões e reconciliação na reconexão.
 - [x] Cenários de compra, eventos, reset e controles REST da demonstração.
-- [x] 12 grupos de E2E e regressão visual: 129 execuções passaram; 12 baselines versionadas.
+- [x] 12 grupos de E2E e regressão visual: 135 execuções passaram; 12 baselines versionadas.
 - [x] Metas Lighthouse locais: 12 medições, medianas performance mobile 90/91 e desktop 100/100; demais categorias 100. Relatórios e condições em `PERFORMANCE.md`.
 - [ ] Deploy público validado.
 - [x] Documentação das etapas, contratos, design, performance e guia da Vercel.
+- [ ] Identificação profissional do perfil GitHub, solicitada para o fechamento (nome exibido/README e apresentação; sem reescrever o histórico automaticamente).
 - [ ] Treino final de apresentação, após validar a publicação.
 
 ## Regras para proteger a entrega

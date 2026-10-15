@@ -187,7 +187,10 @@ export function CartPage() {
                 </div>
                 <div>
                   <dt>Taxa de rede</dt>
-                  <dd>{cart.data.quote.networkFeeEth} ETH</dd>
+                  <dd>
+                    {cart.data.quote.networkFeeEth} ETH
+                    <small className="estimated-network-fee">Taxa estimada</small>
+                  </dd>
                 </div>
                 <div className="summary-total">
                   <dt>Total</dt>

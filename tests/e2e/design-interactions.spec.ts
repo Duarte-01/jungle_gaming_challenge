@@ -79,6 +79,15 @@ test('troca de provedor exige reconexão e nova revisão, preservando dados no p
   await page.getByLabel('Revisei meus dados e os valores desta compra simulada.').check()
   await page.getByRole('button', { name: 'Revisar pedido', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Confirmar compra simulada' })).toBeEnabled()
+  if (page.viewportSize()!.width < 768) {
+    await expect(page.getByRole('heading', { name: 'Seus NFTs', exact: true })).toBeHidden()
+    await page.getByRole('button', { name: 'Ver itens e valores', exact: true }).click()
+    await expect(page.getByRole('heading', { name: 'Seus NFTs', exact: true })).toBeVisible()
+    await expect(page.getByTestId('checkout-total')).toHaveText('1.195 ETH')
+    await page.getByRole('button', { name: 'Ocultar itens e valores', exact: true }).press('Enter')
+    await expect(page.getByRole('heading', { name: 'Seus NFTs', exact: true })).toBeHidden()
+    await expect(page.getByTestId('checkout-total')).toHaveText('1.195 ETH')
+  }
   await page.getByRole('radio', { name: 'Coinbase Wallet', exact: true }).check()
   await expect(page.getByRole('button', { name: 'Confirmar compra simulada' })).toHaveCount(0)
   await page.getByRole('button', { name: 'Conectar carteira simulada' }).click()

@@ -1,4 +1,4 @@
-# Relatórios de validação — etapa 6
+# Relatórios de validação — etapa 7
 
 - `playwright/index.html`: cópia do relatório HTML da execução completa de E2E sobre o build de produção. O resumo e as condições estão em `docs/VALIDACAO.md`.
 - `lighthouse/*.report.html` e `*.report.json`: três medições de cada combinação de início/detalhe e mobile/desktop.

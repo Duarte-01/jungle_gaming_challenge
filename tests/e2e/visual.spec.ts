@@ -14,7 +14,9 @@ async function stable(page: Page) {
   })
   await page.evaluate(() => {
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
+    window.scrollTo({ top: 0, behavior: 'instant' })
   })
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())))
 }
 
 async function cart(page: Page, signedIn = false) {
