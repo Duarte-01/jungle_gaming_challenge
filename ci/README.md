@@ -4,6 +4,7 @@ As capturas visuais dependem do browser, das fontes e do sistema operacional. O 
 
 - Base Node 24.19.0 / Debian 13 fixada por digest.
 - Chromium 155.0.8059.39 e Playwright 1.64.1 fixados. As baselines anteriores, geradas com Chromium 154 no Debian 13, foram comparadas sem atualização no novo container antes de alterar o design.
+- `XDG_CONFIG_HOME` e `XDG_CACHE_HOME` apontam para diretórios graváveis em `/tmp`, inclusive quando o UID do runner não existe em `/etc/passwd`. Sem configuração XDG, esse caso produziu erro de crashpad na reprodução local. O preflight abre o Chromium pelo mesmo launcher/CDP usado pelo Lighthouse e mostra stderr se falhar.
 - Fontes do sistema instaladas explicitamente; a aplicação usa fontes locais.
 - Se a versão fixada desaparecer do repositório APT, o build deve falhar. Atualize a versão deliberadamente, inspecione as diferenças e execute novamente os testes. Não remova a fixação para silenciar o problema.
 
@@ -27,6 +28,6 @@ docker run --rm --ipc=host --user "$(id -u):$(id -g)" \
   kurio-validation npm run audit:lighthouse
 ```
 
-O segundo comando usa o build produzido pelo primeiro. O Dockerfile define os caminhos do Chromium para ambos os runners. No GitHub, cada job instala e constrói sua própria cópia. Lighthouse executa em push/PR e não depende do sucesso do outro job; uma falha E2E não deve ocultar a auditoria. Relatórios e traces são enviados mesmo em falhas.
+O segundo comando usa o build produzido pelo primeiro. O Dockerfile define os caminhos do Chromium para ambos os runners. No GitHub, cada job instala e constrói sua própria cópia. Os logs completos são guardados, e falhas recebem um trecho limitado no job summary. Lighthouse executa em push/PR e não depende do sucesso do outro job; uma falha E2E não deve ocultar a auditoria. Relatórios e traces são enviados mesmo em falhas.
 
 Desenvolvimento local pode usar o browser do Playwright, mas a regressão visual oficial deve usar este ambiente. Nunca atualize as capturas sem inspecionar a alteração nem aumente tolerâncias para obter aprovação. Publicação do ambiente Codex, push, integração na main e deploy são operações diferentes. Main e deploy permanecem suspensos até a revisão solicitada pelo candidato.
