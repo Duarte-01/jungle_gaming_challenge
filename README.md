@@ -6,7 +6,11 @@ Marketplace responsivo de NFTs desenvolvido por **Zandor Duarte** para o [desafi
 
 A aplicação implementa descoberta, conta do colecionador, carteiras e compra completa com API REST e eventos Socket.IO simulados na camada de rede. A confirmação depende do estado do pedido na API. Todas as credenciais, carteiras, transações e referências de exploração são fictícias.
 
-**Demonstração pública:** publicação em preparação. O endereço validado será registrado nesta seção.
+**Demonstração pública:** [junglegamingchallenge.vercel.app](https://junglegamingchallenge.vercel.app/).
+
+A verificação do domínio publicado está disponível no workflow [Validate public deployment](https://github.com/Duarte-01/jungle_gaming_challenge/actions/workflows/deploy.yml): hashes dos arquivos, fluxos nos três viewports e Lighthouse em início/detalhe. Os relatórios são anexados à execução correspondente.
+
+**Deploy validado:** [56 arquivos conferidos, nove testes públicos e 12 medições Lighthouse aprovados](https://github.com/Duarte-01/jungle_gaming_challenge/actions/runs/38841326415). Evidência e condições em [VALIDACAO.md](docs/VALIDACAO.md).
 
 ## Stack
 

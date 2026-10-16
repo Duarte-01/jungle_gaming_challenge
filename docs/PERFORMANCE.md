@@ -32,7 +32,9 @@ Para a regressão oficial, use o container documentado; o script aceita `CHROME_
 
 `AUDIT_OUTPUT_DIR` permite diagnósticos em outra pasta. `--runs 1` é útil durante a otimização, mas não substitui a matriz completa. O resumo identifica `scope.completeMatrix`. Antes de medir, o script remove o resumo anterior e os relatórios dos alvos selecionados, evitando misturar resultados. A CI também remove relatórios versionados antes de iniciar o job, para não enviar evidência antiga se instalação/build falharem.
 
-Os 12 pares HTML/JSON estão em `reports/lighthouse/`. Os hashes SHA-256 dos arquivos de `dist` em `summary.json` foram comparados e são iguais aos de `reports/validation.json`, relativos aos 150 E2E aprovados. A auditoria do domínio público ainda não aconteceu. `AUDIT_BASE_URL` permite executá-la depois do deploy.
+Os 12 pares HTML/JSON locais estão em `reports/lighthouse/`. Os hashes SHA-256 dos arquivos de `dist` em `summary.json` foram comparados e são iguais aos de `reports/validation.json`, relativos aos 150 E2E aprovados.
+
+O domínio público também passou na matriz completa de **12 medições**, preservando todas as metas, na [execução 38841326415](https://github.com/Duarte-01/jungle_gaming_challenge/actions/runs/38841326415). Seus HTML/JSON e medianas estão no artefato **public-deployment-reports**, pasta `reports/deploy/lighthouse`. A tabela acima descreve somente a medição local, sem substituir seus números por inferências sobre o ambiente público. `AUDIT_BASE_URL` e `AUDIT_OUTPUT_DIR` permitem repetir a auditoria em outro domínio/pasta.
 
 ## Decisões de performance
 

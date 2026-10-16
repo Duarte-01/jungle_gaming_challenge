@@ -32,7 +32,11 @@ Os resumos de E2E e Lighthouse identificam cada arquivo de `dist` por SHA-256. A
 
 ## Domínio público
 
-A verificação após publicação cobre acesso anônimo HTTPS, service worker, REST e Socket.IO, assets, acesso direto/refresh das rotas, sessão e compra completa. A URL validada é registrada no README. O banco público é independente do armazenamento local usado nos testes.
+A publicação em [junglegamingchallenge.vercel.app](https://junglegamingchallenge.vercel.app/) foi validada pela [execução pública 38841326415](https://github.com/Duarte-01/jungle_gaming_challenge/actions/runs/38841326415), concluída com sucesso em 16/10/2026 UTC (15/10 em Brasília). O pipeline conferiu os **56 arquivos por SHA-256**, executou **nove testes públicos** em 390/768/1440 px e completou **12 medições Lighthouse**, com todas as metas atingidas.
+
+Os testes cobrem acesso anônimo HTTPS, service worker, REST e Socket.IO, assets, acesso direto/refresh das rotas, sessão, cancelamento de autenticação, carrinho persistente, atualização de preço durante a revisão e compra completa com recibo após refresh. O banco da simulação pertence ao armazenamento do navegador; estes testes usam contextos novos e independentes.
+
+[`reports/deploy/verification.json`](../reports/deploy/verification.json) registra o resultado confirmado pela API do GitHub, o commit, a cobertura e o identificador do artefato. O artefato **public-deployment-reports**, disponível na execução acima, contém os hashes observados, relatório Playwright e HTML/JSON Lighthouse do domínio real; a retenção configurada é de 14 dias. O workflow permite nova execução manual com uma URL HTTPS.
 
 ## Resultado do build de entrega
 
