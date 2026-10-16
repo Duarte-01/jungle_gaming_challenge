@@ -103,7 +103,7 @@ Transporte Socket.IO em `/realtime/`, interceptado pelo MSW com binding de proto
 
 Eventos `nft.updated`, `quote.updated`, `order.updated`: `{ id, sequence, type, resourceId, version, ownerId?, actorId?, reason? }`. `order.updated` é privado. `reason` pode ser reservation ou market. Duplicatas e versões antigas são descartadas. Recurso alterado provoca reconsulta REST; reconexão reconcilia consultas ativas. `health.check`/`health.ready` continua disponível para infraestrutura.
 
-## Controles acrescentados na etapa 4
+## Controles de mercado e recuperação
 
 Novos cenários: `out-of-order`, `wallet-rejected`, `payment-declined`, `order-timeout`, `order-pending`. O cenário de respostas fora de ordem demora mais para a busca Emerald que para as demais, permitindo observar cancelamento da busca antiga.
 
@@ -121,12 +121,12 @@ O reset agora também limpa carteiras, conexões, pedidos, idempotência, evento
 
 Perfil inclui `username`, `ens` e `walletNickname`, validados e persistidos. `username` aceita letras ASCII, números, ponto, sublinhado e hífen (2–50 caracteres); `ens` aceita letras, números e hífen (2–50). A interface apresenta o sufixo ENS.
 
-Carteira acrescenta `profileName`, `email`, `ens`, `referralCode`, `secondaryAddress` e `provider` (`MetaMask`, `WalletConnect`, `Coinbase Wallet`). Campos novos têm defaults para compatibilidade com dados da etapa anterior. Endereço secundário vazio é permitido; quando preenchido deve ser ENS ou endereço em formato aceito. O endereço principal continua validado conforme a rede. Conexão registra também `provider`.
+Carteira acrescenta `profileName`, `email`, `ens`, `referralCode`, `secondaryAddress` e `provider` (`MetaMask`, `WalletConnect`, `Coinbase Wallet`). Campos novos têm defaults para compatibilidade com dados de versões anteriores. Endereço secundário vazio é permitido; quando preenchido deve ser ENS ou endereço em formato aceito. O endereço principal continua validado conforme a rede. Conexão registra também `provider`.
 
 Cliente do pedido acrescenta os campos do perfil, `profileName`, `referralCode` e `note` opcional de até 1.000 caracteres. A criação exige que rede, carteira e provedor coincidam com a conexão simulada atual. O snapshot preserva esses dados e o provedor conectado. A mesma chave idempotente com payload normalizado diferente continua retornando conflito; tentativas antigas são comparadas depois da aplicação dos defaults novos.
 
 Detalhe do NFT inclui coleção, descrição, atributos, avaliação agregada e total de avaliações simuladas. Edições incluem padrão, limitada, única e aberta, com disponibilidade devolvida pela API. Não há API de publicação de avaliações nem compra real.
 
-Na etapa 8, o detalhe acrescenta `mobileDescription` e `details: { paragraphs, network, contract, copyright }`, opcionais para compatibilidade. O mock migra esses textos em dados existentes sem apagar contas, carrinhos, estoque, pedidos ou preços alterados. São textos editoriais fictícios do frame, recebidos por REST.
+O detalhe inclui `mobileDescription` e `details: { paragraphs, network, contract, copyright }`, opcionais para compatibilidade. O mock migra esses textos em dados existentes sem apagar contas, carrinhos, estoque, pedidos ou preços alterados. São textos editoriais fictícios do frame, recebidos por REST.
 
 `customer.secondaryAddress` é opcional; vazio é permitido e valores preenchidos seguem a mesma validação de ENS/endereço secundário das carteiras. O rascunho do pagamento e o snapshot do pedido preservam esse campo. A propriedade é opcional, sem default adicional no payload normalizado, preservando a comparação de tentativas anteriores que não tinham o campo. O endereço principal continua vindo da carteira selecionada e é conferido pela API, não de texto livre no checkout.

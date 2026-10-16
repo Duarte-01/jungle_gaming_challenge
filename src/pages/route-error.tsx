@@ -6,7 +6,7 @@ export function RouteError() {
     <main className="kurio-app">
       <section className="container empty-state" role="alert">
         <h1>Não foi possível abrir esta página</h1>
-        <p>Confira sua conexão e tente novamente.</p>
+        <p>Ocorreu uma falha ao carregar a página. Tente recarregá-la para continuar.</p>
         <button
           type="button"
           className="kurio-button"

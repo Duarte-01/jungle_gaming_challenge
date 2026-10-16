@@ -1,15 +1,14 @@
-# Relatórios de validação — etapa 8
+# Relatórios de qualidade
 
-- `playwright/index.html`: cópia do relatório HTML da execução completa de E2E sobre o build de produção. O resumo e as condições estão em `docs/VALIDACAO.md`.
-- `lighthouse/*.report.html` e `*.report.json`: três medições de cada combinação de início/detalhe e mobile/desktop.
-- `lighthouse/summary.json`: resultados individuais, medianas, versões, configuração e hashes dos arquivos do build auditado.
-- `playwright-before-notice-dismiss/`: histórico de uma execução com 128 aprovações e uma falha mobile; inclui screenshot e trace. Nessa execução o teste tentava clicar no favorito sob um aviso. A versão seguinte fecha o aviso pelo controle disponível antes de tentar novamente, preservando as asserções de rollback e persistência.
-- `validation.json`: identificação do build e da execução de E2E preservada nesta entrega.
+| Arquivo | Conteúdo |
+| --- | --- |
+| `playwright/index.html` | Relatório HTML da suíte E2E completa sobre o build otimizado |
+| `validation.json` | Contagens, ambiente, comando, duração e hashes dos arquivos de `dist` |
+| `lighthouse/*.report.html` / `*.report.json` | Três auditorias de cada combinação início/detalhe × mobile/desktop |
+| `lighthouse/summary.json` | Medianas, LCP/CLS/TBT, configuração, versões e hashes do build |
 
-Os relatórios de uma execução não comprovam alterações posteriores. Reproduza os comandos da documentação depois de mudar o código. Os endereços internos presentes nos relatórios correspondem à medição local; não são o deploy público obrigatório.
+Resultados e reprodução: [VALIDACAO.md](../docs/VALIDACAO.md), [PERFORMANCE.md](../docs/PERFORMANCE.md) e [ambiente de CI](../ci/README.md). Os hashes permitem conferir que E2E e Lighthouse avaliaram o mesmo build.
 
-O Lighthouse retorna código 1 quando uma mediana não atinge a meta. Consulte `docs/PERFORMANCE.md`; relatórios completos e boas notas em outras categorias não apagam esse resultado.
+Execuções novas geram `playwright-report/` e `test-results/`. Traces são preservados para falhas; a CI publica os relatórios e logs como artefatos. Uma execução sem falhas não gera traces de erro. As baselines estão em `tests/e2e/visual.spec.ts-snapshots`, separadas dos frames originais em `docs/design-references`.
 
-Traces de testes com falha são gerados em `test-results/`; o workflow os inclui como artefato em falhas de CI. Uma execução sem falhas não gera traces de erro. As baselines ficam em `tests/e2e/visual.spec.ts-snapshots`, separadas dos frames de referência em `docs/design-references`.
-
-Os relatórios atuais são da etapa 8 e substituem os da etapa 7. As medições anteriores podem ser consultadas no histórico Git; suas descrições históricas em `docs/VALIDACAO.md` não são a identificação do build atual.
+A auditoria é feita com mocks, imagens e fontes reais da demonstração. Metas abaixo do mínimo causam saída 1. O relatório de uma versão não comprova alterações posteriores nem substitui validação do domínio público.

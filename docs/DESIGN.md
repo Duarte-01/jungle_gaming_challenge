@@ -34,43 +34,8 @@ Os tokens estão em `src/index.css`. Tailwind participa da composição e dos ut
 - **Telas sem frame mobile:** perfil, carteiras, pedidos e confirmação usam a mesma identidade e adaptação responsiva.
 - **Ações auxiliares:** Google/Facebook, recuperação de senha, newsletter, conteúdo editorial e links sociais sem destino fornecido mostram uma explicação de escopo. Não aparentam autenticação, envio ou inscrição bem-sucedidos.
 
-Na etapa 7, os 13 PNGs foram novamente abertos e comparados com capturas locais das nove telas em 1440 e 414 px, incluindo início e adaptações sem frame. Ajustes ficam em `src/styles/frame-alignment.css`. O acesso direto ao Figma recebeu 403 do proxy; não há acesso à sessão Google do navegador do candidato. Uma exportação SVG com texto editável pode ajudar a resolver a família tipográfica.
+## Verificação visual
 
-A comparação dos PNGs com as telas foi manual. Não há validação automática de igualdade pixel a pixel com o Figma, e não se afirma fidelidade perfeita. Fonte original e espaçamentos finos ainda podem ser refinados se o arquivo de design fornecer medidas e assets adicionais.
+Os frames originais são preservados com hashes. A implementação foi inspecionada em desktop e mobile; as baselines Playwright cobrem início, detalhe, carrinho e pagamento em três larguras. As comparações verificam regressões da implementação. Não há comparação automática de igualdade com o Figma.
 
-## Regressão visual
-
-`tests/e2e/visual.spec.ts` registra início, detalhe, carrinho e pagamento revisado em 390, 768 e 1440 px. As 12 baselines versionadas ficam em `tests/e2e/visual.spec.ts-snapshots`. Elas representam o resultado implementado e permitem detectar mudanças futuras; não substituem os frames originais como referência de design.
-
-Os testes aguardam consultas, conexão, fontes e decodificação das imagens. Cada contexto começa com armazenamento isolado e usa data fixa; animações são desativadas na captura. A captura não substitui respostas REST ou eventos.
-
-```bash
-npm run build
-E2E_PREVIEW=true PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e -- visual.spec.ts --workers=2
-```
-
-As baselines foram produzidas em Linux Debian 13, Chromium 154.0.8037.57 e Playwright 1.64.1. A CI usa agora o container Debian 13/Chromium 155 descrito em `ci/README.md`; as 12 capturas anteriores passaram nele antes da alteração de tipografia. Em outra plataforma/browser, diferenças de renderização devem ser inspecionadas. Atualize com `--update-snapshots` somente após revisar a alteração visual; não use a atualização para esconder uma regressão.
-
-Na etapa 6, somente `inicio-desktop-linux.png` foi atualizado após inspecionar a captura e o diff: a diferença ficou restrita ao destaque desktop, incluindo título, saudação, descrição e posição do botão. A mudança aplica as medidas fornecidas pelo candidato. As outras 11 baselines foram preservadas; tolerâncias e asserções não foram reduzidas.
-
-## Revisão por tela — etapa 7
-
-Complemento da etapa 8: texto branco da faixa de preço; cópia editorial do detalhe conforme os frames; rótulos e sequência dos campos do pagamento desktop conforme a referência. Explicação das diferenças funcionais mantidas e roteiro de conferência em [ETAPA-08.md](ETAPA-08.md).
-
-| Tela        | Referência                       | Ajustes desta rodada                                                                                                                      |
-| ----------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Início      | Capturas do chat, desktop/mobile | Duas alças, faixa inicial 0,02–12,30 ETH, sidebar compacta, composição do destaque, cards mobile, navegação e conteúdo editorial resumido |
-| Login       | PNG desktop e mobile             | Composição do diálogo/fundo e símbolos locais de autenticação                                                                             |
-| Cadastro    | PNG desktop e mobile             | Logotipo mobile, início do formulário, campos contíguos de senha, botão Criar perfil e orientação acessível                               |
-| Perfil      | PNG desktop; adaptação mobile    | Colunas, avatar, telefone expansível e saída na sidebar                                                                                   |
-| Carteiras   | PNG desktop; adaptação mobile    | Formulário principal aberto, campos em colunas e resumo da outra carteira                                                                 |
-| Detalhe     | PNG desktop e mobile             | Estrelas, ordem das edições, resumo mobile, compra e links de compartilhamento                                                            |
-| Carrinho    | PNG desktop e mobile             | Margens, conteúdo dos cards, proporções e indicação de taxa estimada                                                                      |
-| Pagamento   | PNG desktop e mobile             | Cartões compactos, endereço abreviado, total e detalhamento expansível, confirmação mobile sem sobrepor controles                         |
-| Confirmação | PNG desktop; adaptação mobile    | Hierarquia do cabeçalho do recibo e espaçamento, preservando snapshot e navegação                                                         |
-
-Diferenças de estado permanecem explícitas: a conta autenticada mostra seu nome/saída; as fixtures retornam suas contagens, preços e itens; edição indisponível fica desabilitada. A confirmação não declara transação real em blockchain. O perfil usa ações independentes de salvar dados e alterar senha. O pagamento preserva rede, conexão, validação e revisão, mesmo ocupando mais altura que o frame estático.
-
-As 12 baselines foram atualizadas nesta rodada após a inspeção das alterações, usando Chromium 155 no container fixado. A captura aguarda fontes, consultas e imagens e volta ao início da página para não depender da posição da última interação. A execução completa posterior usa comparação normal, sem `--update-snapshots`; seus resultados estão em `VALIDACAO.md`. Não houve aumento de tolerâncias.
-
-No perfil desktop em 1440 × 1080, foram conferidos também os retângulos dos inputs pelo navegador: nome em y=188, e-mail em y=291, apelido em y=394, senha atual em y=533, nova senha em y=624 e confirmação em y=715. Esses topos coincidem com as medidas tomadas no PNG recebido nessa condição. Isso demonstra alinhamento das caixas; não comprova identidade de todos os pixels, da fonte ou de estados com erros.
+`src/styles/frame-alignment.css` reúne os ajustes sobre a base. A autenticação mobile acrescenta X visível com área de toque de 44 × 44 px. O slider tem duas alças nativas e suporte a teclado. O formulário de pagamento mantém os rótulos e a ordem dos campos principais da referência, com dados de contato e conexão necessários ao fluxo funcional.

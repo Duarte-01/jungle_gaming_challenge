@@ -1,89 +1,133 @@
-# Jungle Gaming Challenge
+# Kurio — NFT Marketplace
 
-Implementação do [desafio frontend](https://github.com/junglegaming/frontend-challenge).
+[![Validate marketplace](https://github.com/Duarte-01/jungle_gaming_challenge/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/Duarte-01/jungle_gaming_challenge/actions/workflows/validate.yml)
 
-**Estado atual:** revisão da etapa 8. Catálogo, conta e compra simulada estão implementados. **Validação local: 150 E2E e 4 unitários aprovados, incluindo 12 comparações visuais. As 12 medições Lighthouse atingiram todas as metas.** Veja a [matriz de requisitos](docs/REQUISITOS.md), os [resultados executados](docs/VALIDACAO.md) e as [medianas Lighthouse](docs/PERFORMANCE.md). Fonte aproximada e diferenças em relação ao Figma estão declaradas em [DESIGN](docs/DESIGN.md). Confira os dois checks do commit correspondente antes de integrar na `main` ou publicar. **Não há deploy público validado.**
+Marketplace responsivo de NFTs desenvolvido por **Zandor Duarte** para o [desafio frontend da Jungle Gaming](https://github.com/junglegaming/frontend-challenge), com base no [Figma fornecido](https://www.figma.com/design/Ff0SksUi7UFtPWUO8kyNtw/Frontend-Challenge?node-id=0-1).
 
-## Executar
+A aplicação implementa descoberta, conta do colecionador, carteiras e compra completa com API REST e eventos Socket.IO simulados na camada de rede. A confirmação depende do estado do pedido na API. Todas as credenciais, carteiras, transações e referências de exploração são fictícias.
 
-Requisitos: Node.js 22.18+ (ambiente atual: Node 24) e npm.
+**Demonstração pública:** publicação em preparação. O endereço validado será registrado nesta seção.
+
+## Stack
+
+React 19, TypeScript 6, TanStack Router, TanStack Query, Axios, Tailwind CSS 4, componente Button no padrão shadcn/ui com Radix, MSW 2, socket.io-client, Playwright, Lighthouse e Vite. Zod valida os contratos de entrada; valores em ETH usam strings decimais e BigInt em wei.
+
+## Execução local
+
+Requisitos: Node.js **22.18+** e npm. A CI usa Node **24.19.0**, Debian 13 e Chromium 155.0.8059.39 em [container reproduzível](ci/README.md).
 
 ```bash
 npm ci
 npm run dev:mocks
 ```
 
-O Vite informa o endereço local no terminal. Os mocks estão ativos por padrão, inclusive no build de demonstração. `.env.example` documenta `VITE_ENABLE_MOCKS`; definir `false` desativa os mocks e requer uma API real, que não faz parte do desafio. Nenhuma credencial real é necessária.
+O Vite informa o endereço no terminal. Não é necessário backend, extensão de carteira, serviço privado nem credencial real. Imagens e fontes são locais.
 
-```bash
-npm run typecheck
-npm run lint
-npm run format:check
-npm run test:unit
-npm run build
-npm run preview
-npm run browsers:install
-npm run test:e2e
-npm run test:report
-npm run audit:lighthouse
-```
+### Variáveis de ambiente
 
-Para reproduzir os checks visuais e Lighthouse do GitHub, use o [ambiente Docker fixado](ci/README.md). A distribuição, as fontes e o Chromium influenciam as capturas: usar um browser diferente exige inspecionar as diferenças, não regenerar baselines automaticamente.
+| Variável            | Padrão | Comportamento                                                                             |
+| ------------------- | ------ | ----------------------------------------------------------------------------------------- |
+| `VITE_ENABLE_MOCKS` | `true` | Ativa MSW em desenvolvimento e no build publicado. `false` exige uma API real compatível. |
 
-O desenvolvimento manual não exige Docker. Em uma máquina local, `npm run browsers:install` instala o browser para os testes funcionais. Nesta nuvem, o download do Playwright é bloqueado; há Chromium do sistema disponível e a imagem de validação preparada. Para uma verificação funcional com o browser do sistema:
+O arquivo `.env.example` documenta a configuração. Variáveis Vite são incorporadas no build; mudanças exigem novo build. Mantenha os mocks ativos na demonstração.
 
-```bash
-PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e
-```
+### Comandos
 
-Esse comando não substitui a regressão visual no container oficial. Os quatro PNGs originais continuam preservados; `npm run assets:optimize` reproduz os derivados AVIF/WebP usados pelo navegador, conforme [ASSETS](docs/ASSETS.md).
+| Comando                             | Finalidade                                                                |
+| ----------------------------------- | ------------------------------------------------------------------------- |
+| `npm run dev` / `npm run dev:mocks` | Desenvolvimento com mocks por padrão                                      |
+| `npm run build`                     | Verificação TypeScript e build otimizado em `dist`                        |
+| `npm run preview`                   | Servir o build localmente                                                 |
+| `npm run typecheck`                 | Verificação de tipos                                                      |
+| `npm run lint`                      | Análise estática com oxlint                                               |
+| `npm run format:check`              | Conferência Prettier                                                      |
+| `npm run test:unit`                 | Precisão ETH, destinos de autenticação e eventos                          |
+| `npm run browsers:install`          | Instalar Chromium para Playwright                                         |
+| `npm run test:e2e`                  | E2E e regressão visual nos três viewports                                 |
+| `npm run test:deploy`               | Validar o domínio indicado por `DEPLOY_BASE_URL` nos três tamanhos        |
+| `npm run test:report`               | Abrir o relatório HTML atual                                              |
+| `npm run audit:lighthouse`          | Três medições de início/detalhe em mobile/desktop, com metas obrigatórias |
+| `npm run assets:optimize`           | Reproduzir derivados AVIF/WebP dos PNGs preservados                       |
 
-Os testes atuais verificam infraestrutura, catálogo, contas, favoritos, carrinho, carteiras, checkout e pedidos nas larguras 390, 768 e 1440. Incluem recusa, timeout, reconexão, revisão de preços, estoque, cupons, taxas e isolamento de pedidos. Os testes unitários verificam precisão ETH, destinos de retorno após login e validação de eventos de rede. Os resultados executados estão em [VALIDACAO](docs/VALIDACAO.md). As 12 baselines cobrem início, detalhe, carrinho e pagamento nos três tamanhos. Relatórios atuais são gerados em `playwright-report/`, e traces de falhas em `test-results/`. A entrega preserva uma cópia do relatório em `reports/playwright/` e as 12 auditorias HTML/JSON em `reports/lighthouse/`. Os browsers ficam em `.cache/browsers/`.
+Para comparar as baselines exatamente como na CI, use [ci/README.md](ci/README.md). Outros sistemas/browsers podem produzir diferenças de renderização que precisam de inspeção. Os testes funcionais podem usar o Chromium instalado pelo Playwright; `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` permite indicar outro executável.
 
-## Testar a demonstração manualmente
+## Avaliar os fluxos
 
-Use somente dados fictícios. As contas abaixo são fixtures públicas da simulação:
+### Credenciais fictícias
 
-| Conta | E-mail             | Senha fictícia   |
+| Conta | E-mail             | Senha            |
 | ----- | ------------------ | ---------------- |
 | Ana   | `ana@kurio.test`   | `KurioDemo2026!` |
 | Bruno | `bruno@kurio.test` | `KurioDemo2026!` |
 
-Abra um NFT, escolha uma edição e adicione ao carrinho. Favoritos exigem login; o carrinho permite visitante e combina seus itens com os da conta ao entrar. Use `KURIO10` para 10% de desconto. `EXPIRED` simula cupom expirado; outros códigos são inválidos.
+As duas contas já existem nas fixtures e têm carteiras simuladas. O cadastro permite criar outra conta fictícia; cadastre sua carteira em `/carteiras` antes de comprar. Endereço Ethereum fictício válido: `0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`.
 
-Ana e Bruno **já estão cadastrados nas fixtures** para permitir testes imediatos. Você também pode usar `/cadastro` com um e-mail fictício novo; o cadastro cria a conta e inicia a sessão. Um e-mail desconhecido não entra pelo formulário de login.
+1. No início, combine busca, filtros, ordenação e paginação; atualize a página e use o histórico para conferir a restauração pela URL.
+2. Abra um NFT, escolha edição/quantidade e adicione ao carrinho. O visitante mantém seus itens após refresh e os combina com o carrinho da conta ao entrar.
+3. Use `KURIO10` para 10% de desconto. `EXPIRED` representa cupom expirado; códigos desconhecidos são inválidos.
+4. Em `/pagamento`, confira o perfil e preencha o telefone; no mobile, expanda **Perfil do colecionador**. Selecione carteira/rede/provedor, conecte a carteira simulada, marque a revisão e use **Revisar pedido**.
+5. Confira os valores antes de **Confirmar compra simulada**. O pedido passa por pendente e só apresenta recibo após confirmação da API. Atualize o recibo para conferir seu snapshot.
+6. Em perfil/carteiras, altere dados e avatar e confira a persistência. Alterar a senha invalida as sessões e exige novo login.
 
-Para comprar, vá do carrinho para `/pagamento`, abra os dados do colecionador no mobile e preencha o telefone, conecte a carteira simulada na rede cadastrada, marque a revisão dos dados e clique em **Revisar pedido**. Confira o resumo antes de **Confirmar compra simulada**. Só o retorno confirmado da API libera o recibo. Se sua base veio da etapa 3 ou a conta é nova, cadastre primeiro a carteira em `/carteiras`; a migração preserva seus dados anteriores. Endereço fictício Ethereum válido: `0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`.
+Os dados ficam no armazenamento do navegador, separados por origem. Outro domínio, porta, navegador ou janela anônima recebe uma base independente. A sessão dura 30 minutos. Não use dados pessoais nem senhas reais.
 
-Acesse `/setup` para selecionar cenários de falha, pagamento recusado, timeout após criar pedido ou pedido pendente. O painel de mercado altera preço/estoque, expira o cupom, interrompe o socket e conclui pedidos pendentes por requisições REST. Os eventos resultantes trafegam pelo Socket.IO. Retorne ao cenário **Padrão** para compras normais. **Restaurar dados de demonstração** apaga contas criadas e alterações locais, incluindo pedidos, carteiras e tentativas, e restaura as fixtures. O controle de reset continua acessível durante a falha simulada de conexão.
+### Cenários e reset
 
-Rotas atuais: `/`, `/nfts/:id`, `/login`, `/cadastro`, `/carrinho`, `/favoritos`, `/perfil`, `/carteiras`, `/pagamento`, `/pedidos`, `/pedidos/:id`, `/explorador/:reference` e `/setup`. O explorador é interno e fictício, sem blockchain. A sessão dura 30 minutos e é recuperada pela API depois do refresh. Alterar a senha exige novo login.
+Acesse `/setup`, selecione um cenário e navegue para o fluxo desejado. A seleção persiste até voltar a **Padrão** ou executar **Restaurar dados de demonstração**. O reset apaga alterações, contas criadas, pedidos, carteiras, rascunhos e tentativas e restaura as fixtures.
 
-Os dados do mock ficam no navegador deste endereço, não no GitHub. Trocar a porta, o domínio ou o navegador cria outro armazenamento. O reset não altera o código-fonte.
+| Cenário                              | Reprodução e resultado esperado                                                                                                           |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Rede lenta / latência variável       | Observe skeletons; envie buscas sucessivas. A resposta antiga não substitui a busca atual.                                                |
+| Falha no catálogo / falha de conexão | Provoque uma consulta, confira o erro, retorne a Padrão e use **Tentar novamente**.                                                       |
+| Falha ao salvar favorito             | Favorite um item autenticado. A mutation falha e restaura o estado anterior.                                                              |
+| Falha ao atualizar carrinho          | Altere uma quantidade; o erro preserva os itens. Volte a Padrão e repita.                                                                 |
+| Sessão expirada                      | Acesse uma rota privada. Após login, o destino e os dados do checkout são recuperados.                                                    |
+| Conflito no cadastro                 | Envie o formulário; o erro de e-mail é associado ao campo.                                                                                |
+| Carteira recusada                    | Use **Conectar carteira simulada**. A recusa impede a compra até uma conexão válida.                                                      |
+| Pagamento recusado                   | Finalize a revisão. O pedido recusado preserva os itens e permite nova tentativa.                                                         |
+| Timeout após criar o pedido          | Confirme a compra. A recuperação consulta/reenvia a mesma chave sem duplicar o pedido.                                                    |
+| Pedido pendente                      | Confirme e interrompa o socket ou atualize a página. O mesmo pedido é recuperado. Use os controles de confirmação/recusa para encerrá-lo. |
 
-## Onde estudar
+O painel **Eventos e recuperação** altera preço, esgota edição, expira cupom, interrompe o socket e resolve pedidos pendentes via REST. Para reproduzir uma mudança enquanto o checkout permanece aberto, execute no console do navegador **nessa mesma aba**:
 
-- [Roteiro dos dois dias](docs/ROTEIRO.md): ordem de implementação e critérios pendentes.
-- [Primeira etapa explicada](docs/ETAPA-01.md): percurso da requisição, arquivos e exercício.
-- [Segunda etapa explicada](docs/ETAPA-02.md): URL, filtros, mocks e precisão ETH.
-- [Terceira etapa explicada](docs/ETAPA-03.md): sessão, isolamento, favoritos otimistas e carrinho.
-- [Quarta etapa explicada](docs/ETAPA-04.md): carteiras, revisão, idempotência, recibos e tempo real, com exercício passo a passo.
-- [Quinta etapa explicada](docs/ETAPA-05.md): composição dos frames, acessibilidade, novos campos e verificações, com exercício guiado.
-- [Sexta etapa explicada](docs/ETAPA-06.md): CI, baselines, carregamento e exercício para interpretar os relatórios.
-- [Sétima etapa explicada](docs/ETAPA-07.md): comparação com os frames, slider, formulários e diferenças entre baseline e Figma.
-- [Oitava etapa explicada](docs/ETAPA-08.md): cancelamento do login, recuperação de falhas e sequência dos campos do pagamento.
-- [Matriz de requisitos](docs/REQUISITOS.md): exigências, código, evidências e pendências.
-- [Referências visuais](docs/DESIGN.md): frames, fonte local, desvios e regressão visual.
-- [Performance](docs/PERFORMANCE.md): medianas Lighthouse, condições, relatórios e limitações.
-- [Publicação na Vercel](docs/DEPLOY.md): conta, branches, importação e validação pública.
-- [Imagens recebidas](docs/ASSETS.md): origem, dimensões e integridade dos PNGs.
-- [Contratos REST](docs/CONTRATOS.md): recursos, entradas, respostas e erros implementados.
-- [Preparação para apresentação](docs/APRESENTACAO.md): roteiro de estudo e perguntas do treino final.
-- [Arquitetura](ARCHITECTURE.md): decisões atuais e limites da base.
-- [Figma do desafio](https://www.figma.com/design/Ff0SksUi7UFtPWUO8kyNtw/Frontend-Challenge?node-id=0-1).
+```js
+await fetch('/api/testing/nfts/emerald-ape-42', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ priceEth: '2.19' }),
+})
+```
 
-## Publicação
+A versão da cotação perde validade e exige nova revisão. O transporte usa o cliente Socket.IO; o painel e os endpoints não injetam dados nos componentes. O mock de eventos pertence à instância da página; notificações entre abas independentes não são simuladas.
 
-Build: `npm run build`; saída: `dist`; mocks ativos por padrão, sem credenciais privadas. `vercel.json` prepara build e fallback de rotas; `netlify.toml` e `public/_redirects` preparam a alternativa Netlify. A configuração de hospedagem ainda precisa ser validada no serviço publicado.
+Rotas: `/`, `/nfts/:nftId`, `/login`, `/cadastro`, `/perfil`, `/carteiras`, `/favoritos`, `/carrinho`, `/pagamento`, `/pedidos`, `/pedidos/:orderId`, `/explorador/:reference` e `/setup`.
 
-O código de desenvolvimento está na branch `feat/marketplace-base`. **Integração na `main` e deploy suspensos por solicitação do candidato até concluir a revisão e obter os dois checks verdes do commit correspondente.** A Vercel será configurada depois dessa etapa. **Publicar o ambiente do Codex**, **enviar commits ao GitHub** e **publicar o site** são operações diferentes. O guia [DEPLOY](docs/DEPLOY.md) explica cada passo. Nenhuma URL pública está declarada como validada nesta entrega local.
+## Qualidade e evidências
+
+A suíte cobre 50 casos em **390, 768 e 1440 px**, totalizando **150 E2E**, incluindo 12 comparações visuais. Quatro testes unitários cobrem invariantes de precisão, redirecionamento e eventos. O workflow executa tipos, lint, formatação, unitários, build, E2E e Lighthouse; falhas mantêm seu código de saída e geram artefatos.
+
+Os relatórios versionados estão em `reports/playwright/`, `reports/validation.json` e `reports/lighthouse/`. Novas execuções produzem `playwright-report/` e `test-results/`; traces são gerados para falhas e enviados pela CI. Os resumos identificam os arquivos do build por SHA-256. Consulte [validação](docs/VALIDACAO.md) e [performance](docs/PERFORMANCE.md) para resultados e condições; baselines verificam regressão da implementação e não equivalem a comparação automática com o Figma.
+
+## Arquitetura e documentação
+
+- [ARCHITECTURE.md](ARCHITECTURE.md): responsabilidades, sessão, carrinho, cache, idempotência, tempo real e limitações.
+- [Contratos REST e eventos](docs/CONTRATOS.md).
+- [Matriz de requisitos](docs/REQUISITOS.md).
+- [Decisões visuais e acessibilidade](docs/DESIGN.md).
+- [Origem e integridade dos assets](docs/ASSETS.md).
+- [Auditorias Lighthouse](docs/PERFORMANCE.md).
+- [Ambiente de CI reproduzível](ci/README.md).
+
+## Hospedagem
+
+Vercel: preset Vite, raiz do repositório, `npm ci`, `npm run build`, saída `dist`, Node 24.x e branch `main`. Não são necessárias variáveis secretas. `vercel.json` configura o fallback das rotas e impede cache persistente do service worker. Alternativas: Netlify (`netlify.toml`/`public/_redirects`) e Cloudflare Pages.
+
+O domínio público exige HTTPS para o service worker. Após publicar, confira `/setup`, acesso direto e refresh de `/nfts/emerald-ape-42`, autenticação, carrinho, confirmação da compra e eventos. Alterar o domínio não transfere os dados locais da simulação.
+
+Para repetir os testes no domínio publicado, sem iniciar servidor local:
+
+```bash
+DEPLOY_BASE_URL=https://seu-dominio-publicado npm run test:deploy
+```
+
+Esse parâmetro pertence apenas ao runner de testes. O relatório público fica em `reports/deploy/playwright/` e verifica REST/Socket.IO, assets, refresh de rotas, carrinho, autenticação, revisão de preço e recibo.

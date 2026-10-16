@@ -1,101 +1,107 @@
-# Arquitetura em evolução
+# Arquitetura
 
-## Estado atual
+## Visão geral
 
-Esta documentação descreve a base até a etapa 6. A página inicial segue a composição das capturas fornecidas e usa os quatro retratos originais. Conta, perfil, favoritos, carrinho, carteiras, checkout e pedidos estão implementados. A tela técnica fica em `/setup`. Os 13 frames recebidos foram usados na revisão; fonte original não fornecida, substituições e desvios conhecidos estão em `docs/DESIGN.md`.
+Aplicação React e TypeScript organizada por responsabilidade, com APIs simuladas na rede pelo MSW. O mesmo conjunto de handlers e fixtures atende desenvolvimento, build de demonstração e testes. Componentes e hooks consomem a API pelo Axios; não importam fixtures nem substituem operações de negócio por setters locais.
 
-## Responsabilidades
+```mermaid
+flowchart LR
+  UI[Pages e componentes] --> Hooks[Hooks de aplicação]
+  Hooks --> Query[TanStack Query]
+  Query --> Axios[Axios REST]
+  Axios --> MSW[Handlers MSW]
+  MSW --> DB[Persistência local da simulação]
+  DB --> Events[Eventos versionados]
+  Events --> Binding[Binding MSW Socket.IO]
+  Binding --> Socket[socket.io-client]
+  Socket --> Query
+```
 
-`app/` compõe os providers e as rotas; `pages/` contém as telas; `components/ui/` contém componentes adaptados do padrão shadcn/ui; `api/` contém contratos e transporte Axios; `mocks/` simula a rede com MSW; `realtime/` gerencia o cliente Socket.IO. Os componentes não têm uma alternativa local que retorna fixtures.
+## Organização
 
-O MSW inicia antes do React. A configuração `VITE_ENABLE_MOCKS=false` desativa o worker. Os mocks ficam ativos por padrão no desenvolvimento e no build de demonstração. Não há backend privado.
+| Diretório        | Responsabilidade                                                                       |
+| ---------------- | -------------------------------------------------------------------------------------- |
+| `src/app`        | Providers, Router, política global de Query e bootstrap da UI                          |
+| `src/pages`      | Composição das telas e estado de apresentação                                          |
+| `src/components` | Elementos compartilhados e componentes acessíveis; Button adaptado do padrão shadcn/ui |
+| `src/hooks`      | Consultas e mutations de carrinho, favoritos e carteiras                               |
+| `src/api`        | Contratos de transporte, consultas Axios e normalização de erros                       |
+| `src/domain`     | Schemas Zod, tipos e invariantes de conta, checkout e eventos                          |
+| `src/auth`       | Proteção de rotas, sincronização/geração de sessão e destinos da autenticação          |
+| `src/realtime`   | Cliente Socket.IO, listeners e reconciliação                                           |
+| `src/mocks`      | Handlers REST/WebSocket, fixtures, banco e simulação de falhas                         |
+| `src/lib`        | Precisão ETH e armazenamento de rascunhos/tentativas                                   |
+| `src/styles`     | Ajustes da composição visual sobre os tokens e estilos de base                         |
 
-## Contratos implementados nesta etapa
+## Rotas e estado remoto
 
-`GET /api/health` → `200 { status: "ok", service: "jungle-marketplace-mock" }`.
+TanStack Router gerencia URLs, parâmetros, histórico e guards das rotas privadas. Busca, coleção, rede, preço, ordenação, aba e página compõem a URL. Alterar filtros reinicia a paginação. A chave da consulta inclui os parâmetros normalizados; AbortSignal é encaminhado ao Axios e respostas obsoletas são canceladas/descartadas.
 
-`GET /api/nfts?q=&category=&network=&min=0&max=100&sort=recent&tab=all&page=1` retorna itens, total, página, número de páginas e facets. Página contém até nove itens. Ordenações: `recent` (ordem estável de fixture), `price-asc`, `price-desc`, `name`; destaques: `all`, `new`, `trending`. `GET /api/nfts/:id` retorna um NFT com edições e disponibilidade, ou 404. Valores ETH são strings; filtros e ordenação de preço usam BigInt em wei.
+O sucesso do login retoma um destino interno validado. Cancelar retorna à última página pública; após refresh do login, usa uma alternativa pública segura, incluindo o carrinho quando o destino era pagamento. Destinos externos, caracteres de controle e ciclos de autenticação são rejeitados.
 
-Parâmetros são normalizados pelo Router e pelo MSW. Mudanças de filtro reiniciam a paginação. O cache da listagem usa todos os parâmetros na chave; a query passa AbortSignal ao Axios e mantém dados anteriores enquanto informa atualização. O detalhe usa chave por ID, sem retry para 404. O catálogo pertence ao mesmo banco local dos demais recursos; eventos invalidam as consultas afetadas.
+TanStack Query mantém os dados remotos. Estado local de React fica restrito a apresentação, formulários, seleção de edição, quantidade e revisão de compra.
 
-Socket.IO: `health.check`/`health.ready` verifica a infraestrutura. `nft.updated`, `quote.updated` e `order.updated` notificam alterações de negócio. A inscrição privada é validada pelo cookie da conexão, não apenas pelo ID enviado pelo cliente.
+| Recurso                        | Cache e sincronização                                                                                                   |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| Catálogo e detalhe             | `staleTime` de 30 s; parâmetros/ID nas chaves; uma nova tentativa para consultas transitórias, nenhuma para detalhe 404 |
+| Sessão                         | 30 s; consulta após refresh/foco; sem retry automático; tratamento distinto de sessão anônima e falha de transporte     |
+| Carrinho                       | Identidade de usuário/visitante na chave; `staleTime: 0`; mutations serializadas por identidade                         |
+| Favoritos, carteiras e pedidos | Chaves privadas incluem usuário; invalidação após mutations/eventos                                                     |
+| Mutations                      | Sem retry automático; pedido só é reenviado com chave e conteúdo da mesma tentativa                                     |
+| Pedido pendente                | Eventos Socket.IO e polling de recuperação de 1 s                                                                       |
 
-## Política inicial de cache
+Favoritos têm atualização otimista por item, snapshot anterior e rollback de falha. A reconciliação ocorre após a última mutation concorrente daquele usuário. O cache privado, as mutations e as subscriptions são descartados no logout/troca de conta. Uma geração de sessão impede que respostas antigas atualizem outra conta.
 
-TanStack Query: respostas frescas por 30 segundos, uma nova tentativa para queries e revalidação ao focar a janela. Mutations não têm retries automáticos. Pedido pode ser reenviado somente com a mesma chave e o mesmo conteúdo da tentativa salva. Queries passam AbortSignal ao Axios. Sessão não tem retry automático. Favoritos, carteiras e pedidos usam chaves por usuário; carrinho usa identidade de visitante ou usuário e staleTime zero. Queries e mutations privadas são removidas ao encerrar ou trocar a sessão. Rascunho e tentativa permanecem separados por usuário para recuperação após login.
+## Contratos, persistência e sessão
 
-## Transporte dos mocks
+Os [contratos REST e eventos](docs/CONTRATOS.md) são tipados e compartilham schemas de validação entre formulários e handlers. Erros incluem código, mensagem e campos; conflitos e permissões continuam sendo decididos na API, mesmo após validação no cliente.
 
-MSW 2 é usado por compatibilidade com o peer dependency de `@mswjs/socket.io-binding` 0.2. O cliente real `socket.io-client` conecta usando apenas WebSocket. A integração intercepta o protocolo e simula a abertura e os eventos; adicionamos heartbeat Engine.IO para manter a conexão. Não se pretende reproduzir salas, namespaces ou fallback HTTP polling. Os listeners são liberados no unmount.
+`kurio:db:v1` mantém catálogo, contas, sessões, favoritos, carrinhos, carteiras, conexões, pedidos, idempotência e eventos no localStorage. Migrações acrescentam campos sem apagar dados anteriores. Uma fila por instância coordena gravações; eventos são emitidos pelos sockets da instância que realizou a operação. Esse banco não oferece transações distribuídas nem sincronização multiusuário em servidor.
 
-Endpoint de transporte: `/realtime/`. A UI é baixada em paralelo aos mocks. A importação de socket.io-client acontece na criação assíncrona do socket, depois da ativação do MSW, porque Engine.IO captura o construtor WebSocket na avaliação do módulo. O caminho dedicado evita interceptar o WebSocket do próprio Vite.
+A sessão usa identificadores opacos em cookies, expira em 30 minutos e é validada nos handlers. Senhas fictícias usam PBKDF2/SHA-256 com 120.000 iterações, salts aleatórios e sem armazenamento em claro. Alteração de senha invalida as sessões. Hashes não são expostos na API.
 
-## Decisões e pendências
+Os cookies do mock são legíveis por JavaScript e o banco local pode ser inspecionado pelo proprietário do navegador. A implementação demonstra o contrato de autenticação e isolamento, sem representar segurança de backend de produção. O reset restaura integralmente as fixtures, inclusive cookies, tentativas e rascunhos.
 
-Vite simplifica desenvolvimento e build; Tailwind 4 participa pelo plugin do Vite. Um Button no padrão shadcn/ui usa Radix Slot, CVA e a composição `clsx`/`tailwind-merge`. Cores foram extraídas dos PNGs recebidos. IBM Plex Mono local (400/600 na UI e 500/700 no destaque desktop) é uma aproximação, pois os exports não especificam a fonte. Lucide substitui ícones sem arquivo dedicado. Os quatro retratos permanecem originais; a galeria apresenta recortes CSS da mesma arte. As decisões visuais e ajustes de acessibilidade estão em `docs/DESIGN.md`.
+## Carrinho, cotação e compra
 
-Playwright cobre fluxos e falhas, com baselines para quatro telas nos três viewports. Lighthouse mede início/detalhe três vezes por perfil, no build real com mocks padrão; relatórios e análise estão em `docs/PERFORMANCE.md`. Resultados e condições atuais devem ser conferidos em `docs/PERFORMANCE.md`; resultados antigos abaixo da meta não autorizam a publicação. O deploy público ainda exige autorização no serviço e validação da URL.
+A API deriva o proprietário dos cookies. O login combina itens do visitante com os da conta por NFT/edição, limita quantidades ao estoque e informa ajustes. Logout não converte o carrinho privado em carrinho visitante.
 
-Os contratos implementados estão em `docs/CONTRATOS.md`. `docs/ETAPA-04.md` explica compra e tempo real. Os registros das etapas anteriores descrevem o estado histórico; os PNGs então pendentes foram incorporados nesta etapa, conforme `docs/ASSETS.md`.
+ETH trafega como string decimal e é convertido para BigInt em wei. Subtotal, descontos, taxa e total vêm da cotação da API. O cupom inicial `KURIO10` aplica 10%, truncado em wei; a taxa fictícia é 0.005 ETH por rede distinta. O token da cotação incorpora regras de preço, revisão do carrinho, versões dos NFTs e quantidades.
 
-## Persistência e autenticação da simulação
+Conectar carteira, revisar e confirmar são operações distintas. Trocar carteira, rede, provedor ou dados invalida a revisão. A API confere conexão, carteira/versão, estoque, cupom e cotação antes de criar o pedido.
 
-`mocks/database.ts` mantém um banco versionado em `kurio:db:v1` com catálogo, contas, hashes, sessões, favoritos, carrinhos, carteiras, conexões, pedidos, chaves idempotentes e eventos. Novos campos são acrescentados sem apagar o banco anterior; carteiras das fixtures são criadas somente em banco novo/reset. Gravações passam por uma fila por instância para preservar alterações concorrentes. Esse mecanismo não é um servidor compartilhado nem oferece sincronização transacional entre abas; é uma persistência local para a demonstração.
+A tentativa persiste UUID e payload **antes** do POST. A chave idempotente é associada ao usuário e ao conteúdo normalizado: repetir recupera o mesmo pedido; conteúdo diferente gera 409. Existe no máximo um pedido pendente por usuário. Um timeout consulta a mesma tentativa antes de permitir reenvio.
 
-Senhas fictícias usam PBKDF2/SHA-256 com 120.000 iterações e salt aleatório. Cookies separam visitante e sessão, com identificadores opacos; a expiração de 30 minutos é verificada nos handlers. O cookie do mock é legível por JavaScript e o banco local pode ser inspecionado pelo usuário da máquina: isso não representa segurança de backend em produção. Nenhuma senha em claro é persistida no banco e o logging detalhado de requisições do MSW está desativado.
+Pedidos reservam estoque e guardam snapshot independente dos itens, preços, descontos, taxas, carteira e cliente. `pending` pode avançar para `confirmed` ou `declined`; estados terminais não regridem. Confirmação remove apenas as quantidades compradas do carrinho atual. Recusa devolve o estoque e preserva itens. Recibo, referência de transação e explorador só aparecem após confirmação da API.
 
-O cliente trata 401, preserva o caminho interno para retomar o fluxo e usa gerações de sessão para descartar respostas de uma conta anterior. O retorno após login rejeita destinos externos, caracteres de controle e ciclos de autenticação. Hashes nunca são retornados pelos recursos de conta. Alteração de senha invalida as sessões da conta.
+O timeout de criação de 700 ms torna reproduzível o cenário em que o mock salva o pedido e retarda a resposta em 1.500 ms. Essa latência é uma configuração de teste da demonstração. Timers, consultas e reconexão concluem pedidos vencidos após refresh.
 
-## Favoritos e carrinho
+## Socket.IO e reconexão
 
-Favoritos atualizam o cache de forma otimista, guardam o estado anterior do item e fazem rollback se a API falhar. Rollback não substitui alterações em outros itens. A confirmação acessível é emitida após a resposta da API. A reconciliação é feita quando termina a última mutation concorrente de favoritos daquela conta. Avisos globais continuam visíveis se um card removido otimisticamente sair da árvore.
+O cliente real `socket.io-client` usa WebSocket em `/realtime`, interceptado por `@mswjs/socket.io-binding`. O mock implementa handshake/heartbeat Engine.IO e inscrição privada validada pela sessão. Não simula namespaces, salas ou fallback HTTP polling completos.
 
-O carrinho deriva o proprietário dos cookies; o cliente não escolhe um userId. Operações do cliente usam um scope de mutation por identidade. O login combina itens por NFT/edição com o carrinho já salvo na conta, limita quantidades ao estoque e informa ajustes. Logout não transforma o carrinho da conta em carrinho visitante.
+Eventos `nft.updated`, `quote.updated` e `order.updated` incluem ID, recurso, sequência e versão. O cliente valida payloads, descarta duplicatas/versões antigas, confere titular e geração de sessão e invalida os recursos REST afetados. Listeners são liberados no unmount/logout. Eventos não atualizam estado da UI por callbacks alternativos ao socket.
 
-Cotação, desconto e taxa vêm da API e usam BigInt em wei; o transporte usa strings decimais. A regra fictícia inicial é KURIO10 (10%, truncado em wei) e 0.005 ETH por rede distinta. O token de versão inclui regras de preço, revisão do carrinho, NFTs e quantidades. A criação do pedido revalida essa versão, estoque, cupom e carteira; mudança exige nova revisão e confirmação.
+A reconexão reconcilia recursos REST ativos, cobrindo eventos perdidos. O cenário de preço/estoque atualizado informa a mudança no carrinho e bloqueia confirmação com cotação antiga. Pedido pendente é recuperável após desconexão ou refresh com a mesma identificação.
 
-## Compra e recuperação
+## Carregamento e recuperação de erros
 
-Uma tentativa salva UUID e payload antes do primeiro POST. O handler associa chave e conteúdo normalizado ao usuário. Repetir a chave recupera o pedido; conteúdo diferente retorna 409. Só um pedido pendente é permitido por usuário. A confirmação visual depende do estado da API.
+O bootstrap apresenta um shell, baixa UI e mocks em paralelo e aguarda `worker.start()` antes de montar componentes ou capturar WebSocket no Engine.IO. Catálogo, sessão e carrinho estão disponíveis desde o início; resolvers de operações privadas e rotas privadas são carregados sob demanda. Consultas públicas são antecipadas no mesmo QueryClient.
 
-O pedido reserva estoque ao ser criado, guarda uma cópia independente dos itens, preços, cupom, taxas, carteira e coletor, e avança de pending para confirmed ou declined. Estados terminais não regridem. Confirmação subtrai apenas as quantidades compradas do carrinho atual; recusa devolve o estoque e preserva itens. Referência e recibo só aparecem após confirmed; o explorador interno é fictício.
+Ao retornar a uma aba, consultas desatualizadas são revalidadas. Uma falha não prova ausência de internet: também pode envolver sessão, módulo dinâmico ou service worker. Falhas REST permitem refetch; erro fatal de rota recarrega o documento para descartar uma importação React.lazy rejeitada e reativar o MSW. Rascunhos e tentativas já persistidos sobrevivem. A causa exata de um episódio isolado exige o erro correspondente do navegador.
 
-Timeout da criação é 700 ms para tornar reproduzível o cenário didático em que o MSW salva o pedido e retarda a resposta por 1.500 ms. O cliente consulta a tentativa antes de permitir reenvio idempotente. Não é uma configuração sugerida para gateway real. Timers resolvem pedidos da demonstração; GET e reconexão também concluem estados vencidos após refresh.
+## Interface, UX e acessibilidade
 
-## Eventos e reconexão
+Tokens, tipografia local, componentes compartilhados e estilos responsivos seguem os frames fornecidos. Tailwind participa dos utilitários e da composição; Button usa Radix Slot, CVA e tailwind-merge no padrão shadcn/ui. Diálogos/drawers têm controle de foco, labels, mensagens associadas e operação por teclado. Abas suportam setas, Home e End. Skeletons reservam espaço e respeitam movimento reduzido.
 
-Eventos têm ID, sequência, recurso e versão. O cliente descarta IDs repetidos e versões antigas, compara também com o cache e invalida consultas REST. Eventos privados exigem usuário e geração de sessão atuais. Logout remove listeners e desconecta; o servidor mock verifica sessão e destinatário antes de emitir pedidos.
+Os [desvios visuais](docs/DESIGN.md) incluem fonte IBM Plex Mono aproximada, ícones locais, ampliação dos quatro retratos de 250 px e dados dinâmicos diferentes dos exemplos estáticos. O X do mobile tem área de toque de 44 px. Conexão, revisão e confirmação permanecem explícitas; dados do colecionador e resumo são expansíveis no mobile, tornando o fluxo mais alto que o frame estático.
 
-Reconexão revalida recursos REST ativos, sem depender de receber todo o histórico perdido. Pedidos pendentes têm polling de 1 s como recuperação adicional. O socket usa timeout de abertura de 1 s e backoff de 250–1.000 ms para recuperar interrupções de handshake na simulação. O painel de testes muda o banco via REST e transmite eventos pelo protocolo Socket.IO; não injeta os valores no cache dos componentes.
+Ações auxiliares fora do escopo, como OAuth e newsletter, explicam a limitação sem aparentar sucesso. Não há blockchain, extensão de carteira, gateway, e-mail real ou armazenamento remoto. Galeria oferece composições CSS da mesma imagem original. Limitações de origem, resolução e compressão estão em [ASSETS.md](docs/ASSETS.md).
 
-## Validação e desenvolvimento
+## Performance e verificação
 
-Schemas Zod são usados no formulário e no handler. A API pode retornar erros de campo mesmo após validação no cliente, como e-mail em conflito e senha atual incorreta. Prettier padroniza a formatação; oxlint, TypeScript, testes unitários e Playwright verificam o código. As telas seguem a composição dos frames recebidos, com diferenças explícitas em `docs/DESIGN.md`.
+Fontes e imagens são locais. `<picture>` oferece AVIF/WebP/PNG com dimensões explícitas; preload antecipa retrato/fontes relevantes. AVIF usa compressão com perda declarada e WebP é comparado aos pixels originais. Não existe versão exclusiva da aplicação para Lighthouse.
 
-O painel em `/setup` altera cenários por REST e restaura as fixtures. Dados de negócio não são injetados diretamente nos componentes ou no cache pelos controles. Avisos internos sobre respostas HTTP continuam separados dos eventos de negócio Socket.IO. Testes verificam respostas, interface e persistência usando os handlers reais da simulação.
+O [container da CI](ci/README.md) fixa Node, distribuição e Chromium. Validação e Lighthouse são jobs independentes. Playwright cobre os fluxos, falhas, isolamento e 12 baselines em 390/768/1440 px. Cada contexto de browser parte de estado isolado. Lighthouse executa três medições por página/perfil, verifica dados/assets carregados e falha quando uma meta não é atendida.
 
-## Composição visual e carregamento
-
-`components/` compartilha cabeçalho, rodapé, navegação mobile, sidebar, galeria e relacionados. Login/cadastro usam diálogo Radix no desktop e tela própria no mobile; ações auxiliares fora do escopo exibem explicações sem simular sucesso. Controles têm labels, foco visível, erros associados e mensagens de status. As abas implementam navegação por setas, Home e End.
-
-O bootstrap apresenta um shell de carregamento, baixa a UI em paralelo aos mocks e aguarda a ativação do MSW antes de montar o React ou emitir consultas. As consultas públicas são antecipadas no mesmo QueryClient. Rotas privadas são carregadas por React.lazy; início e detalhe pertencem ao módulo público inicial. Não há variante exclusiva da aplicação para auditorias. Fontes e imagens são locais; há preload das fontes locais e do retrato de destaque para rotas conhecidas. Skeletons preservam a composição e respeitam movimento reduzido.
-
-Perfil, carteira e pedido incluem os campos adicionais dos frames. Schemas normalizam os campos antigos com defaults compatíveis; a migração acrescenta metadados sem substituir preços ou snapshots de pedidos. O fingerprint de idempotência antigo é normalizado pelo schema atual antes da comparação. Trocar rede, carteira ou provedor invalida a conexão/revisão apropriada; o snapshot registra o provedor efetivamente conectado.
-
-O pagamento mobile usa rolagem e dados expansíveis para preservar conexão, revisão e confirmação explícitas; ocupa mais altura que o frame estático. O recibo mantém navegação e detalhes do colecionador expansíveis. Novas telas sem frame mobile usam a mesma identidade responsiva. Essas decisões não equivalem a fidelidade pixel a pixel comprovada.
-
-## Carregamento e ambiente de CI
-
-Os handlers de operações privadas registram suas rotas imediatamente e carregam os resolvers sob demanda. A primeira requisição aguarda a implementação real do handler, sem bypass de rede ou alternativa de negócio na UI. Catálogo, sessão e consulta do carrinho permanecem disponíveis na inicialização. Helpers sem dependências de schemas evitam carregar validação dos formulários no bootstrap público; os formulários e mutations mantêm Zod. O payload de evento recebe validação explícita na fronteira, incluindo inteiros seguros e enums.
-
-Os hashes PBKDF2 das duas contas públicas de demonstração são fixtures previamente calculadas. Cada conta possui salt e hash próprios; login continua verificando a senha com o algoritmo real. Cadastros e mudanças de senha geram novos salts aleatórios. A inicialização não precisa derivar novamente duas senhas conhecidas.
-
-Os retratos usam picture AVIF/WebP/PNG e dimensões explícitas. Os PNGs originais e sua integridade permanecem disponíveis; AVIF é compressão com perda declarada e WebP é verificado sem perda de pixels. Não há variante exclusiva para Lighthouse. A latência sintética padrão de catálogo/detalhe é 120 ms, consistente com as demais operações; cenários lentos e fora de ordem continuam ativos e reproduzíveis.
-
-O container `ci/Dockerfile` fixa Node, distribuição e Chromium. Os jobs de validação e Lighthouse executam independentemente em push/PR e mantêm as metas do enunciado. Consulte `ci/README.md` para reproduzir e `docs/ETAPA-06.md` para a explicação. A matriz do escopo está em `docs/REQUISITOS.md`. Por solicitação do candidato, main e deploy permanecem suspensos até a revisão e a aprovação dos checks.
-
-## Refinamentos dos frames — etapa 7
-
-A revisão visual está separada dos contratos de negócio: `src/styles/frame-alignment.css` reúne os ajustes medidos e é importado após a base. O catálogo usa duas alças nativas, com rascunho local e aplicação dos limites na URL antes da consulta REST. A faixa inicial segue o desenho (0,02–12,30 ETH); contas, estoque e preços continuam vindo da API. A escala/posição visual usa números; o transporte continua em strings e os cálculos monetários em wei.
-
-No mobile, a ordenação fica no drawer, e o resumo do checkout permite expandir itens/taxas sem esconder o total. A confirmação permanece desabilitada quando a cotação perde validade. Dados adicionais do perfil usam uma seção expansível, e o nome de exibição da carteira é derivado do perfil. Os desvios, a família tipográfica aproximada e o limite de resolução dos retratos continuam declarados em `docs/DESIGN.md` e `docs/ETAPA-07.md`.
+Configuração, versões, LCP, CLS, TBT, relatórios e hashes do build estão em [PERFORMANCE.md](docs/PERFORMANCE.md) e [VALIDACAO.md](docs/VALIDACAO.md). A configuração de hospedagem suporta acesso direto/refresh das rotas e mantém MSW ativo no build público.

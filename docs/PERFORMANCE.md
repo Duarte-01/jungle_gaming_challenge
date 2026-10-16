@@ -1,4 +1,4 @@
-# Auditorias Lighthouse — etapa 8
+# Auditorias Lighthouse
 
 Execução: 15/10/2026, build otimizado servido por Vite preview no container de CI. Foram feitas **12 medições**: três por combinação de início/detalhe e mobile/desktop, com imagens, fontes e todas as funcionalidades ativas no cenário padrão dos mocks. Não havia outro browser concorrente. O comando encerrou com **código 0**; todas as medianas atingiram as metas.
 
@@ -6,10 +6,10 @@ Execução: 15/10/2026, build otimizado servido por Vite preview no container de
 
 | Página  | Perfil  | Performance | Acessibilidade | Boas práticas | SEO |     LCP |     CLS |     TBT |
 | ------- | ------- | ----------: | -------------: | ------------: | --: | ------: | ------: | ------: |
-| Início  | mobile  |          90 |            100 |           100 | 100 | 3.577 s | 0.00000 | 79.0 ms |
-| Início  | desktop |         100 |            100 |           100 | 100 | 0.715 s | 0.00000 |  0.0 ms |
-| Detalhe | mobile  |          91 |            100 |           100 | 100 | 3.506 s | 0.00000 | 27.5 ms |
-| Detalhe | desktop |         100 |            100 |           100 | 100 | 0.712 s | 0.00507 |  0.0 ms |
+| Início  | mobile  |          90 |            100 |           100 | 100 | 3.578 s | 0.00000 | 74.0 ms |
+| Início  | desktop |         100 |            100 |           100 | 100 | 0.670 s | 0.00000 |  0.0 ms |
+| Detalhe | mobile  |          91 |            100 |           100 | 100 | 3.515 s | 0.00000 | 29.0 ms |
+| Detalhe | desktop |         100 |            100 |           100 | 100 | 0.732 s | 0.00507 |  0.0 ms |
 
 Metas preservadas do enunciado: performance ≥90, acessibilidade ≥95, boas práticas ≥95 e SEO ≥90. Cada coluna usa sua própria mediana das três execuções. LCP mede quando o maior conteúdo ficou visível; CLS mede deslocamentos de layout; TBT mede o bloqueio por tarefas longas. Valores individuais, configuração e versões estão em [summary.json](../reports/lighthouse/summary.json).
 
@@ -34,18 +34,10 @@ Para a regressão oficial, use o container documentado; o script aceita `CHROME_
 
 Os 12 pares HTML/JSON estão em `reports/lighthouse/`. Os hashes SHA-256 dos arquivos de `dist` em `summary.json` foram comparados e são iguais aos de `reports/validation.json`, relativos aos 150 E2E aprovados. A auditoria do domínio público ainda não aconteceu. `AUDIT_BASE_URL` permite executá-la depois do deploy.
 
-## O que mudou desde a etapa 5
+## Decisões de performance
 
-A etapa 5 tinha performance mobile 83/85, abaixo da meta, e o comando retornava 1. O run remoto antigo também falhou nas capturas; seu Lighthouse estava restrito ao disparo manual. Esses resultados históricos não são apresentados como aprovações.
+UI e mocks são baixados em paralelo; resolvers privados, formulários e Socket.IO são carregados sob demanda. As consultas públicas usam o mesmo QueryClient. O MSW é ativado antes das consultas e da captura de WebSocket pelo Engine.IO. Os hashes das contas públicas são fixtures previamente calculadas; cadastros e login mantêm o processamento real das senhas.
 
-A implementação passou a baixar UI e mocks em paralelo, carregar resolvers privados e Socket.IO sob demanda, antecipar consultas no mesmo QueryClient e evitar schemas de formulários na inicialização pública. A ativação do MSW continua precedendo as consultas e a captura de WebSocket pelo Engine.IO. Os hashes das duas contas públicas são preparados nas fixtures, sem derivação desnecessária durante a primeira visita. Novos cadastros e login mantêm o processamento real de senhas.
+Imagens AVIF reduzem aproximadamente 84% dos bytes dos quatro PNGs. As alternativas WebP/PNG e as fontes locais permanecem disponíveis. Dimensões explícitas e preload ajudam a antecipar recursos e reservar espaço. A coleta de classes Tailwind se limita ao código e HTML da aplicação.
 
-As imagens AVIF reduzem cerca de 84% dos bytes dos quatro PNGs. AVIF usa compressão com perda declarada; WebP é verificado sem perda e PNG original permanece como alternativa. Dimensões, preload do retrato e fontes locais ajudam a reservar espaço e antecipar recursos. A coleta de classes Tailwind se limita ao código e HTML da aplicação, evitando CSS gerado a partir dos visualizadores de relatórios.
-
-A UI pública e MSW ainda representam um custo relevante de JavaScript. O início mobile atingiu exatamente a meta, portanto os checks devem continuar obrigatórios para novas alterações; não é uma garantia de mesma nota em todo hardware. O cenário lento e os fluxos de erro continuaram passando nos E2E. As notas automáticas de acessibilidade complementam testes de teclado/foco, sem comprovar sozinhas toda a acessibilidade ou fidelidade ao Figma.
-
-## Revisão da etapa 8
-
-A matriz foi repetida depois das correções de cancelamento da autenticação, recuperação de falhas, textos do NFT e formulário de pagamento. Os relatórios atuais substituem os anteriores e correspondem ao mesmo build dos 150 E2E aprovados, conferido por SHA-256. As condições e metas foram preservadas; nenhuma funcionalidade, imagem ou fonte foi desativada para a auditoria.
-
-A execução começou em 16/10/2026 UTC, ainda 15/10 no horário de São Paulo. As medições da etapa anterior permanecem no histórico Git. A fonte aproximada e as diferenças funcionais necessárias continuam declaradas em `DESIGN.md`; notas locais não garantem resultados idênticos no futuro domínio público.
+MSW e a UI pública têm custo de JavaScript relevante no mobile. Metas continuam obrigatórias na CI. As medições são do build real, com cenário padrão, e não garantem pontuação idêntica em qualquer hardware. Auditorias automáticas complementam testes manuais de teclado, foco e referência visual.

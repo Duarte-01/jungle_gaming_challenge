@@ -12,6 +12,7 @@
     "typecheck": "tsc -b",
     "test:e2e": "node scripts/playwright.mjs test",
     "test:e2e:ui": "node scripts/playwright.mjs test --ui",
+    "test:deploy": "node scripts/playwright.mjs test --config playwright.deploy.config.ts",
     "test:report": "node scripts/playwright.mjs show-report",
     "browsers:install": "node scripts/playwright.mjs install chromium",
     "test:unit": "node --test tests/unit/*.test.mjs",

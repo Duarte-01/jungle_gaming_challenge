@@ -29,7 +29,7 @@ void bootstrap().catch(() => {
   const title = document.createElement('h1')
   title.textContent = 'Não foi possível iniciar a experiência'
   const explanation = document.createElement('p')
-  explanation.textContent = 'Confira sua conexão e recarregue a página.'
+  explanation.textContent = 'Recarregue a página para tentar iniciar novamente.'
   message.append(title, explanation)
   document.getElementById('root')!.replaceChildren(message)
 })

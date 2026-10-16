@@ -31,15 +31,13 @@ Referência: [frontend-challenge](https://github.com/junglegaming/frontend-chall
 | Contratos, cache e limitações          | `CONTRATOS.md`, `ARCHITECTURE.md`, `DESIGN.md`                                  | revisão documental e comandos no README                                                                |
 | Checkout limpo                         | lockfile e assets locais, sem backend privado                                   | `npm ci`, build e CI                                                                                   |
 
-## Revisão que permanece separada
+## Limites e publicação
 
-- **Família tipográfica original:** o Figma mostrou apenas `font/family`. Medidas do destaque desktop fornecidas pelo candidato foram aplicadas. IBM Plex Mono continua sendo aproximação declarada; baselines comprovam regressão da implementação, não igualdade com o Figma.
-- **Deploy obrigatório:** ainda não realizado/validado. A integração na main e a publicação estão suspensas por solicitação do candidato até concluir revisão e checks verdes do commit correspondente. Depois será necessário testar HTTPS, acesso anônimo, refresh das rotas e REST/Socket.IO no domínio público.
-- **Apresentação:** ensaio final solicitado para depois da validação pública; material preparatório em `APRESENTACAO.md`.
+A família tipográfica original não foi identificada nos exports; IBM Plex Mono é a aproximação local documentada em `DESIGN.md`. As baselines detectam regressões da implementação e não comprovam igualdade automática com o Figma.
 
-Não acrescentar autenticação Google real, blockchain, pagamento real ou páginas editoriais para tentar compensar um requisito pendente. Esses recursos estão fora do escopo. Prioridade: comportamento exigido, fidelidade, evidências e explicação compreensível pelo candidato.
+A validação do domínio público inclui HTTPS, acesso anônimo, REST/Socket.IO, acesso direto/refresh das rotas e compra completa. O endereço e as evidências de publicação são registrados no README e em `VALIDACAO.md` após a verificação.
 
-## Conferência dos seis critérios eliminatórios — etapa 7
+## Conferência dos seis critérios eliminatórios
 
 A leitura do enunciado foi repetida em 15/10/2026. Os caminhos abaixo permitem verificar a implementação; o resultado da execução correspondente deve ser consultado em `VALIDACAO.md`.
 
