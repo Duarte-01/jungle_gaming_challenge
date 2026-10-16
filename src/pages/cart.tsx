@@ -247,7 +247,7 @@ export function CartPage() {
                 </Link>
               )}
               <Button asChild>
-                <Link to="/pagamento" aria-label="Continuar para pagamento">
+                <Link to="/pagamento" aria-label="Conectar e finalizar: Continuar para pagamento">
                   Conectar e finalizar
                 </Link>
               </Button>

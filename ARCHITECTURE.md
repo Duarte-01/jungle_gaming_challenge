@@ -102,6 +102,8 @@ Falhas REST permitem nova consulta pelo botão de recuperação. O visitante rec
 
 Tokens, tipografia local, componentes compartilhados e estilos responsivos seguem os frames fornecidos. Tailwind participa dos utilitários e da composição; Button usa Radix Slot, CVA e tailwind-merge no padrão shadcn/ui. Diálogos/drawers têm controle de foco, labels, mensagens associadas e operação por teclado. Abas suportam setas, Home e End. Skeletons reservam espaço e respeitam movimento reduzido.
 
+Nomes acessíveis preservam os textos visíveis dos controles, incluindo o nome do colecionador no link da conta, as legendas das edições e as ações de compra. Complementos em `aria-label` descrevem o destino ou o efeito sem impedir a identificação do controle por seu texto em comandos de voz.
+
 Os [desvios visuais](docs/DESIGN.md) incluem fonte IBM Plex Mono aproximada, ícones locais, ampliação dos quatro retratos de 250 px e dados dinâmicos diferentes dos exemplos estáticos. O X do mobile tem área de toque de 44 px. Conexão, revisão e confirmação permanecem explícitas; dados do colecionador e resumo são expansíveis no mobile, tornando o fluxo mais alto que o frame estático.
 
 Ações auxiliares fora do escopo, como OAuth e newsletter, explicam a limitação sem aparentar sucesso. Não há blockchain, extensão de carteira, gateway, e-mail real ou armazenamento remoto. Galeria oferece composições CSS da mesma imagem original. Limitações de origem, resolução e compressão estão em [ASSETS.md](docs/ASSETS.md).

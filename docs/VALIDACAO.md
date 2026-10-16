@@ -24,6 +24,12 @@ As capturas usam Chromium 155.0.8059.39, Debian 13 e fontes locais. Não atualiz
 - Rotas privadas, cancelamento da autenticação e falhas de carregamento permitem retorno/recuperação.
 - Teclado, foco, formulários, skeletons, responsividade e reflow têm cenários dedicados.
 
+## Verificação complementar de acessibilidade
+
+A inspeção com axe-core 4.14.0 verifica as regras WCAG 2 A/AA e WCAG 2.1 A/AA em início, cadastro, login, detalhe, carrinho, perfil, carteiras, pagamento revisado e recibo confirmado. São 27 inspeções, nas larguras de 390, 768 e 1440 px, mais seis verificações de foco visível e navegação com Tab/Shift+Tab dentro do diálogo de autenticação.
+
+Essa revisão identificou controles cujo nome acessível substituía o texto visível. Os rótulos de conta, edições e compra foram ajustados para incluir esse texto, permitindo sua identificação também por comandos de voz. O resultado do build corrigido está em [`reports/accessibility.json`](../reports/accessibility.json), com versão da ferramenta, resultados por tela e hashes do build. Uma inspeção automatizada não comprova todos os critérios de acessibilidade nem substitui uso com tecnologias assistivas.
+
 ## Lighthouse e identificação do build
 
 São 12 auditorias: três medições por página (início/detalhe) e perfil (mobile/desktop). Resultados, metas, LCP/CLS/TBT e condições estão em [PERFORMANCE.md](PERFORMANCE.md).

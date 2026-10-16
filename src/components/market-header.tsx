@@ -60,7 +60,7 @@ export function AccountActions({ catalogSearch }: { catalogSearch?: CatalogSearc
       </Link>
       {session.data?.user ? (
         <>
-          <Link to="/perfil" aria-label="Minha conta">
+          <Link to="/perfil" aria-label={`Minha conta: ${session.data.user.name.split(' ')[0]}`}>
             <UserRound size={18} />
             {session.data.user.name.split(' ')[0]}
           </Link>

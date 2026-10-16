@@ -15,6 +15,10 @@ import { problemFrom } from '../api/account'
 import { Button } from '../components/ui/button'
 import { BrandIcon } from '../components/brand-icon'
 
+function editionCaption(id: string) {
+  return id === 'standard' ? '1/50' : id === 'limited' ? '1/10' : id === 'unique' ? '1/1' : 'ABERTA'
+}
+
 export function NftDetailPage() {
   const { nftId } = useParams({ from: '/nfts/$nftId' })
   return <NftDetailContent key={nftId} nftId={nftId} />
@@ -150,20 +154,14 @@ function NftDetailContent({ nftId }: { nftId: string }) {
                           key={item.id}
                           className="edition-option"
                           disabled={item.available === 0}
-                          aria-label={`${item.label} · ${item.available ? `${item.available} disponíveis` : 'Esgotada'}`}
+                          aria-label={`${editionCaption(item.id)} · ${item.label} · ${item.available ? `${item.available} disponíveis` : 'Esgotada'}`}
                           aria-pressed={editionId === item.id}
                           onClick={() => {
                             setEditionId(item.id)
                             setQuantity(1)
                           }}
                         >
-                          {item.id === 'standard'
-                            ? '1/50'
-                            : item.id === 'limited'
-                              ? '1/10'
-                              : item.id === 'unique'
-                                ? '1/1'
-                                : 'ABERTA'}
+                          {editionCaption(item.id)}
                         </button>
                       ))}
                   </fieldset>
@@ -209,7 +207,13 @@ function NftDetailContent({ nftId }: { nftId: string }) {
                     <span className="mobile-purchase-price nft-price">{nft.priceEth} ETH</span>
                     <Button
                       type="button"
-                      aria-label={edition?.available ? 'Adicionar ao carrinho' : 'Edição esgotada'}
+                      aria-label={
+                        mutation.isPending
+                          ? 'Adicionando…'
+                          : edition?.available
+                            ? 'Comprar NFT: Adicionar ao carrinho'
+                            : 'Edição esgotada'
+                      }
                       disabled={
                         !edition?.available ||
                         mutation.isPending ||

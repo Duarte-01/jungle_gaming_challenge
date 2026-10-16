@@ -1,0 +1,345 @@
+{
+  "createdAt": "2026-10-16T15:21:12.018Z",
+  "baseURL": "http://127.0.0.1:4178",
+  "checks": [
+    {
+      "name": "visible-keyboard-focus",
+      "width": 1440,
+      "focus": {
+        "tag": "A",
+        "width": "2px",
+        "style": "solid",
+        "color": "rgb(241, 183, 120)"
+      }
+    },
+    {
+      "name": "home",
+      "width": 1440,
+      "url": "http://127.0.0.1:4178/?q=&category=&network=&min=%220.02%22&max=%2212.30%22&sort=recent&tab=all&page=1",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 27
+    },
+    {
+      "name": "register",
+      "width": 1440,
+      "url": "http://127.0.0.1:4178/cadastro?redirect=%2F",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 24
+    },
+    {
+      "name": "auth-keyboard-focus-trap",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "name": "login",
+      "width": 1440,
+      "url": "http://127.0.0.1:4178/login?redirect=%2Fnfts%2Femerald-ape-42",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 24
+    },
+    {
+      "name": "detail",
+      "width": 1440,
+      "url": "http://127.0.0.1:4178/nfts/emerald-ape-42",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 30
+    },
+    {
+      "name": "cart",
+      "width": 1440,
+      "url": "http://127.0.0.1:4178/carrinho",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 24
+    },
+    {
+      "name": "profile",
+      "width": 1440,
+      "url": "http://127.0.0.1:4178/perfil",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 22
+    },
+    {
+      "name": "wallets",
+      "width": 1440,
+      "url": "http://127.0.0.1:4178/carteiras?redirect=%2F",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 22
+    },
+    {
+      "name": "checkout",
+      "width": 1440,
+      "url": "http://127.0.0.1:4178/pagamento",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 31
+    },
+    {
+      "name": "receipt",
+      "width": 1440,
+      "url": "http://127.0.0.1:4178/pedidos/508efb37-07cc-44db-a4a6-47788d272b41",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 21
+    },
+    {
+      "name": "visible-keyboard-focus",
+      "width": 768,
+      "focus": {
+        "tag": "A",
+        "width": "2px",
+        "style": "solid",
+        "color": "rgb(241, 183, 120)"
+      }
+    },
+    {
+      "name": "home",
+      "width": 768,
+      "url": "http://127.0.0.1:4178/?q=&category=&network=&min=%220.02%22&max=%2212.30%22&sort=recent&tab=all&page=1",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 27
+    },
+    {
+      "name": "register",
+      "width": 768,
+      "url": "http://127.0.0.1:4178/cadastro?redirect=%2F",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 24
+    },
+    {
+      "name": "auth-keyboard-focus-trap",
+      "width": 768,
+      "passed": true
+    },
+    {
+      "name": "login",
+      "width": 768,
+      "url": "http://127.0.0.1:4178/login?redirect=%2Fnfts%2Femerald-ape-42",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 24
+    },
+    {
+      "name": "detail",
+      "width": 768,
+      "url": "http://127.0.0.1:4178/nfts/emerald-ape-42",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 30
+    },
+    {
+      "name": "cart",
+      "width": 768,
+      "url": "http://127.0.0.1:4178/carrinho",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 24
+    },
+    {
+      "name": "profile",
+      "width": 768,
+      "url": "http://127.0.0.1:4178/perfil",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 22
+    },
+    {
+      "name": "wallets",
+      "width": 768,
+      "url": "http://127.0.0.1:4178/carteiras?redirect=%2F",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 22
+    },
+    {
+      "name": "checkout",
+      "width": 768,
+      "url": "http://127.0.0.1:4178/pagamento",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 31
+    },
+    {
+      "name": "receipt",
+      "width": 768,
+      "url": "http://127.0.0.1:4178/pedidos/d67095a5-c95d-44d5-abc2-3eb0bf7ae736",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 21
+    },
+    {
+      "name": "visible-keyboard-focus",
+      "width": 390,
+      "focus": {
+        "tag": "INPUT",
+        "width": "2px",
+        "style": "solid",
+        "color": "rgb(241, 183, 120)"
+      }
+    },
+    {
+      "name": "home",
+      "width": 390,
+      "url": "http://127.0.0.1:4178/?q=&category=&network=&min=%220.02%22&max=%2212.30%22&sort=recent&tab=all&page=1",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 25
+    },
+    {
+      "name": "register",
+      "width": 390,
+      "url": "http://127.0.0.1:4178/cadastro?redirect=%2F",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 25
+    },
+    {
+      "name": "auth-keyboard-focus-trap",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "name": "login",
+      "width": 390,
+      "url": "http://127.0.0.1:4178/login?redirect=%2Fnfts%2Femerald-ape-42",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 24
+    },
+    {
+      "name": "detail",
+      "width": 390,
+      "url": "http://127.0.0.1:4178/nfts/emerald-ape-42",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 29
+    },
+    {
+      "name": "cart",
+      "width": 390,
+      "url": "http://127.0.0.1:4178/carrinho",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 23
+    },
+    {
+      "name": "profile",
+      "width": 390,
+      "url": "http://127.0.0.1:4178/perfil",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 22
+    },
+    {
+      "name": "wallets",
+      "width": 390,
+      "url": "http://127.0.0.1:4178/carteiras?redirect=%2F",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 22
+    },
+    {
+      "name": "checkout",
+      "width": 390,
+      "url": "http://127.0.0.1:4178/pagamento",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 26
+    },
+    {
+      "name": "receipt",
+      "width": 390,
+      "url": "http://127.0.0.1:4178/pedidos/42c9de52-31e5-4862-a3df-ad8aeebe2dde",
+      "violations": [],
+      "overflow": false,
+      "passedRules": 20
+    }
+  ],
+  "axeVersion": "4.14.0",
+  "chromium": "155.0.8059.39 (Debian 13)",
+  "buildFiles": {
+    "_redirects": "6036983e5fc00f0169c9e939b1816ed771eee00e27f2fcc517b819041460b9ef",
+    "assets/account-handlers-B6tSL5Ze.js": "f40e3c696e41e494c024466acf2c10bea9cab757aacf3f3ad8745f3a0492a2b8",
+    "assets/account-kZkEvB55.js": "b98813acc633864d346687a0627941a18d4e149a9161f9ba5e295b5466e58bf3",
+    "assets/account-sidebar-Cguom020.js": "32debb86c838b01405a5614af3f1a660fad066138925068966f6d53cfb51376b",
+    "assets/auth-CJA7DHjI.js": "94d7f4bee7e354557abc59382fe688134fa29d4503480e7f338fe2a35147d78b",
+    "assets/cart-D2YmMS04.js": "b84c9078c2d06845b997d45dd6caf3442cd1d08784be3ce45838fcf07a21f807",
+    "assets/cart-handlers-BkolNYs_.js": "cfb51be9beec4a8c9c5dea5775cc35454784c20d99bf57ee7873f6b53671153f",
+    "assets/checkout-CGGV_39A.js": "bd7f4e510a7e6dd3b0a31239239319f406c47a115dc2b516159676edfa1f9234",
+    "assets/checkout-CkjXoWFp.js": "1ba311d58be9bc039b451b0ee6ae85cb134373fefaf407ebcb8ce83af1709bac",
+    "assets/checkout-DRrsYF_G.js": "9e6d59a9708487b954100ac8994a373343d918a6196ef31b2d77fd8e310d38db",
+    "assets/esm-5GYxu7cH.js": "fe228eb0bac08e4289303481f148ce7eb9fda9b982f6ca2b391ff4b4035cff15",
+    "assets/favorites-B2Qpx4Uy.js": "342c0f12fbe96096be3af9ebcc8309a50e880b6bcb0bf2f51dade46971bb16e8",
+    "assets/form-field-BQo_uG0V.js": "3277695c6f1af830d0321be4e8d0fd73e2479829ceaf80616e9e3916ce4f74d9",
+    "assets/http-client-CSy1q-Ik.js": "89dafacc5e5057d4398bdf4cd873dda2c6d5252efef1ac4cf78605ef4ee2a024",
+    "assets/ibm-plex-mono-latin-400-normal-CvHOgSBP.woff": "328d50b6ece9ca25c46eea3e885ba497f6237f2fb84ef7b92f88e14a1a25e381",
+    "assets/ibm-plex-mono-latin-400-normal-DMJ8VG8y.woff2": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+    "assets/ibm-plex-mono-latin-500-normal-DSY6xOcd.woff2": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+    "assets/ibm-plex-mono-latin-600-normal-BgSNZQsw.woff2": "0d1f0b8d0722224e32e9f28261bdc86c79115be73444ae5eceb73976a1bcdf83",
+    "assets/ibm-plex-mono-latin-600-normal-DWFSQ4vo.woff": "cb96282f22c6f19112856fd6e0b34e2baefaf4ca6551e851d58c5ab0aabcd2be",
+    "assets/ibm-plex-mono-latin-700-normal-7sUh57Bg.woff2": "4f84d86cfd060f4ded334358ff8a4c81d4db2ed5addd568359d693f44a87765a",
+    "assets/index-BUHreUKJ.css": "f7c43b4da2f8336f06755d3c4797d4c754f8e3d1081177630caaef39a8691d0d",
+    "assets/index-oa2Gyqzf.js": "d7286bd9f440b798099007c4fd091be8d3d99cd239325789f0bcbc63cbcb7c00",
+    "assets/market-controls-QaGPF89L.js": "0c00b3f1ab42bd3eb35766c6f3127e5be63f5791d432b56d5cca0bbc9fc6427a",
+    "assets/mock-network-CCIa2xBn.js": "015baf65813b0c5cfbf9c6414ef2d360fa997121146b88d5ccdef3af4159a27f",
+    "assets/module-loader-BLdHbfdN.js": "8aec9ff75ffa86a03d51268b63126abadb3754aa5a6b6c5bb16e4e2446a63dee",
+    "assets/order-handlers-CAgam7Bd.js": "c4bbec96527dfb00cb2a7cfd8133527c9f55c63fad331c6c41b0754fcbf1fb43",
+    "assets/orders-B2Ln9aay.js": "840dda7e42d8da221f3e0f4978cb83bf15ea2e2169b72c2e6ce33bc0ddaad77d",
+    "assets/password-field-HuuBhWzQ.js": "c1082ca8cae81083b7273e7610a72dee035f67ebcee540d962f12bc52249f304",
+    "assets/profile-DvVuyTEv.js": "f6ad376ea1cf80c2b29554f9117bd336be3884447f8d270420a4f82e1f333006",
+    "assets/public-ui-cCzW7uRY.js": "01503ee744954b8582768787167f9563441d466f7dceef6939437ad82c196207",
+    "assets/quote-summary-k5MIZgIp.js": "b2ada7accb11cf7316537723c9d4f30af901732381bdf92d1ce04866ccf4750a",
+    "assets/rolldown-runtime-XKyaHtl9.js": "548d1dbf321e7d2ae804fcc158b588706a7c52f8ca175de1490c6ccb4dbe55b7",
+    "assets/schemas-CSq7W9-F.js": "b5dedc78f851880d803caa44b9976d7596144039758f9b25a0fcca3d2fd6e09a",
+    "assets/setup-BPPBZ36e.js": "cf8a0872e5d0f602ec3add154fd82666410b1ad2ed760ee4ffc273b99411f7c7",
+    "assets/ui-vendor-CJ4Q9O8z.js": "9a563541c92e1dbf7f2b1013ceb3abde4a22ee46812091a18b248dd28690fc52",
+    "assets/use-wallets-MRo4OhKy.js": "44a5bea45613405125a956649c85f50822b81aeac049f214f29f3e5147c780a4",
+    "assets/wallet-handlers-CMaaNIKf.js": "5aaf9f4940e05fff069b2bbec74e87d9d969151f45cf194cef7be9c18806a620",
+    "assets/wallets-Chv5LrJx.js": "a205f543f19c9c11189ed6fd5afd8a3c7c2b1019ad8ed7cc1de44012625d0e6d",
+    "favicon.svg": "801f0b02b7768a39cc0ad8f6bc60ad46655d30cb35d13c560e736b8685d169c4",
+    "images/nfts/emerald-ape.avif": "8e080727d56fd2c60dfcf9bdd0c2e288e7edcde335602ff0d03bfd0b8748d29d",
+    "images/nfts/emerald-ape.png": "358616ec920e300cd0dc8e5470f19481dc0a5115b413826624b5d34fc14a607a",
+    "images/nfts/emerald-ape.webp": "26d1df56a5c0d148e6e0da81e268473ecd13a6740d6c3ba65aba7e2fe3e602d5",
+    "images/nfts/golden-beat.avif": "114239d8a2daeed8797e3694f505dd45d64f4cc1c40f6241750d83304a8b0aa6",
+    "images/nfts/golden-beat.png": "f821c01cb38ab4ce4b51888d0bc8e7af18e6ca97417a9ee04d70c55226db7277",
+    "images/nfts/golden-beat.webp": "9b563584e435e7a98b0cd628ee6a1632eaaff92c16df6dd96f83a9d08bd1e366",
+    "images/nfts/manifest.json": "34289b12bd896b19b8e8e63ca9ced3c1fa1049668386f60c580689dccb3cafc3",
+    "images/nfts/neon-vessel.avif": "2f03a022e06b01998a95bbea4588ce52816836b03a62e93453ef787f7c4323a3",
+    "images/nfts/neon-vessel.png": "77075cabfcf0b2bee451dc14e03655e1ae90abd2e165ffe746da058fd23292b2",
+    "images/nfts/neon-vessel.webp": "90fdd7efd412f09c5e19d567d5d6eaf7da3847fc077c28b192d78741c47cbe7d",
+    "images/nfts/sage-nomad.avif": "396156321691deb19d861966a80793284401a31ca4c6f92b05fe9e80f1848e15",
+    "images/nfts/sage-nomad.png": "66c1e3e83dd0a4ae875c13e7c4576987d3c014280e155f1807689b59fda43272",
+    "images/nfts/sage-nomad.webp": "a3a542134b4c0073d9e17595045b34bdb6a51eb02e7e4f8357244832e83a0f4b",
+    "index.html": "ff0e874c57a9f501283bedf64f97af5dc2f9fcd209f87654cdbc588f86a6cae7",
+    "licenses/ibm-plex-mono-OFL.txt": "23b0a9d0c6d3f140a0b77e483c5cfa6bba574325ef5cb189ed9f2fec4884533f",
+    "mockServiceWorker.js": "26171599d94d5445297303f3a1f1cedec26835ea3d0057dcfa92ec520cb35cca",
+    "robots.txt": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95"
+  },
+  "ruleset": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa"
+  ],
+  "scope": {
+    "screens": 9,
+    "viewports": [
+      390,
+      768,
+      1440
+    ],
+    "automatedInspections": 27,
+    "keyboardChecks": 6,
+    "complete": true
+  },
+  "limitations": "Automated WCAG checks, overflow detection and selected keyboard interactions; not a complete assistive-technology audit or Figma comparison."
+}

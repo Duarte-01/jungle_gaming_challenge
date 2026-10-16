@@ -4,6 +4,7 @@
 | --- | --- |
 | `playwright/index.html` | Relatório HTML da suíte E2E completa sobre o build otimizado |
 | `validation.json` | Contagens, ambiente, comando, duração e hashes dos arquivos de `dist` |
+| `accessibility.json` | Inspeção WCAG das nove telas em três larguras, verificações de teclado e hashes do build |
 | `lighthouse/*.report.html` / `*.report.json` | Três auditorias de cada combinação início/detalhe × mobile/desktop |
 | `lighthouse/summary.json` | Medianas, LCP/CLS/TBT, configuração, versões e hashes do build |
 | Artefato `public-deployment-reports` | Hashes observados, relatório Playwright e Lighthouse do domínio público, vinculados ao commit de cada execução |

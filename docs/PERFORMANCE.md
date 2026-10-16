@@ -4,12 +4,12 @@ Execução: 16/10/2026, build otimizado servido por Vite preview no container de
 
 ## Medianas
 
-| Página  | Perfil  | Performance | Acessibilidade | Boas práticas | SEO |     LCP |     CLS |     TBT |
-| ------- | ------- | ----------: | -------------: | ------------: | --: | ------: | ------: | ------: |
-| Início  | mobile  |          90 |            100 |           100 | 100 | 3.489 s | 0.00000 | 87.0 ms |
-| Início  | desktop |         100 |            100 |           100 | 100 | 0.678 s | 0.00000 |  0.0 ms |
-| Detalhe | mobile  |          91 |            100 |           100 | 100 | 3.487 s | 0.00000 | 27.0 ms |
-| Detalhe | desktop |         100 |            100 |           100 | 100 | 0.721 s | 0.00507 |  0.0 ms |
+| Página  | Perfil  | Performance | Acessibilidade | Boas práticas | SEO |     LCP |     CLS |      TBT |
+| ------- | ------- | ----------: | -------------: | ------------: | --: | ------: | ------: | -------: |
+| Início  | mobile  |          91 |            100 |           100 | 100 | 3.424 s | 0.00000 | 110.0 ms |
+| Início  | desktop |         100 |            100 |           100 | 100 | 0.689 s | 0.00000 |   0.0 ms |
+| Detalhe | mobile  |          91 |            100 |           100 | 100 | 3.491 s | 0.00000 |  77.5 ms |
+| Detalhe | desktop |         100 |            100 |           100 | 100 | 0.715 s | 0.00507 |   0.0 ms |
 
 Metas preservadas do enunciado: performance ≥90, acessibilidade ≥95, boas práticas ≥95 e SEO ≥90. Cada coluna usa sua própria mediana das três execuções. LCP mede quando o maior conteúdo ficou visível; CLS mede deslocamentos de layout; TBT mede o bloqueio por tarefas longas. Valores individuais, configuração e versões estão em [summary.json](../reports/lighthouse/summary.json).
 
