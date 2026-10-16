@@ -1,0 +1,49 @@
+name: Validate public deployment
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/deploy.yml]
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Public HTTPS deployment URL
+        default: https://junglegamingchallenge.vercel.app
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  deployment:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      DEPLOY_BASE_URL: ${{ inputs.url || 'https://junglegamingchallenge.vercel.app' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove previous deployment reports
+        run: rm -rf -- reports/deploy
+      - name: Build the pinned browser environment
+        run: docker build --tag kurio-validation --file ci/Dockerfile ci
+      - name: Verify deployed files, browser flows and Lighthouse targets
+        shell: bash
+        run: >-
+          docker run --rm --ipc=host --user "$(id -u):$(id -g)"
+          --mount type=bind,source="$GITHUB_WORKSPACE",target=/app
+          --workdir /app --env npm_config_cache=/tmp/npm-cache
+          --env XDG_CACHE_HOME=/tmp/kurio-cache --env CI=true
+          --env GITHUB_SHA --env DEPLOY_BASE_URL --env AUDIT_BASE_URL="$DEPLOY_BASE_URL"
+          --env AUDIT_OUTPUT_DIR=reports/deploy/lighthouse
+          kurio-validation sh -c '
+          npm ci && node ci/check-browser.mjs &&
+          node ci/check-deployment.mjs && npm run test:deploy && npm run audit:lighthouse'
+          2>&1 | tee /tmp/kurio-deployment.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-deployment-reports
+          path: |
+            reports/deploy/
+            .cache/deploy-results/
+            /tmp/kurio-deployment.log
+          retention-days: 14
