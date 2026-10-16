@@ -134,6 +134,13 @@ export async function readDatabase(): Promise<Database> {
       nft.attributes ??= original.attributes
       nft.rating ??= original.rating
       nft.reviewCount ??= original.reviewCount
+      nft.mobileDescription ??= original.mobileDescription
+      nft.details ??= original.details
+      if (
+        nft.description ===
+        'Um colecionável digital finalizado à mão da coleção Kurio Editions, verificado na Ethereum, com arte desbloqueável e acesso para colecionadores.'
+      )
+        nft.description = original.description
       for (const edition of original.editions)
         if (!nft.editions.some((item) => item.id === edition.id))
           nft.editions.push(structuredClone(edition))

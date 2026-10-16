@@ -1,4 +1,4 @@
-# Auditorias Lighthouse — etapa 7
+# Auditorias Lighthouse — etapa 8
 
 Execução: 15/10/2026, build otimizado servido por Vite preview no container de CI. Foram feitas **12 medições**: três por combinação de início/detalhe e mobile/desktop, com imagens, fontes e todas as funcionalidades ativas no cenário padrão dos mocks. Não havia outro browser concorrente. O comando encerrou com **código 0**; todas as medianas atingiram as metas.
 
@@ -6,10 +6,10 @@ Execução: 15/10/2026, build otimizado servido por Vite preview no container de
 
 | Página  | Perfil  | Performance | Acessibilidade | Boas práticas | SEO |     LCP |     CLS |     TBT |
 | ------- | ------- | ----------: | -------------: | ------------: | --: | ------: | ------: | ------: |
-| Início  | mobile  |          90 |            100 |           100 | 100 | 3.509 s | 0.00000 | 91.5 ms |
-| Início  | desktop |         100 |            100 |           100 | 100 | 0.702 s | 0.00000 |  0.0 ms |
-| Detalhe | mobile  |          91 |            100 |           100 | 100 | 3.501 s | 0.00000 | 36.0 ms |
-| Detalhe | desktop |         100 |            100 |           100 | 100 | 0.721 s | 0.00507 |  0.0 ms |
+| Início  | mobile  |          90 |            100 |           100 | 100 | 3.577 s | 0.00000 | 79.0 ms |
+| Início  | desktop |         100 |            100 |           100 | 100 | 0.715 s | 0.00000 |  0.0 ms |
+| Detalhe | mobile  |          91 |            100 |           100 | 100 | 3.506 s | 0.00000 | 27.5 ms |
+| Detalhe | desktop |         100 |            100 |           100 | 100 | 0.712 s | 0.00507 |  0.0 ms |
 
 Metas preservadas do enunciado: performance ≥90, acessibilidade ≥95, boas práticas ≥95 e SEO ≥90. Cada coluna usa sua própria mediana das três execuções. LCP mede quando o maior conteúdo ficou visível; CLS mede deslocamentos de layout; TBT mede o bloqueio por tarefas longas. Valores individuais, configuração e versões estão em [summary.json](../reports/lighthouse/summary.json).
 
@@ -32,7 +32,7 @@ Para a regressão oficial, use o container documentado; o script aceita `CHROME_
 
 `AUDIT_OUTPUT_DIR` permite diagnósticos em outra pasta. `--runs 1` é útil durante a otimização, mas não substitui a matriz completa. O resumo identifica `scope.completeMatrix`. Antes de medir, o script remove o resumo anterior e os relatórios dos alvos selecionados, evitando misturar resultados. A CI também remove relatórios versionados antes de iniciar o job, para não enviar evidência antiga se instalação/build falharem.
 
-Os 12 pares HTML/JSON estão em `reports/lighthouse/`. Os hashes SHA-256 dos arquivos de `dist` em `summary.json` foram comparados e são iguais aos de `reports/validation.json`, relativos aos 135 E2E aprovados. A auditoria do domínio público ainda não aconteceu. `AUDIT_BASE_URL` permite executá-la depois do deploy.
+Os 12 pares HTML/JSON estão em `reports/lighthouse/`. Os hashes SHA-256 dos arquivos de `dist` em `summary.json` foram comparados e são iguais aos de `reports/validation.json`, relativos aos 150 E2E aprovados. A auditoria do domínio público ainda não aconteceu. `AUDIT_BASE_URL` permite executá-la depois do deploy.
 
 ## O que mudou desde a etapa 5
 
@@ -44,8 +44,8 @@ As imagens AVIF reduzem cerca de 84% dos bytes dos quatro PNGs. AVIF usa compres
 
 A UI pública e MSW ainda representam um custo relevante de JavaScript. O início mobile atingiu exatamente a meta, portanto os checks devem continuar obrigatórios para novas alterações; não é uma garantia de mesma nota em todo hardware. O cenário lento e os fluxos de erro continuaram passando nos E2E. As notas automáticas de acessibilidade complementam testes de teclado/foco, sem comprovar sozinhas toda a acessibilidade ou fidelidade ao Figma.
 
-## Revisão visual da etapa 7
+## Revisão da etapa 8
 
-A matriz foi repetida depois dos ajustes dos frames e da descrição acessível dos campos. Os 12 relatórios atuais pertencem ao mesmo build dos 135 E2E aprovados, conferido arquivo por arquivo por SHA-256. O início mantém mediana 90 em performance mobile; o detalhe mantém 91. As demais metas foram preservadas, sem omitir imagens, fontes, mocks ou cenários para a auditoria.
+A matriz foi repetida depois das correções de cancelamento da autenticação, recuperação de falhas, textos do NFT e formulário de pagamento. Os relatórios atuais substituem os anteriores e correspondem ao mesmo build dos 150 E2E aprovados, conferido por SHA-256. As condições e metas foram preservadas; nenhuma funcionalidade, imagem ou fonte foi desativada para a auditoria.
 
-A composição mobile foi alinhada às referências: proporções das imagens, destaque, filtros, hierarquia e espaços. O slider usa controles nativos e as marcas são representações locais; não foi adicionada dependência de slider nem solicitação de fontes/logos externos. As diferenças funcionais necessárias e a família tipográfica aproximada continuam declaradas em `DESIGN.md`. A nota local não garante o mesmo resultado em qualquer hardware ou no futuro deploy.
+A execução começou em 16/10/2026 UTC, ainda 15/10 no horário de São Paulo. As medições da etapa anterior permanecem no histórico Git. A fonte aproximada e as diferenças funcionais necessárias continuam declaradas em `DESIGN.md`; notas locais não garantem resultados idênticos no futuro domínio público.

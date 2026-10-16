@@ -55,6 +55,8 @@ Na etapa 6, somente `inicio-desktop-linux.png` foi atualizado após inspecionar 
 
 ## Revisão por tela — etapa 7
 
+Complemento da etapa 8: texto branco da faixa de preço; cópia editorial do detalhe conforme os frames; rótulos e sequência dos campos do pagamento desktop conforme a referência. Explicação das diferenças funcionais mantidas e roteiro de conferência em [ETAPA-08.md](ETAPA-08.md).
+
 | Tela        | Referência                       | Ajustes desta rodada                                                                                                                      |
 | ----------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | Início      | Capturas do chat, desktop/mobile | Duas alças, faixa inicial 0,02–12,30 ETH, sidebar compacta, composição do destaque, cards mobile, navegação e conteúdo editorial resumido |

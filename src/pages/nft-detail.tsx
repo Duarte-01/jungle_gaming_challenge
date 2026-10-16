@@ -133,7 +133,7 @@ function NftDetailContent({ nftId }: { nftId: string }) {
                   <p className="detail-description">
                     <span className="desktop-description">{nft.description}</span>
                     <span className="mobile-description">
-                      {nft.description.split(', com ')[0].replace(/[.!?]$/, '')}.
+                      {nft.mobileDescription ?? nft.description}
                     </span>
                   </p>
                   <fieldset className="edition-picker">
@@ -336,24 +336,18 @@ function NftDetailContent({ nftId }: { nftId: string }) {
                 </div>
                 {tab === 'details' ? (
                   <div id="nft-details-panel" role="tabpanel" aria-labelledby="nft-details-tab">
-                    <p>
-                      {nft.description} Cada atributo faz parte dos metadados desta coleção de
-                      demonstração.
-                    </p>
-                    <p>
-                      Explore identidade, movimento e luz em uma coleção de arte digital. Nesta
-                      demonstração, a compra e a propriedade são simuladas.
-                    </p>
+                    {(nft.details?.paragraphs ?? [nft.description]).map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
                     <dl>
                       <dt>Rede:</dt>
-                      <dd>{nft.network}</dd>
+                      <dd>{nft.details?.network ?? nft.network}</dd>
                       <dt>Contrato:</dt>
-                      <dd>Referência simulada da coleção {nft.collection ?? 'Kurio Apes'}.</dd>
-                      <dt>Direitos autorais:</dt>
                       <dd>
-                        A aquisição de um token não transfere automaticamente os direitos autorais
-                        da obra.
+                        {nft.details?.contract ?? `Coleção ${nft.collection ?? 'Kurio Apes'}.`}
                       </dd>
+                      <dt>Direitos autorais:</dt>
+                      <dd>{nft.details?.copyright ?? 'Consulte os termos da coleção.'}</dd>
                     </dl>
                   </div>
                 ) : (

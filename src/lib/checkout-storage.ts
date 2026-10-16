@@ -35,6 +35,7 @@ const draftSchema = z.object({
   profileName: z.string().default('Colecionador Kurio'),
   referralCode: z.string().default('KURIO'),
   note: z.string().default(''),
+  secondaryAddress: z.string().optional(),
   provider: z.enum(['WalletConnect', 'MetaMask', 'Coinbase Wallet']).default('MetaMask'),
   name: z.string(),
   email: z.string(),

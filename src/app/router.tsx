@@ -19,6 +19,7 @@ import { SessionSync } from '../auth/session-sync'
 import { safeReturnTo } from '../domain/account-helpers'
 import { RouteError } from '../pages/route-error'
 import { MarketRealtime } from '../realtime/market-realtime'
+import { rememberPublicLocation } from '../auth/navigation'
 
 const rootRoute = createRootRoute({
   errorComponent: RouteError,
@@ -132,6 +133,8 @@ export const router = createRouter({
     explorerRoute,
   ]),
 })
+
+router.subscribe('onResolved', ({ toLocation }) => rememberPublicLocation(toLocation))
 
 declare module '@tanstack/react-router' {
   interface Register {

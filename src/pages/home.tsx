@@ -266,9 +266,10 @@ export function HomePage() {
                 <button
                   type="button"
                   className="kurio-button"
+                  disabled={catalog.isFetching}
                   onClick={() => void catalog.refetch()}
                 >
-                  Tentar novamente
+                  {catalog.isFetching ? 'Tentando novamente…' : 'Tentar novamente'}
                 </button>
               </div>
             ) : catalog.data?.items.length === 0 ? (

@@ -4,6 +4,18 @@ import type { CartItem, Quote } from '../api/cart'
 
 export const providerSchema = z.enum(['WalletConnect', 'MetaMask', 'Coinbase Wallet'])
 export const networkSchema = z.enum(['Ethereum', 'Polygon', 'Solana'])
+const secondaryAddressSchema = z
+  .string()
+  .trim()
+  .max(100)
+  .refine(
+    (value) =>
+      !value ||
+      /^[a-zA-Z0-9-]+\.eth$/.test(value) ||
+      /^0x[0-9a-fA-F]{40}$/.test(value) ||
+      /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(value),
+    'Use um ENS .eth ou endereço válido.',
+  )
 export const walletSchema = z
   .object({
     provider: providerSchema.default('MetaMask'),
@@ -21,7 +33,7 @@ export const walletSchema = z
       .min(2, 'Informe o código de indicação.')
       .max(30)
       .default('KURIO'),
-    secondaryAddress: z.string().trim().max(100).default(''),
+    secondaryAddress: secondaryAddressSchema.default(''),
     label: z.string().trim().min(2, 'Dê um nome à carteira.').max(50),
     address: z.string().trim().min(1, 'Informe o endereço.'),
     network: networkSchema,
@@ -32,19 +44,6 @@ export const walletSchema = z
       wallet.network === 'Solana'
         ? /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(wallet.address)
         : /^0x[0-9a-fA-F]{40}$/.test(wallet.address)
-    if (
-      wallet.secondaryAddress &&
-      !(
-        /^[a-zA-Z0-9-]+\.eth$/.test(wallet.secondaryAddress) ||
-        /^0x[0-9a-fA-F]{40}$/.test(wallet.secondaryAddress) ||
-        /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(wallet.secondaryAddress)
-      )
-    )
-      context.addIssue({
-        code: 'custom',
-        path: ['secondaryAddress'],
-        message: 'Use um ENS .eth ou endereço válido.',
-      })
     if (!valid)
       context.addIssue({
         code: 'custom',
@@ -74,6 +73,7 @@ export const customerSchema = z.object({
     .default('Colecionador Kurio'),
   referralCode: z.string().trim().min(2, 'Informe o código de indicação.').max(30).default('KURIO'),
   note: z.string().trim().max(1000, 'Use até 1000 caracteres.').default(''),
+  secondaryAddress: secondaryAddressSchema.optional(),
   name: z.string().trim().min(2, 'Informe seu nome.').max(80),
   email: emailSchema,
   phone: z
