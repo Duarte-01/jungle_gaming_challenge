@@ -1,4 +1,4 @@
-# Relatórios de validação — etapa 7
+# Relatórios de validação — etapa 8
 
 - `playwright/index.html`: cópia do relatório HTML da execução completa de E2E sobre o build de produção. O resumo e as condições estão em `docs/VALIDACAO.md`.
 - `lighthouse/*.report.html` e `*.report.json`: três medições de cada combinação de início/detalhe e mobile/desktop.
@@ -11,3 +11,5 @@ Os relatórios de uma execução não comprovam alterações posteriores. Reprod
 O Lighthouse retorna código 1 quando uma mediana não atinge a meta. Consulte `docs/PERFORMANCE.md`; relatórios completos e boas notas em outras categorias não apagam esse resultado.
 
 Traces de testes com falha são gerados em `test-results/`; o workflow os inclui como artefato em falhas de CI. Uma execução sem falhas não gera traces de erro. As baselines ficam em `tests/e2e/visual.spec.ts-snapshots`, separadas dos frames de referência em `docs/design-references`.
+
+Os relatórios atuais são da etapa 8 e substituem os da etapa 7. As medições anteriores podem ser consultadas no histórico Git; suas descrições históricas em `docs/VALIDACAO.md` não são a identificação do build atual.

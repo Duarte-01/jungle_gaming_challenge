@@ -40,6 +40,13 @@ export interface Nft {
   reviewCount?: number
   creator: string
   description: string
+  mobileDescription?: string
+  details?: {
+    paragraphs: string[]
+    network: string
+    contract: string
+    copyright: string
+  }
   newRelease: boolean
   trending: boolean
   version: number

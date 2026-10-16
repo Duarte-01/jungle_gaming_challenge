@@ -126,3 +126,7 @@ Carteira acrescenta `profileName`, `email`, `ens`, `referralCode`, `secondaryAdd
 Cliente do pedido acrescenta os campos do perfil, `profileName`, `referralCode` e `note` opcional de até 1.000 caracteres. A criação exige que rede, carteira e provedor coincidam com a conexão simulada atual. O snapshot preserva esses dados e o provedor conectado. A mesma chave idempotente com payload normalizado diferente continua retornando conflito; tentativas antigas são comparadas depois da aplicação dos defaults novos.
 
 Detalhe do NFT inclui coleção, descrição, atributos, avaliação agregada e total de avaliações simuladas. Edições incluem padrão, limitada, única e aberta, com disponibilidade devolvida pela API. Não há API de publicação de avaliações nem compra real.
+
+Na etapa 8, o detalhe acrescenta `mobileDescription` e `details: { paragraphs, network, contract, copyright }`, opcionais para compatibilidade. O mock migra esses textos em dados existentes sem apagar contas, carrinhos, estoque, pedidos ou preços alterados. São textos editoriais fictícios do frame, recebidos por REST.
+
+`customer.secondaryAddress` é opcional; vazio é permitido e valores preenchidos seguem a mesma validação de ENS/endereço secundário das carteiras. O rascunho do pagamento e o snapshot do pedido preservam esse campo. A propriedade é opcional, sem default adicional no payload normalizado, preservando a comparação de tentativas anteriores que não tinham o campo. O endereço principal continua vindo da carteira selecionada e é conferido pela API, não de texto livre no checkout.

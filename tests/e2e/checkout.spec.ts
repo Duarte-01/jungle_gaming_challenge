@@ -46,7 +46,7 @@ async function prepare(page: Page, scenario = 'default', coupon = false, fromCat
   } else await page.goto('/pagamento')
   await expect(page.getByLabel('Telefone do colecionador')).toBeAttached()
   if (!(await page.getByLabel('Telefone do colecionador').isVisible()))
-    await page.getByText('Dados do colecionador', { exact: false }).first().click()
+    await page.locator('.collector-checkout-details > summary').click()
   await page.getByLabel('Telefone do colecionador').fill('+55 11 99999-1234')
   await page.getByRole('button', { name: 'Conectar carteira simulada' }).click()
   await expect(page.getByText('Carteira conectada à rede Ethereum.')).toBeVisible()
@@ -268,6 +268,8 @@ test('carteira recusa conexão, valida rede e desconecta sem permitir confirmar'
   await page.getByRole('button', { name: 'Conectar carteira simulada' }).click()
   await expect(page.getByRole('alert').filter({ hasText: 'A conexão foi recusada' })).toBeVisible()
   await control(page, 'scenario', { scenario: 'default' })
+  if (!(await page.getByRole('combobox', { name: 'Rede', exact: true }).isVisible()))
+    await page.locator('.collector-checkout-details > summary').click()
   await page.getByRole('combobox', { name: 'Rede', exact: true }).selectOption('Solana')
   await page.getByRole('button', { name: 'Conectar carteira simulada' }).click()
   await expect(

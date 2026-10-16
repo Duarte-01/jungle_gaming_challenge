@@ -1,8 +1,7 @@
-import { Link, useRouter } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { defaultSearch } from '../api/catalog'
 
-export function RouteError({ reset }: { reset: () => void }) {
-  const router = useRouter()
+export function RouteError() {
   return (
     <main className="kurio-app">
       <section className="container empty-state" role="alert">
@@ -11,7 +10,9 @@ export function RouteError({ reset }: { reset: () => void }) {
         <button
           type="button"
           className="kurio-button"
-          onClick={() => void router.invalidate().then(reset)}
+          // A rejected React.lazy import remains cached after a boundary reset.
+          // Reload also reactivates the mock worker after a suspended browser tab.
+          onClick={() => window.location.reload()}
         >
           Tentar novamente
         </button>

@@ -71,6 +71,25 @@ test('troca de provedor exige reconexão e nova revisão, preservando dados no p
   await expect(phone).toBeAttached()
   if (!(await phone.isVisible()))
     await page.locator('.collector-checkout-details > summary').click()
+  await expect(page.locator('.checkout-fields > .form-field > label')).toHaveText([
+    'Nome de exibição*',
+    'Nome de usuário*',
+    'Rede*',
+    'Nome do perfil*',
+    'Endereço da carteira*',
+    'ENS ou carteira secundária (opcional)',
+    'Tipo de carteira*',
+    'Código de indicação*',
+    'E-mail*',
+    'Nome ENS*',
+    'Observação do colecionador (opcional)',
+  ])
+  await expect(page.getByLabel('Endereço da carteira', { exact: true })).toHaveValue(
+    `0x${'a'.repeat(40)}`,
+  )
+  await page
+    .getByLabel('ENS ou carteira secundária (opcional)', { exact: true })
+    .fill('reserva.eth')
   await phone.fill('+55 11 99999-1234')
   await page.getByLabel('Nome de usuário', { exact: true }).fill('ana.coleciona')
   await page.getByLabel('Nome ENS', { exact: true }).fill('ana-coleciona')
@@ -99,6 +118,7 @@ test('troca de provedor exige reconexão e nova revisão, preservando dados no p
   expect(orders[0].snapshot.customer.username).toBe('ana.coleciona')
   expect(orders[0].snapshot.customer.ens).toBe('ana-coleciona')
   expect(orders[0].snapshot.customer.note).toBe('Minha primeira coleção')
+  expect(orders[0].snapshot.customer.secondaryAddress).toBe('reserva.eth')
   expect(orders[0].snapshot.wallet.provider).toBe('Coinbase Wallet')
 })
 

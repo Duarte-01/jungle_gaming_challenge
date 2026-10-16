@@ -52,6 +52,7 @@ function CheckoutForm({ user }: { user: User }) {
   const [detailsOpen, setDetailsOpen] = useState(
     () => window.matchMedia('(min-width: 768px)').matches,
   )
+  const [choosingWallet, setChoosingWallet] = useState(false)
   const [review, setReview] = useState<Cart | null>(null)
   const [attempt, setAttempt] = useState(() => loadAttempt(user.id))
   const [recovering, setRecovering] = useState(true)
@@ -222,7 +223,10 @@ function CheckoutForm({ user }: { user: User }) {
             onSubmit={(event) => {
               event.preventDefault()
               const result = orderInputSchema.safeParse({
-                customer: { ...draft },
+                customer: {
+                  ...draft,
+                  secondaryAddress: draft.secondaryAddress ?? selected?.secondaryAddress ?? '',
+                },
                 provider: draft.provider,
                 walletId: selected?.id ?? '',
                 walletVersion: selected?.version ?? 1,
@@ -250,31 +254,16 @@ function CheckoutForm({ user }: { user: User }) {
               onToggle={(event) => setDetailsOpen(event.currentTarget.open)}
             >
               <summary>
-                Dados do colecionador <span>{draft.name}</span>
+                Perfil do colecionador <span>{draft.name}</span>
               </summary>
               <fieldset disabled={Boolean(attempt)} className="checkout-fields">
                 <FormField
-                  label="Nome completo"
+                  label="Nome de exibição"
                   value={draft.name}
                   autoComplete="name"
                   onChange={(event) => setField({ name: event.target.value })}
                   error={errors['customer.name']}
-                />
-                <FormField
-                  label="E-mail do colecionador"
-                  type="email"
-                  error={errors['customer.email']}
-                  value={draft.email}
-                  autoComplete="email"
-                  onChange={(event) => setField({ email: event.target.value })}
-                />
-                <FormField
-                  label="Telefone do colecionador"
-                  type="tel"
-                  error={errors['customer.phone']}
-                  value={draft.phone}
-                  autoComplete="tel"
-                  onChange={(event) => setField({ phone: event.target.value })}
+                  required
                 />
                 <FormField
                   label="Nome de usuário"
@@ -283,6 +272,27 @@ function CheckoutForm({ user }: { user: User }) {
                   onChange={(event) => setField({ username: event.target.value })}
                   required
                 />
+                <div className="form-field">
+                  <label htmlFor="checkout-network">
+                    Rede
+                    <span className="required-mark" aria-hidden="true">
+                      *
+                    </span>
+                  </label>
+                  <select
+                    id="checkout-network"
+                    aria-label="Rede"
+                    value={network}
+                    required
+                    onChange={(event) =>
+                      setField({ network: event.target.value as typeof network })
+                    }
+                  >
+                    {networks.map((value) => (
+                      <option key={value}>{value}</option>
+                    ))}
+                  </select>
+                </div>
                 <FormField
                   label="Nome do perfil"
                   value={draft.profileName}
@@ -291,11 +301,57 @@ function CheckoutForm({ user }: { user: User }) {
                   required
                 />
                 <FormField
+                  label="Endereço da carteira"
+                  value={selected?.address ?? ''}
+                  placeholder="Endereço 0x da carteira"
+                  readOnly
+                  required
+                  aria-describedby="checkout-address-help"
+                />
+                <FormField
+                  label="ENS ou carteira secundária (opcional)"
+                  containerClassName="checkout-secondary-address"
+                  value={draft.secondaryAddress ?? selected?.secondaryAddress ?? ''}
+                  placeholder="ENS ou carteira secundária (opcional)"
+                  onChange={(event) => setField({ secondaryAddress: event.target.value })}
+                  error={errors['customer.secondaryAddress']}
+                />
+                <div className="form-field">
+                  <label htmlFor="checkout-wallet-type">
+                    Tipo de carteira
+                    <span className="required-mark" aria-hidden="true">
+                      *
+                    </span>
+                  </label>
+                  <select
+                    id="checkout-wallet-type"
+                    aria-label="Tipo de carteira"
+                    value={draft.provider}
+                    required
+                    onChange={(event) =>
+                      setField({ provider: event.target.value as CheckoutDraft['provider'] })
+                    }
+                  >
+                    {(['WalletConnect', 'MetaMask', 'Coinbase Wallet'] as const).map((provider) => (
+                      <option key={provider}>{provider}</option>
+                    ))}
+                  </select>
+                </div>
+                <FormField
                   label="Código de indicação"
                   value={draft.referralCode}
                   error={errors['customer.referralCode']}
                   onChange={(event) => setField({ referralCode: event.target.value })}
                   required
+                />
+                <FormField
+                  label="E-mail"
+                  type="email"
+                  error={errors['customer.email']}
+                  value={draft.email}
+                  autoComplete="email"
+                  required
+                  onChange={(event) => setField({ email: event.target.value })}
                 />
                 <FormField
                   label="Nome ENS"
@@ -304,13 +360,36 @@ function CheckoutForm({ user }: { user: User }) {
                   onChange={(event) => setField({ ens: event.target.value })}
                   required
                 />
-                <div className="form-field">
+                <label className="checkout-other-wallet">
+                  <input
+                    type="checkbox"
+                    checked={choosingWallet}
+                    onChange={(event) => setChoosingWallet(event.target.checked)}
+                  />
+                  Usar outra carteira?
+                </label>
+                <div className="form-field checkout-collector-note">
                   <label htmlFor="collector-note">Observação do colecionador (opcional)</label>
                   <textarea
                     id="collector-note"
                     value={draft.note}
                     maxLength={1000}
                     onChange={(event) => setField({ note: event.target.value })}
+                  />
+                </div>
+                <div className="checkout-contact-fields">
+                  <p id="checkout-address-help" className="muted">
+                    O endereço pertence à carteira cadastrada selecionada. Use “Trocar carteira”
+                    para editá-lo.
+                  </p>
+                  <FormField
+                    label="Telefone do colecionador"
+                    type="tel"
+                    error={errors['customer.phone']}
+                    value={draft.phone}
+                    autoComplete="tel"
+                    required
+                    onChange={(event) => setField({ phone: event.target.value })}
                   />
                 </div>
               </fieldset>
@@ -354,7 +433,9 @@ function CheckoutForm({ user }: { user: User }) {
                       </label>
                     ))}
                   </div>
-                  <div className="form-field checkout-wallet-select">
+                  <div
+                    className={`form-field checkout-wallet-select ${choosingWallet ? 'is-open' : ''}`}
+                  >
                     <label htmlFor="checkout-wallet">Carteira</label>
                     <select
                       id="checkout-wallet"
@@ -374,21 +455,6 @@ function CheckoutForm({ user }: { user: User }) {
                   </div>
                   <div className="checkout-connection-controls">
                     <p className="wallet-address">{selected?.address}</p>
-                    <div className="form-field">
-                      <label htmlFor="checkout-network">Rede</label>
-                      <select
-                        id="checkout-network"
-                        value={network}
-                        disabled={Boolean(attempt)}
-                        onChange={(event) =>
-                          setField({ network: event.target.value as typeof network })
-                        }
-                      >
-                        {networks.map((value) => (
-                          <option key={value}>{value}</option>
-                        ))}
-                      </select>
-                    </div>
                     {connected ? (
                       <>
                         <p role="status">Carteira conectada à rede {network}.</p>
@@ -481,7 +547,11 @@ function CheckoutForm({ user }: { user: User }) {
                     disabled={stale || !connected || cart.isFetching || purchase.isPending}
                     onClick={() => {
                       const result = orderInputSchema.safeParse({
-                        customer: { ...draft },
+                        customer: {
+                          ...draft,
+                          secondaryAddress:
+                            draft.secondaryAddress ?? selected?.secondaryAddress ?? '',
+                        },
                         provider: draft.provider,
                         walletId: selected?.id ?? '',
                         walletVersion: selected?.version ?? 1,

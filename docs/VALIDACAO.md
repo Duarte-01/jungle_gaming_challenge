@@ -1,6 +1,6 @@
 # Evidências de validação
 
-**Resultado atual: etapa 7, ao final deste documento.** As etapas anteriores são registros históricos; suas listas de pendências descrevem a versão daquela data.
+**Resultado atual: etapa 8, ao final deste documento.** As etapas anteriores são registros históricos; suas listas de pendências descrevem a versão daquela data.
 
 ## Etapa 1 — infraestrutura
 
@@ -174,3 +174,19 @@ O run `38804230419`, do commit `04ecde3`, falhou nos dois passos de Docker build
 A instalação foi corrigida para baixar os pacotes oficiais exatos por HTTPS e validar os SHA-256 versionados. Os arquivos de execução e scripts de manutenção conferidos coincidem com a imagem anterior (47 itens, sem diferenças; oito arquivos de documentação omitidos pela imagem slim). A construção limpa da imagem `kurio-validation:chromium-155-reproducible` concluiu com código 0; o preflight CDP e as **12 comparações visuais passaram sem atualizar qualquer baseline** em 21,6 segundos. Os dois jobs da CI repetem instalação limpa, build e validação nessa configuração.
 
 Os relatórios de 135 E2E e 12 Lighthouse acima foram produzidos com a imagem anterior já preparada, contendo a mesma versão do browser; a aplicação e os 56 hashes de `dist` não mudaram nesta correção de instalação. O workflow também passou a guardar o log da própria construção Docker, com status de erro preservado por `bash`/`pipefail`, para que uma falha nesse passo não deixe o resumo sem diagnóstico. Detalhes de download, integridade, certificado do proxy e fonte alternativa em `ci/README.md`.
+
+## Etapa 8 — cancelamento, recuperação e campos do pagamento
+
+Execução final no build otimizado, com `CI=true`, `E2E_PREVIEW=true`, dois workers e `--retries=0`, no container `kurio-validation:chromium-155-reproducible` (Node 24.19.0, Chromium 155.0.8059.39 / Debian 13). **150 E2E passaram em 358.1 s**, correspondendo a 50 casos em desktop 1440 px, tablet 768 px e mobile 390 px. Não houve falhas, skips, retries ou flaky. Tipos, lint, formatação, build e quatro unitários também passaram.
+
+Cinco novos casos por viewport cobrem links do rodapé/navegação mobile, rotas privadas abertas diretamente, cancelamento pelo X e Escape, carrinho preservado após cancelar pagamento e atualizar o login, falha no download do módulo e falha de sessão ao voltar à aba. O teste de pagamento confere a ordem dos rótulos e observa o endereço secundário no snapshot REST do pedido. Os testes do catálogo verificam texto editorial e cor branca da faixa.
+
+O X antes tentava o destino protegido e era redirecionado de volta ao login. Agora cancela para uma página pública, enquanto o sucesso mantém o destino solicitado. A recuperação de erro fatal recarrega o documento para descartar importações rejeitadas pelo React.lazy. As simulações de rede passaram; a causa exata do episódio raro relatado pelo candidato permanece não confirmada.
+
+Uma rodada intermediária encontrou o X oculto no mobile e seletores que precisavam acompanhar os controles responsivos. O X foi tornado visível; os testes passaram a usar a troca de cadastro disponível no mobile, o link da mensagem de confirmação do carrinho e a expansão do perfil antes de alterar a rede. Os 15 novos cenários foram aprovados nos três tamanhos antes da execução completa final.
+
+Oito baselines foram atualizadas após revisão das mudanças visuais de texto, cor e formulário. A execução completa acima repetiu as **12 comparações visuais sem `--update-snapshots`**, sem relaxar tolerâncias. Os 13 frames originais continuam com os mesmos hashes do manifesto.
+
+As **12 medições Lighthouse concluíram com código 0 e todas as metas atendidas**. Performance: home/mobile: 90; home/desktop: 100; detail/mobile: 91; detail/desktop: 100. Os resultados das demais categorias estão na tabela de `PERFORMANCE.md`. Os 56 hashes de `dist` coincidem nos resumos de Playwright e Lighthouse. Resultados individuais e condições em `PERFORMANCE.md`.
+
+Os relatórios correntes de `reports/playwright`, `reports/validation.json` e `reports/lighthouse` pertencem a esta etapa. Os relatos de etapas anteriores acima são históricos. Os checks remotos precisam corresponder ao commit revisado; não se confunde aprovação local com CI. Main e deploy público continuam suspensos por solicitação do candidato.

@@ -53,8 +53,8 @@ export function SessionSync() {
     return (
       <div className="session-notice" role="alert">
         Não foi possível recuperar sua sessão.
-        <button type="button" onClick={() => void session.refetch()}>
-          Tentar novamente
+        <button type="button" disabled={session.isFetching} onClick={() => void session.refetch()}>
+          {session.isFetching ? 'Tentando novamente…' : 'Tentar novamente'}
         </button>
       </div>
     )

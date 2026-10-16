@@ -12,6 +12,7 @@ import { X } from 'lucide-react'
 import { HomePage } from './home'
 import { PasswordField } from '../components/password-field'
 import { BrandIcon } from '../components/brand-icon'
+import { authCancelDestination } from '../auth/navigation'
 
 const signUpSchema = registerSchema
   .extend({ confirmPassword: registerSchema.shape.password })
@@ -52,7 +53,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
       <Dialog.Root
         open
         onOpenChange={(open) => {
-          if (!open) void router.navigate({ href: returnTo })
+          if (!open) void router.navigate({ href: authCancelDestination(returnTo), replace: true })
         }}
       >
         <Dialog.Portal>
@@ -70,6 +71,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
             <div className="auth-tabs">
               <Link
                 to="/login"
+                replace
                 search={{ redirect: returnTo }}
                 aria-current={!isRegister ? 'page' : undefined}
               >
@@ -78,6 +80,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
               <span aria-hidden="true">|</span>
               <Link
                 to="/cadastro"
+                replace
                 search={{ redirect: returnTo }}
                 aria-current={isRegister ? 'page' : undefined}
               >
@@ -216,6 +219,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
               {isRegister ? 'Já tem uma conta?' : 'Novo na Kurio?'}{' '}
               <Link
                 to={isRegister ? '/login' : '/cadastro'}
+                replace
                 search={{ redirect: returnTo }}
                 className="text-link"
               >

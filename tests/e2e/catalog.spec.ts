@@ -56,6 +56,13 @@ test('detalhe direto, edição esgotada e NFT inexistente', async ({ page }) => 
   await expect(page.getByRole('heading', { name: 'Emerald Ape #042' })).toBeVisible()
   await expect(page.getByRole('button', { name: /Edição limitada/ })).toBeDisabled()
   await expect(page.getByRole('spinbutton', { name: 'Quantidade' })).toHaveAttribute('max', '5')
+  await expect(page.locator('#nft-details-panel')).toContainText(
+    'Emerald Ape #042 é uma obra digital 1/50 finalizada à mão da coleção Kurio Editions.',
+  )
+  await expect(page.locator('#nft-details-panel')).toContainText('Nova Sato recebe 5%')
+  await expect(page.locator('.mobile-description')).toHaveText(
+    'Um colecionável digital 1/50 finalizado à mão da coleção Kurio Editions, verificado na Ethereum.',
+  )
   await page.goto('/nfts/inexistente')
   await expect(page.getByRole('heading', { name: 'NFT não encontrado' })).toBeVisible()
 })
@@ -101,6 +108,7 @@ test('faixa de preço usa duas alças, impede inversão e restaura limites da UR
     if (mobile) await page.getByRole('button', { name: 'Abrir filtros' }).click()
   }
   await open()
+  await expect(page.locator('.price-range-value:visible')).toHaveCSS('color', 'rgb(245, 241, 235)')
   const min = page.getByRole('slider', { name: 'Preço mínimo em ETH' })
   const max = page.getByRole('slider', { name: 'Preço máximo em ETH' })
   await min.focus()
