@@ -15,8 +15,8 @@ async function bootstrap() {
   )
   const application = import('./app/mount')
   if (import.meta.env.VITE_ENABLE_MOCKS !== 'false') {
-    const { worker } = await import('./mocks/browser')
-    await worker.start({ onUnhandledRequest: 'warn', quiet: true })
+    const { startMockNetwork } = await import('./mocks/browser')
+    await startMockNetwork()
   }
   const { mountApplication } = await application
   mountApplication()

@@ -88,7 +88,15 @@ A reconexão reconcilia recursos REST ativos, cobrindo eventos perdidos. O cená
 
 O bootstrap apresenta um shell, baixa UI e mocks em paralelo e aguarda `worker.start()` antes de montar componentes ou capturar WebSocket no Engine.IO. Catálogo, sessão e carrinho estão disponíveis desde o início; resolvers de operações privadas e rotas privadas são carregados sob demanda. Consultas públicas são antecipadas no mesmo QueryClient.
 
-Ao retornar a uma aba, consultas desatualizadas são revalidadas. Uma falha não prova ausência de internet: também pode envolver sessão, módulo dinâmico ou service worker. Falhas REST permitem refetch; erro fatal de rota recarrega o documento para descartar uma importação React.lazy rejeitada e reativar o MSW. Rascunhos e tentativas já persistidos sobrevivem. A causa exata de um episódio isolado exige o erro correspondente do navegador.
+Ao retornar a uma aba, consultas desatualizadas são revalidadas. O navegador pode encerrar o processo do service worker sem remover seu registro. No MSW 2.15, isso apaga a lista de clientes ativos mantida em memória; uma consulta pode escapar da interceptação e chegar à hospedagem estática, que retorna 404 para `/api/session`. Essa falha foi reproduzida encerrando o worker pelo Chromium DevTools Protocol, inclusive como visitante.
+
+`src/mocks/worker-lifecycle.ts` confirma o handshake `MOCK_ACTIVATE` / `MOCKING_ENABLED` antes das chamadas HTTP. O bootstrap instala essa preparação no cliente Axios somente quando os mocks estão ativos. Requisições concorrentes compartilham a mesma confirmação em andamento; o listener é removido no sucesso/erro e a espera tem limite de cinco segundos. A geração de sessão é capturada antes da espera: uma troca de conta cancela o envio que ficou aguardando.
+
+A preparação não cria respostas de negócio, não altera o arquivo distribuído `mockServiceWorker.js`, não encerra o Socket.IO e não reenvia mutations. O protocolo está isolado na camada de mocks e coberto por testes de encerramento real do worker; atualizações do MSW devem preservar essa verificação. Repetir apenas `worker.start()` enquanto a biblioteca se considera iniciada não reativa o cliente.
+
+O transporte também rejeita respostas 200 que não sejam JSON, preservando 204 para operações sem corpo. Um fallback HTML da hospedagem não entra no cache como se fosse sessão ou carrinho válido; a consulta apresenta seu estado recuperável de erro.
+
+Falhas REST permitem nova consulta pelo botão de recuperação. O visitante recebe uma mensagem de verificação de acesso, sem pressupor que tenha feito login; uma sessão realmente expirada continua exigindo autenticação. Erro fatal de rota recarrega o documento para descartar uma importação React.lazy rejeitada. Rascunhos e tentativas já persistidos sobrevivem.
 
 ## Interface, UX e acessibilidade
 

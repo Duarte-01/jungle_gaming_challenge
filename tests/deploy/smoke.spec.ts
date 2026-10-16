@@ -1,4 +1,20 @@
 import { expect, test } from '@playwright/test'
+import { returnToStaleTab, stopMockWorker } from '../helpers/worker-lifecycle.js'
+
+test('visitante retoma a aba após encerramento real do service worker', async ({ page }) => {
+  await page.goto('/?q=Emerald')
+  await expect(page.locator('.nft-card')).toHaveCount(4)
+  await stopMockWorker(page)
+  const response = page.waitForResponse(
+    (response) => new URL(response.url()).pathname === '/api/session',
+  )
+  await returnToStaleTab(page)
+  const session = await response
+  expect(session.status()).toBe(200)
+  expect(await session.json()).toMatchObject({ user: null, expiresAt: null })
+  await expect(page.locator('.session-notice[role="alert"]')).toHaveCount(0)
+  await expect(page.locator('.nft-card')).toHaveCount(4)
+})
 
 test('domínio serve REST, Socket.IO, assets e rota direta após refresh', async ({ page }) => {
   await page.goto('/setup')
@@ -67,6 +83,7 @@ test('compra pública revalida evento Socket.IO e preserva o recibo confirmado',
   await expect(page.getByRole('button', { name: 'Confirmar compra simulada' })).toBeDisabled()
   await page.getByRole('button', { name: 'Revisar valores atualizados' }).click()
   await expect(page.getByTestId('checkout-total')).toHaveText('2.195 ETH')
+  await stopMockWorker(page)
   await page.getByRole('button', { name: 'Confirmar compra simulada' }).click()
   await expect(page.getByRole('heading', { name: 'Pedido confirmado' })).toBeVisible()
   const orderId = await page.getByTestId('order-id').textContent()

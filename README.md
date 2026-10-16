@@ -1,6 +1,7 @@
 # Kurio — NFT Marketplace
 
 [![Validate marketplace](https://github.com/Duarte-01/jungle_gaming_challenge/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/Duarte-01/jungle_gaming_challenge/actions/workflows/validate.yml)
+[![Validate public deployment](https://github.com/Duarte-01/jungle_gaming_challenge/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/Duarte-01/jungle_gaming_challenge/actions/workflows/deploy.yml)
 
 Marketplace responsivo de NFTs desenvolvido por **Zandor Duarte** para o [desafio frontend da Jungle Gaming](https://github.com/junglegaming/frontend-challenge), com base no [Figma fornecido](https://www.figma.com/design/Ff0SksUi7UFtPWUO8kyNtw/Frontend-Challenge?node-id=0-1).
 
@@ -8,9 +9,7 @@ A aplicação implementa descoberta, conta do colecionador, carteiras e compra c
 
 **Demonstração pública:** [junglegamingchallenge.vercel.app](https://junglegamingchallenge.vercel.app/).
 
-A verificação do domínio publicado está disponível no workflow [Validate public deployment](https://github.com/Duarte-01/jungle_gaming_challenge/actions/workflows/deploy.yml): hashes dos arquivos, fluxos nos três viewports e Lighthouse em início/detalhe. Os relatórios são anexados à execução correspondente.
-
-**Deploy validado:** [56 arquivos conferidos, nove testes públicos e 12 medições Lighthouse aprovados](https://github.com/Duarte-01/jungle_gaming_challenge/actions/runs/38841326415). Evidência e condições em [VALIDACAO.md](docs/VALIDACAO.md).
+A verificação do domínio publicado é executada pelo workflow [Validate public deployment](https://github.com/Duarte-01/jungle_gaming_challenge/actions/workflows/deploy.yml) após a Vercel confirmar um deploy de produção. O pipeline confere os 56 arquivos, executa 12 testes públicos nos três viewports e realiza 12 medições Lighthouse. Os relatórios são anexados à execução do commit correspondente. Evidências e condições em [VALIDACAO.md](docs/VALIDACAO.md).
 
 ## Stack
 
@@ -108,7 +107,7 @@ Rotas: `/`, `/nfts/:nftId`, `/login`, `/cadastro`, `/perfil`, `/carteiras`, `/fa
 
 ## Qualidade e evidências
 
-A suíte cobre 50 casos em **390, 768 e 1440 px**, totalizando **150 E2E**, incluindo 12 comparações visuais. Quatro testes unitários cobrem invariantes de precisão, redirecionamento e eventos. O workflow executa tipos, lint, formatação, unitários, build, E2E e Lighthouse; falhas mantêm seu código de saída e geram artefatos.
+A suíte cobre 54 casos em **390, 768 e 1440 px**, totalizando **162 E2E**, incluindo 12 comparações visuais. Quatro testes unitários cobrem invariantes de precisão, redirecionamento e eventos. Os cenários incluem encerramento real do service worker durante a navegação, nova tentativa, carrinho preservado e sessão expirada. O workflow executa tipos, lint, formatação, unitários, build, E2E e Lighthouse; falhas mantêm seu código de saída e geram artefatos.
 
 Os relatórios versionados estão em `reports/playwright/`, `reports/validation.json` e `reports/lighthouse/`. Novas execuções produzem `playwright-report/` e `test-results/`; traces são gerados para falhas e enviados pela CI. Os resumos identificam os arquivos do build por SHA-256. Consulte [validação](docs/VALIDACAO.md) e [performance](docs/PERFORMANCE.md) para resultados e condições; baselines verificam regressão da implementação e não equivalem a comparação automática com o Figma.
 

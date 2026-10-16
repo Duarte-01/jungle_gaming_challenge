@@ -44,6 +44,11 @@ export async function changePassword(input: { currentPassword: string; newPasswo
 
 export function problemFrom(error: unknown): ApiProblem {
   if (isAxiosError<ApiProblem>(error) && error.response?.data?.message) return error.response.data
+  if (isAxiosError(error) && error.code === 'ERR_BAD_RESPONSE')
+    return {
+      code: 'INVALID_RESPONSE',
+      message: 'O serviço não respondeu corretamente. Tente novamente.',
+    }
   return {
     code: 'NETWORK_ERROR',
     message: 'Não foi possível conectar. Confira sua conexão e tente novamente.',

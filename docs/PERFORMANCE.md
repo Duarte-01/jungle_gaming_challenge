@@ -1,15 +1,15 @@
 # Auditorias Lighthouse
 
-Execução: 15/10/2026, build otimizado servido por Vite preview no container de CI. Foram feitas **12 medições**: três por combinação de início/detalhe e mobile/desktop, com imagens, fontes e todas as funcionalidades ativas no cenário padrão dos mocks. Não havia outro browser concorrente. O comando encerrou com **código 0**; todas as medianas atingiram as metas.
+Execução: 16/10/2026, build otimizado servido por Vite preview no container de CI. Foram feitas **12 medições**: três por combinação de início/detalhe e mobile/desktop, com imagens, fontes e todas as funcionalidades ativas no cenário padrão dos mocks. Não havia outro browser concorrente. O comando encerrou com **código 0**; todas as medianas atingiram as metas.
 
 ## Medianas
 
 | Página  | Perfil  | Performance | Acessibilidade | Boas práticas | SEO |     LCP |     CLS |     TBT |
 | ------- | ------- | ----------: | -------------: | ------------: | --: | ------: | ------: | ------: |
-| Início  | mobile  |          90 |            100 |           100 | 100 | 3.578 s | 0.00000 | 74.0 ms |
-| Início  | desktop |         100 |            100 |           100 | 100 | 0.670 s | 0.00000 |  0.0 ms |
-| Detalhe | mobile  |          91 |            100 |           100 | 100 | 3.515 s | 0.00000 | 29.0 ms |
-| Detalhe | desktop |         100 |            100 |           100 | 100 | 0.732 s | 0.00507 |  0.0 ms |
+| Início  | mobile  |          90 |            100 |           100 | 100 | 3.489 s | 0.00000 | 87.0 ms |
+| Início  | desktop |         100 |            100 |           100 | 100 | 0.678 s | 0.00000 |  0.0 ms |
+| Detalhe | mobile  |          91 |            100 |           100 | 100 | 3.487 s | 0.00000 | 27.0 ms |
+| Detalhe | desktop |         100 |            100 |           100 | 100 | 0.721 s | 0.00507 |  0.0 ms |
 
 Metas preservadas do enunciado: performance ≥90, acessibilidade ≥95, boas práticas ≥95 e SEO ≥90. Cada coluna usa sua própria mediana das três execuções. LCP mede quando o maior conteúdo ficou visível; CLS mede deslocamentos de layout; TBT mede o bloqueio por tarefas longas. Valores individuais, configuração e versões estão em [summary.json](../reports/lighthouse/summary.json).
 
@@ -32,9 +32,9 @@ Para a regressão oficial, use o container documentado; o script aceita `CHROME_
 
 `AUDIT_OUTPUT_DIR` permite diagnósticos em outra pasta. `--runs 1` é útil durante a otimização, mas não substitui a matriz completa. O resumo identifica `scope.completeMatrix`. Antes de medir, o script remove o resumo anterior e os relatórios dos alvos selecionados, evitando misturar resultados. A CI também remove relatórios versionados antes de iniciar o job, para não enviar evidência antiga se instalação/build falharem.
 
-Os 12 pares HTML/JSON locais estão em `reports/lighthouse/`. Os hashes SHA-256 dos arquivos de `dist` em `summary.json` foram comparados e são iguais aos de `reports/validation.json`, relativos aos 150 E2E aprovados.
+Os 12 pares HTML/JSON locais estão em `reports/lighthouse/`. Os hashes SHA-256 dos arquivos de `dist` em `summary.json` foram comparados e são iguais aos de `reports/validation.json`, relativos aos 162 E2E aprovados.
 
-O domínio público também passou na matriz completa de **12 medições**, preservando todas as metas, na [execução 38841326415](https://github.com/Duarte-01/jungle_gaming_challenge/actions/runs/38841326415). Seus HTML/JSON e medianas estão no artefato **public-deployment-reports**, pasta `reports/deploy/lighthouse`. A tabela acima descreve somente a medição local, sem substituir seus números por inferências sobre o ambiente público. `AUDIT_BASE_URL` e `AUDIT_OUTPUT_DIR` permitem repetir a auditoria em outro domínio/pasta.
+A auditoria pública executa a mesma matriz de **12 medições** e as mesmas metas após a confirmação do deploy pela Vercel. Seus resultados ficam no [workflow público](https://github.com/Duarte-01/jungle_gaming_challenge/actions/workflows/deploy.yml), no artefato **public-deployment-reports**, pasta `reports/deploy/lighthouse`. A tabela acima descreve a medição local. `AUDIT_BASE_URL` e `AUDIT_OUTPUT_DIR` permitem repetir a auditoria em outro domínio/pasta.
 
 ## Decisões de performance
 

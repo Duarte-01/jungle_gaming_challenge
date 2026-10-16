@@ -6,7 +6,7 @@
 | `validation.json` | Contagens, ambiente, comando, duração e hashes dos arquivos de `dist` |
 | `lighthouse/*.report.html` / `*.report.json` | Três auditorias de cada combinação início/detalhe × mobile/desktop |
 | `lighthouse/summary.json` | Medianas, LCP/CLS/TBT, configuração, versões e hashes do build |
-| `deploy/verification.json` | Resultado confirmado do workflow público, commit, cobertura e identificação dos artefatos do deploy |
+| Artefato `public-deployment-reports` | Hashes observados, relatório Playwright e Lighthouse do domínio público, vinculados ao commit de cada execução |
 
 Resultados e reprodução: [VALIDACAO.md](../docs/VALIDACAO.md), [PERFORMANCE.md](../docs/PERFORMANCE.md) e [ambiente de CI](../ci/README.md). Os hashes permitem conferir que E2E e Lighthouse avaliaram o mesmo build.
 

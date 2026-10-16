@@ -2,7 +2,7 @@
 
 ## Escopo
 
-A suíte contém 50 casos executados nos viewports desktop 1440 × 900, tablet 768 × 1024 e mobile 390 × 844. Inclui 12 comparações visuais de início, detalhe, carrinho e pagamento, além de fluxos de sucesso, falha, expiração, isolamento e eventos.
+A suíte contém 54 casos executados nos viewports desktop 1440 × 900, tablet 768 × 1024 e mobile 390 × 844, totalizando 162 E2E. Inclui 12 comparações visuais de início, detalhe, carrinho e pagamento, além de fluxos de sucesso, falha, expiração, isolamento, eventos e retomada após inatividade.
 
 O resultado atual e a duração estão em [`reports/validation.json`](../reports/validation.json); o relatório navegável está em [`reports/playwright/index.html`](../reports/playwright/index.html). Os testes unitários verificam precisão ETH, validação de eventos e destinos internos de autenticação.
 
@@ -32,12 +32,18 @@ Os resumos de E2E e Lighthouse identificam cada arquivo de `dist` por SHA-256. A
 
 ## Domínio público
 
-A publicação em [junglegamingchallenge.vercel.app](https://junglegamingchallenge.vercel.app/) foi validada pela [execução pública 38841326415](https://github.com/Duarte-01/jungle_gaming_challenge/actions/runs/38841326415), concluída com sucesso em 16/10/2026 UTC (15/10 em Brasília). O pipeline conferiu os **56 arquivos por SHA-256**, executou **nove testes públicos** em 390/768/1440 px e completou **12 medições Lighthouse**, com todas as metas atingidas.
+A publicação em [junglegamingchallenge.vercel.app](https://junglegamingchallenge.vercel.app/) tem um [workflow de verificação pública](https://github.com/Duarte-01/jungle_gaming_challenge/actions/workflows/deploy.yml). Após a Vercel confirmar um deploy de produção, o workflow faz checkout do commit publicado, confere os **56 arquivos por SHA-256**, executa **12 testes públicos** em 390/768/1440 px e completa **12 medições Lighthouse**, preservando todas as metas. O resultado de cada execução permanece vinculado ao commit correspondente.
 
-Os testes cobrem acesso anônimo HTTPS, service worker, REST e Socket.IO, assets, acesso direto/refresh das rotas, sessão, cancelamento de autenticação, carrinho persistente, atualização de preço durante a revisão e compra completa com recibo após refresh. O banco da simulação pertence ao armazenamento do navegador; estes testes usam contextos novos e independentes.
+Os testes cobrem acesso anônimo HTTPS, REST e Socket.IO, assets, acesso direto/refresh das rotas, sessão, cancelamento de autenticação, carrinho persistente, atualização de preço durante a revisão e compra completa com recibo após refresh. Encerram o processo real do service worker como visitante e antes de confirmar a compra. O banco da simulação pertence ao armazenamento do navegador; estes testes usam contextos novos e independentes.
 
-[`reports/deploy/verification.json`](../reports/deploy/verification.json) registra o resultado confirmado pela API do GitHub, o commit, a cobertura e o identificador do artefato. O artefato **public-deployment-reports**, disponível na execução acima, contém os hashes observados, relatório Playwright e HTML/JSON Lighthouse do domínio real; a retenção configurada é de 14 dias. O workflow permite nova execução manual com uma URL HTTPS.
+O artefato **public-deployment-reports**, disponível em cada execução, contém `reports/deploy/build.json` com os hashes observados e o commit, relatório Playwright e HTML/JSON Lighthouse do domínio real; a retenção configurada é de 14 dias. O workflow permite nova execução manual com uma URL HTTPS.
+
+## Regressão de retomada da aba
+
+O problema relatado em 16/10/2026 foi reproduzido encerrando o service worker via Chromium DevTools Protocol e revalidando a sessão após 31 segundos de inatividade simulada. Antes da correção, a consulta escapou do MSW e retornou **404** no cenário equivalente a uma hospedagem estática. Repetir a consulta sem reativar o cliente mantinha a falha.
+
+Os quatro casos de `worker-recovery.spec.ts` verificam recuperação automática do visitante, nova tentativa após falha com carrinho preservado, persistência da conta com uma única mutation de perfil e exigência de login para sessão realmente expirada. A API da hospedagem estática é representada apenas por 404 quando o MSW deixa uma solicitação escapar; respostas de negócio continuam sendo produzidas pelos handlers reais. O teste público repete o encerramento sem essa simulação de hospedagem.
 
 ## Resultado do build de entrega
 
-A execução completa aprovou **150 E2E**, sem falhas, skips, flaky ou retries, incluindo as 12 comparações visuais. Tipos, lint, formatação, build e quatro unitários passaram. As **12 auditorias Lighthouse** concluíram com código 0 e todas as metas atendidas. Os 56 hashes de `dist` são iguais nos dois resumos de relatórios.
+A execução completa aprovou **162 E2E**, sem falhas, skips, flaky ou retries, incluindo as 12 comparações visuais. Tipos, lint, formatação, build e quatro unitários passaram. As **12 auditorias Lighthouse** concluíram com código 0 e todas as metas atendidas. Os 56 hashes de `dist` são iguais nos dois resumos de relatórios.

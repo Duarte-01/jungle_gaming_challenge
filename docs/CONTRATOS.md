@@ -61,13 +61,13 @@ Formato: `{ code, message, fields?: Record<string, string> }`.
 | 422    | validação de formulário, cupom inválido/expirado, senha atual incorreta |
 | 503    | falha transitória determinística de favorito ou carrinho                |
 
-O usuário atual é derivado da sessão; os recursos privados não aceitam um `userId` escolhido pelo cliente. Não há nesta etapa endpoints privados para consultar outra conta.
+O usuário atual é derivado da sessão; os recursos privados não aceitam um `userId` escolhido pelo cliente. Os endpoints privados retornam somente recursos do titular autenticado.
 
 ## Controles da demonstração
 
 `GET /testing/scenario`, `PUT /testing/scenario { scenario }`, `POST /testing/reset` e `POST /testing/session/expire`. Eles existem apenas na camada MSW, ativada por configuração; não devem existir num backend de produção.
 
-Valores de cenário: `default`, `slow`, `catalog-error`, `favorite-error`, `cart-error`, `session-expired`, `register-conflict`, `offline`. Controles continuam disponíveis durante a falha simulada de conexão para permitir recuperação. A interface fica em `/setup`. O reset restaura catálogo, contas, hashes, sessões, favoritos, carrinhos, cupons e cenário conhecidos desta etapa.
+Valores de cenário: `default`, `slow`, `catalog-error`, `favorite-error`, `cart-error`, `session-expired`, `register-conflict`, `offline`. Controles continuam disponíveis durante a falha simulada de conexão para permitir recuperação. A interface fica em `/setup`. O reset restaura catálogo, contas, hashes, sessões, favoritos, carrinhos, cupons e o cenário inicial das fixtures.
 
 ## Carteiras e conexão
 
@@ -105,7 +105,7 @@ Eventos `nft.updated`, `quote.updated`, `order.updated`: `{ id, sequence, type, 
 
 ## Controles de mercado e recuperação
 
-Novos cenários: `out-of-order`, `wallet-rejected`, `payment-declined`, `order-timeout`, `order-pending`. O cenário de respostas fora de ordem demora mais para a busca Emerald que para as demais, permitindo observar cancelamento da busca antiga.
+Cenários de compra, carteira e busca: `out-of-order`, `wallet-rejected`, `payment-declined`, `order-timeout`, `order-pending`. O cenário de respostas fora de ordem demora mais para a busca Emerald que para as demais, permitindo observar cancelamento da busca antiga.
 
 | Endpoint de teste (POST)       | Corpo                                     | Efeito                                                           |
 | ------------------------------ | ----------------------------------------- | ---------------------------------------------------------------- |
@@ -115,15 +115,15 @@ Novos cenários: `out-of-order`, `wallet-rejected`, `payment-declined`, `order-t
 | `/testing/orders/:id/settle`   | `{ outcome: confirmed ou declined }`      | resolve pedido próprio pendente, preserva estado terminal        |
 | `/testing/events/replay`       | `{ type, resourceId, version?, copies? }` | retransmite evento duplicado/antigo; verifica titular se privado |
 
-O reset agora também limpa carteiras, conexões, pedidos, idempotência, eventos, rascunhos e tentativas. Erros podem incluir `details` além de `code`, `message` e `fields`; campos aninhados usam caminhos como `customer.phone`. Os controles são exclusivos da demonstração MSW.
+O reset também limpa carteiras, conexões, pedidos, idempotência, eventos, rascunhos e tentativas. Erros podem incluir `details` além de `code`, `message` e `fields`; campos aninhados usam caminhos como `customer.phone`. Os controles são exclusivos da demonstração MSW.
 
-## Campos acrescentados após receber os frames
+## Campos e validações complementares
 
 Perfil inclui `username`, `ens` e `walletNickname`, validados e persistidos. `username` aceita letras ASCII, números, ponto, sublinhado e hífen (2–50 caracteres); `ens` aceita letras, números e hífen (2–50). A interface apresenta o sufixo ENS.
 
-Carteira acrescenta `profileName`, `email`, `ens`, `referralCode`, `secondaryAddress` e `provider` (`MetaMask`, `WalletConnect`, `Coinbase Wallet`). Campos novos têm defaults para compatibilidade com dados de versões anteriores. Endereço secundário vazio é permitido; quando preenchido deve ser ENS ou endereço em formato aceito. O endereço principal continua validado conforme a rede. Conexão registra também `provider`.
+Carteiras incluem `profileName`, `email`, `ens`, `referralCode`, `secondaryAddress` e `provider` (`MetaMask`, `WalletConnect`, `Coinbase Wallet`). Campos complementares têm defaults para compatibilidade com dados de versões anteriores. Endereço secundário vazio é permitido; quando preenchido deve ser ENS ou endereço em formato aceito. O endereço principal continua validado conforme a rede. Conexão registra também `provider`.
 
-Cliente do pedido acrescenta os campos do perfil, `profileName`, `referralCode` e `note` opcional de até 1.000 caracteres. A criação exige que rede, carteira e provedor coincidam com a conexão simulada atual. O snapshot preserva esses dados e o provedor conectado. A mesma chave idempotente com payload normalizado diferente continua retornando conflito; tentativas antigas são comparadas depois da aplicação dos defaults novos.
+Os dados do cliente do pedido incluem os campos do perfil, `profileName`, `referralCode` e `note` opcional de até 1.000 caracteres. A criação exige que rede, carteira e provedor coincidam com a conexão simulada atual. O snapshot preserva esses dados e o provedor conectado. A mesma chave idempotente com payload normalizado diferente continua retornando conflito; tentativas antigas são comparadas depois da aplicação dos defaults do contrato atual.
 
 Detalhe do NFT inclui coleção, descrição, atributos, avaliação agregada e total de avaliações simuladas. Edições incluem padrão, limitada, única e aberta, com disponibilidade devolvida pela API. Não há API de publicação de avaliações nem compra real.
 

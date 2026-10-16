@@ -1,8 +1,6 @@
 name: Validate public deployment
 on:
-  push:
-    branches: [main]
-    paths: [.github/workflows/deploy.yml]
+  deployment_status:
   workflow_dispatch:
     inputs:
       url:
@@ -15,12 +13,17 @@ permissions:
 
 jobs:
   deployment:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production')
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
       DEPLOY_BASE_URL: ${{ inputs.url || 'https://junglegamingchallenge.vercel.app' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.deployment.sha || github.sha }}
       - name: Remove previous deployment reports
         run: rm -rf -- reports/deploy
       - name: Build the pinned browser environment
@@ -38,6 +41,9 @@ jobs:
           npm ci && node ci/check-browser.mjs &&
           node ci/check-deployment.mjs && npm run test:deploy && npm run audit:lighthouse'
           2>&1 | tee /tmp/kurio-deployment.log
+      - name: Summarize deployment failure
+        if: failure()
+        run: python3 ci/summarize-failure.py /tmp/kurio-deployment.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -52,7 +52,9 @@ export function SessionSync() {
   if (session.isError)
     return (
       <div className="session-notice" role="alert">
-        Não foi possível recuperar sua sessão.
+        {session.data?.user
+          ? 'Não foi possível recuperar sua sessão.'
+          : 'Não foi possível verificar seu acesso. Tente novamente.'}
         <button type="button" disabled={session.isFetching} onClick={() => void session.refetch()}>
           {session.isFetching ? 'Tentando novamente…' : 'Tentar novamente'}
         </button>

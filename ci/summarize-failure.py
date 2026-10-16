@@ -12,3 +12,7 @@ excerpt = lines if len(lines) <= 200 else lines[:100] + ["â€¦ output truncated â
 body = "\n".join(excerpt).replace("```", "''' ")
 with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a") as summary:
     summary.write("## Failed validation diagnostics\n\n```text\n" + body + "\n```\n")
+# Check annotations remain readable through the GitHub API when artifact storage
+# is unavailable to the development environment. Preserve the failing step status.
+annotation = body[-6000:].replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+print("::error title=Validation diagnostics::" + annotation)
