@@ -1,6 +1,6 @@
 # Imagens originais
 
-Fonte: arquivo `Imagens projeto jungle gaming.zip` fornecido pelo candidato em 15/10/2026. O ZIP contém quatro PNGs de 250 × 250 pixels. Foram copiados sem conversão, recorte ou geração de novas imagens para `public/images/nfts/`.
+Usei como fonte o arquivo `Imagens projeto jungle gaming.zip`, com quatro PNGs de 250 × 250 pixels. Mantive os originais em `public/images/nfts/`, sem conversão, recorte ou geração de novas imagens.
 
 | Arquivo no projeto | SHA-256                                                            |
 | ------------------ | ------------------------------------------------------------------ |
@@ -9,7 +9,7 @@ Fonte: arquivo `Imagens projeto jungle gaming.zip` fornecido pelo candidato em 1
 | `neon-vessel.png`  | `77075cabfcf0b2bee451dc14e03655e1ae90abd2e165ffe746da058fd23292b2` |
 | `golden-beat.png`  | `f821c01cb38ab4ce4b51888d0bc8e7af18e6ca97417a9ee04d70c55226db7277` |
 
-As variantes do catálogo reutilizam esses quatro retratos, conforme as capturas disponíveis. Há teste de carregamento dos nove cards da primeira página, com verificação da resolução natural. Posteriormente foram recebidos os frames de detalhe, conta, carteira e pagamento, preservados em `docs/design-references/`. Os ZIPs não incluem fonte ou ícones separados. A fonte local aproximada, sua licença e os desvios conhecidos estão em [DESIGN](DESIGN.md).
+As variantes do catálogo reutilizam esses quatro retratos, de acordo com as capturas disponíveis. Há um teste de carregamento dos nove cards da primeira página, incluindo a resolução natural das imagens. Os frames de detalhe, conta, carteira e pagamento estão preservados em `docs/design-references/`. Os ZIPs não incluem fonte ou ícones separados; a fonte local aproximada, sua licença e os desvios conhecidos estão em [DESIGN](DESIGN.md).
 
 ## Derivados para a execução
 

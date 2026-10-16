@@ -1,8 +1,8 @@
 # Referências visuais e decisões de interface
 
-## Material recebido
+## Referências usadas
 
-Em 15/10/2026 foram recebidos os ZIPs `modelo Desktop jungle gaming.zip` e `modelo Mobile jungle gaming.zip`. Os 13 PNGs originais estão em `docs/design-references`, com SHA-256 em `manifest.json`. O ZIP desktop inclui login, cadastro, perfil, carteiras, detalhe, carrinho, pagamento e confirmação. O ZIP mobile inclui login, cadastro, detalhe, carrinho e pagamento. A tela inicial usa as capturas desktop/mobile enviadas anteriormente no chat; essas capturas não estavam nos ZIPs.
+Usei os ZIPs `modelo Desktop jungle gaming.zip` e `modelo Mobile jungle gaming.zip` como referências principais da interface. Os 13 PNGs originais estão em `docs/design-references`, com SHA-256 em `manifest.json`. O ZIP desktop inclui login, cadastro, perfil, carteiras, detalhe, carrinho, pagamento e confirmação. O ZIP mobile inclui login, cadastro, detalhe, carrinho e pagamento. As capturas desktop e mobile da tela inicial foram recebidas separadamente e não faziam parte desses ZIPs.
 
 Os retratos do catálogo são os quatro PNGs originais de 250 × 250 pixels, documentados em `ASSETS.md`. Os PNGs originais não foram modificados; a UI prefere derivados AVIF e oferece WebP/PNG como alternativas, conforme `ASSETS.md`. Ampliação e recortes da galeria são apresentações CSS do mesmo retrato, pois não foram recebidas quatro obras alternativas para cada NFT.
 
@@ -25,7 +25,7 @@ Os tokens estão em `src/index.css`. Tailwind participa da composição e dos ut
 
 ## Substituições e desvios conhecidos
 
-- **Fonte:** os ZIPs não incluem fonte. O Figma mostrou ao candidato somente o token `font/family`, sem revelar o nome da família. Foi usada IBM Plex Mono local, por aproximação à referência (400/600 na UI; 500/700 isolados no destaque desktop). Não foi possível confirmar que seja a fonte original do Figma. As medidas fornecidas posteriormente pelo candidato foram aplicadas ao destaque desktop: saudação 14/16 px, peso 500 e tracking 10%; título 43/70 px e peso 700; descrição 14/24 px e peso 400. Arquivos vêm de `@fontsource/ibm-plex-mono`; licença OFL em `public/licenses/ibm-plex-mono-OFL.txt`. A execução não depende de Google Fonts.
+- **Fonte:** os ZIPs não incluem a fonte, e o Figma exibe apenas o token `font/family`, sem revelar o nome da família. Por isso, adotei IBM Plex Mono local como aproximação da referência (400/600 na UI; 500/700 no destaque desktop). Apliquei ao destaque as medidas disponíveis: saudação em 14/16 px, peso 500 e tracking de 10%; título em 43/70 px e peso 700; descrição em 14/24 px e peso 400. Os arquivos vêm de `@fontsource/ibm-plex-mono`, com licença OFL em `public/licenses/ibm-plex-mono-OFL.txt`. A execução não depende de Google Fonts.
 - **Ícones:** Lucide e SVGs locais representam navegação, compartilhamento e redes sociais. Os benefícios mantêm W/C/D da referência; os provedores usam símbolos ilustrativos locais. Não são assets extraídos do Figma.
 - **Acessibilidade:** controles pequenos receberam áreas de clique maiores e foco visível; abas permitem setas, Home e End; diálogos controlam e devolvem foco. Textos auxiliares explicam os campos e as operações simuladas.
 - **Nomes acessíveis:** links da conta, opções de edição e ações de compra incluem o texto visível no nome anunciado por tecnologias assistivas. Assim, comandos por voz podem identificar os mesmos dizeres apresentados na tela; informações complementares explicam a ação sem substituir seu rótulo.

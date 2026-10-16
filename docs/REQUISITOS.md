@@ -1,6 +1,6 @@
 # Conferência do enunciado
 
-Referência: [frontend-challenge](https://github.com/junglegaming/frontend-challenge), conferido novamente em 16/10/2026. Esta matriz aponta implementação e evidência; aprovação dos testes não equivale a fidelidade perfeita ao Figma. A validação pública possui workflow e artefatos próprios.
+Usei o [enunciado oficial](https://github.com/junglegaming/frontend-challenge) como checklist final em 16/10/2026. A matriz relaciona cada exigência à implementação e à evidência executável. Os testes visuais protegem contra regressões, mas não substituem a comparação com o Figma.
 
 | Exigência                              | Implementação                                                                     | Evidência executável                                                                                                        |
 | -------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
@@ -40,7 +40,7 @@ A validação do domínio público inclui HTTPS, acesso anônimo, REST/Socket.IO
 
 ## Conferência dos seis critérios eliminatórios
 
-A leitura do enunciado foi repetida em 16/10/2026. Foram conferidos os handlers de autenticação, carrinho e pedidos, o estado terminal do recibo, os guards, as chaves de cache e a inscrição no Socket.IO. Os caminhos abaixo permitem verificar a implementação; os resultados da execução correspondente devem ser consultados em `VALIDACAO.md`.
+Revisei separadamente os seis critérios eliminatórios, incluindo autenticação, carrinho, pedidos, recibo, guards, isolamento do cache e inscrição no Socket.IO. Os caminhos abaixo mostram onde cada ponto foi implementado; os resultados das execuções estão em `VALIDACAO.md`.
 
 | Eliminatório                        | Verificação no código e nos testes                                                                                                                                                                                               |
 | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -51,4 +51,4 @@ A leitura do enunciado foi repetida em 16/10/2026. Foram conferidos os handlers 
 | Eventos injetados diretamente na UI | `socket.io-client` conecta com transporte WebSocket à rede interceptada pelo binding MSW; eventos têm ID/versão, são filtrados por titular/geração e provocam reconciliação REST                                                 |
 | Ausência de E2E executáveis         | Suíte completa com os 12 grupos do enunciado, três viewports e 12 capturas; execução reproduzível no container da CI, sem serviço privado                                                                                        |
 
-O ajuste visual do slider preserva o fluxo URL → Axios → MSW. Seu teste adicional verifica limites, teclado, ponteiro e refresh. O detalhamento recolhido do pagamento continua acessível por botão e mantém o mesmo total antes/depois de expandir.
+O ajuste visual do slider preserva o fluxo URL → Axios → MSW. O teste dedicado cobre limites, teclado, ponteiro e refresh. O detalhamento recolhido do pagamento continua acessível por botão e mantém o mesmo total antes e depois de expandir.
